@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+        Registration
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="row"> 
+            <p:messages id="wow" closable="true" />
+            <div class="ibox-content" style="height: 80px;">
+                <div class="form-group">
+                    <div class="text-center">                        
+                        <p:panel id="dude" style="border: none;">
+                            <p:selectOneMenu rendered="#{registration.admin}"  class="form-control" value="#{registration.registration}" required="true" requiredMessage="Registration required">
+                                <p:ajax listener="#{registration.regDetails()}" update="grad" />
+                                <f:selectItem itemLabel="--Select Registration--" itemValue="" noSelectionOption="true"/>                                
+                                <f:selectItem itemLabel="Student" itemValue="1" />                                
+                                <f:selectItem itemLabel="Staff" itemValue="2" />   
+                                <f:selectItem itemLabel="Admin" itemValue="3" /> 
+                            </p:selectOneMenu>  
+                            
+                            <p:selectOneMenu rendered="#{registration.student}" class="form-control" value="#{registration.registration}" required="true" requiredMessage="Registration required">
+                                <p:ajax listener="#{registration.regDetails()}" update="grad" />
+                                <f:selectItem itemLabel="--Select Registration--" itemValue="" noSelectionOption="true"/>                                
+                                <f:selectItem itemLabel="Student" itemValue="1" />                                                               
+                            </p:selectOneMenu>  
+                            
+                             <p:selectOneMenu rendered="#{registration.staff}" class="form-control" value="#{registration.registration}" required="true" requiredMessage="Registration required">
+                                <p:ajax listener="#{registration.regDetails()}" update="grad" />
+                                <f:selectItem itemLabel="--Select Registration--" itemValue="" noSelectionOption="true"/>                                                                                           
+                                <f:selectItem itemLabel="Staff" itemValue="2" />                                   
+                            </p:selectOneMenu>  
+                            
+                            <p:selectOneMenu rendered="#{registration.staffStudent}" class="form-control" value="#{registration.registration}" required="true" requiredMessage="Registration required">
+                                <p:ajax listener="#{registration.regDetails()}" update="grad" />
+                                <f:selectItem itemLabel="--Select Registration--" itemValue="" noSelectionOption="true"/>                                
+                                <f:selectItem itemLabel="Student" itemValue="1" />                                
+                                <f:selectItem itemLabel="Staff" itemValue="2" />                                   
+                            </p:selectOneMenu> 
+
+
+
+                            <p:selectOneMenu id="grad" class="form-control" value="#{registration.regType}" required="true" requiredMessage="Type required">                                
+                                <p:ajax listener="#{registration.regTypeChanges()}" update="staff,stu,sta,str" />
+                                <f:selectItem itemLabel="--Registration Type--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{registration.typeValue}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue}"
+                                               itemValue="#{singlevalue}"/>
+                            </p:selectOneMenu>  
+                            <p:panel id="stu" visible="#{registration.but}">  <span > <p:commandLink style="padding-top: 10px;"   value="Register Student" action="#{registration.regStudent()}"/></span></p:panel>
+                            <p:panel id="sta" visible="#{registration.put}">  <span > <p:commandLink style="padding-top: 10px;"  value="Register Staff" action="#{registration.regStaff()}"/></span></p:panel>
+                            <p:panel id="str" visible="#{registration.lut}">  <span > <p:commandLink style="padding-top: 10px;"  value="Register Admin" action="#{registration.regAdmin()}"/></span></p:panel>
+
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <div class="row">
+            <p:panel id="staff" visible="#{registration.staffStatus}">
+                <p:fileUpload required="true" id="upload_staff_data" value="#{result.csv}" auto="true"
+                              fileUploadListener="#{registration.handleFileUpload}" 
+                              allowTypes="/(\.|\/)(xls|xlsx)$/"
+                              invalidFileMessage="Excel is only Required"
+                              mode="advanced"  dragDropSupport="false"
+                              sizeLimit="2097152" fileLimit="1" update="staff,upload_staff_data,wow"  /> 
+                <p:outputLabel value="Hi"/> <p:commandLink value="Fill Form"/>
+            </p:panel>           
+
+        </div>
+    </ui:define>
+
+</ui:composition>

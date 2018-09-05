@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+        Register Admin
+    </ui:define>
+
+
+    <ui:define name="content">
+
+
+        <p:messages id="message" closable="true"/>
+        <div class="ibox-content">
+            <div class="row">
+                <p:panel class="panel-default" id="reg" style="border: none;" header="Register">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <p:outputLabel for="fname" value="First Name: "/>
+                            <p:inputText id="fname" required="true" value="#{adminReg.fname}" class="form-control"></p:inputText>
+                            <p:message for="fname"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="lname" value="Last Name: "/>
+                            <p:inputText id="lname" required="true" value="#{adminReg.lname}" class="form-control"></p:inputText>
+                            <p:message for="lname"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="uname" value="Phone Number: "/>
+                            <p:inputText id="uname" class="form-control" value="#{adminReg.pnum}" maxlength="11" required="true"/>                                
+                            <p:message for="uname"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Highest Qualification: " for="qual"/>
+                            <p:inputTextarea id="qual" required="true" autoResize="true" value="#{adminReg.highestQua}" class="form-control"/>
+                            <p:message for="qual"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Address: " for="add"/>
+                            <p:inputTextarea id="add" required="true" autoResize="true" value="#{adminReg.address}" class="form-control"/>
+                            <p:message for="add"/>
+                        </div>                      
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <p:outputLabel for="mname" value="Middle Name: "/>
+                            <p:inputText id="mname" class="form-control" value="#{adminReg.mname}" /> 
+                            <p:message for="mname"/>
+                        </div>
+                        <div class="form-group">
+
+                            <p:outputLabel for="email" value="Email Address: "/>
+                            <p:inputText id="email" required="true" value="#{adminReg.email}" class="form-control" label="email" size="40"
+                                         requiredMessage="Please enter your email address."
+                                         validatorMessage="Invalid email format"
+                                         >
+
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                            </p:inputText>
+                            <p:message for="email"/>
+                        </div>                       
+                        <div class="form-group">
+
+                            <p:outputLabel value="Select Image: *" />
+                            <p:fileUpload id="upload_pix_data" value="#{adminReg.passport_file}" auto="true"
+                                          fileUploadListener="#{adminReg.handleFileUpload}" 
+                                          mode="advanced" dragDropSupport="false"
+                                          update="pst_img" sizeLimit="2097152" fileLimit="1" 
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+
+                            <p:outputLabel value="Passport:"/>
+                            <p:graphicImage id="pst_img" value="#{adminReg.passport_url}" style="width: 100px; height: 100px;" />
+
+                            <p:commandButton value="clear" immediate="true" ajax="false"
+                                             actionListener="#{adminReg.clearPix}" 
+                                             update="upload_pix_data,pst_img"/>                                 
+
+                        </div>
+                         <div class="form-group">
+                            <p:outputLabel  for="design" value="Designation: "/>
+                            <p:inputTextarea id="design" class="form-control" value="#{adminReg.designation}" required="true" />
+                            <p:message for="design"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel  for="dob" value="Date Employed: "/>
+                            <p:calendar id="dob" class="form-control" yearRange="1980:2030" pattern="dd/MM/yyyy" value="#{adminReg.dateEmployed}"  navigator="true" required="true" />
+                            <p:message for="dob"/>
+                        </div>
+
+
+
+                    </div>
+                    <p:commandButton class="btn btn-sm btn-primary m-t-n-xs" update="message,reg"
+                                     actionListener="#{adminReg.register}" process="@this fname,lname,uname,email,design,mname,qual,add,reg" value="Register"/>
+
+
+                </p:panel>
+
+
+            </div>
+        </div>
+
+
+
+    </ui:define>
+    <ui:define name="footer">
+        <div>
+            <strong>Copyright</strong> GOT IT
+        </div>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <title>Login</title>
+        <link href="resources/main/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+        <link href="resources/main/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+        <link href="resources/main/css/animate.css" rel="stylesheet" type="text/css"/>
+
+        <link href="resources/main/css/style.css" rel="stylesheet" type="text/css"/>
+
+    </h:head>
+    <h:body class="gray-bg">
+
+        <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div>
+                <h:form>
+                    <div>
+                        <p:messages id="mess" closable="true"/>
+                        <h2 class="logo-name" style="font-family: cursive; "><span style="color: red;">S</span><span style="color: red;">C</span>
+                            <span style="color: orange;">H</span>
+                            <span style="color: yellow;">O</span>
+                            <span style="color: green;">O</span>
+                            <span style="color: blue;">L</span>
+                            <span style="color: indigo;">+</span>
+                        </h2>
+
+                    </div>
+                    <br/>                    
+                    <br/>
+
+                    <p:messages id="login_panel"/>
+                    <div class="form-group">
+                        <p:inputText class="form-control" id="username" value="#{login.username}" placeholder="Username" required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <p:password class="form-control" id="password" value="#{login.password}" placeholder="Password" required="true"/>
+                    </div>
+                    <p:commandButton value="Login" actionListener="#{login.loginpage}" update="mess" class="btn btn-primary block full-width m-b"/>
+
+
+                </h:form>
+
+            </div>
+        </div>
+
+        <!-- Mainly scripts -->
+        <script src="resources/main/js/jquery-2.1.1.js" type="text/javascript"></script>
+        <script src="resources/main/js/bootstrap.min.js" type="text/javascript"></script>
+
+    </h:body>
+</html>
+

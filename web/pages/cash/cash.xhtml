@@ -1,0 +1,173 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+       Profile
+    </ui:define>
+
+
+    <ui:define name="content">
+
+        <h:form>
+                  <p:panel  id="firstPanelRpt" 
+                  header="Role Management" style="margin-bottom: 10px; margin-left: 20px; float: left;">
+
+            <p:growl showSummary="true"/>
+            <h:panelGrid cellpadding="5" columns="3" style="margin-bottom:10px">
+
+                <p:outputLabel value="First Name:" for="fname"/>
+                <p:inputText id="fname" required="true" value="#{mgt.first_name}"/>
+                <p:message for="fname"/>
+
+                <p:outputLabel value="LastName: " for="lname"/>
+                <p:inputText id="lname" required="true" value="#{mgt.last_name}"/>
+                <p:message for="lname"/>
+
+                <p:outputLabel value="Username: " for="uname"/>
+                <p:inputText id="uname" required="true" value="#{mgt.username}"/>
+                <p:message for="uname"/>
+
+                <p:outputLabel value="Password: " for="pWord"/>
+                <p:password id="pWord" required="true" match="RWord" label="Password" value="#{mgt.pass}"/>
+                <p:message for="pWord"/>
+
+                <p:outputLabel value="Re-type Password: " for="RWord"/>
+                <p:password id="RWord" required="true" label="Re-type Password" value="#{mgt.repass}"/>
+                <p:message for="RWord"/>
+
+                <p:outputLabel value="Role: "/>
+                <h:panelGrid columns="6" style="margin-bottom:10px" cellpadding="5">
+                    <p:selectBooleanCheckbox value="#{selectBooleanView.value1}" />
+                    <h:outputText value="Can Add Item " />
+                    <p:selectBooleanCheckbox value="#{selectBooleanView.value1}" />
+                    <h:outputText value="Can Print Invoice: " />
+                    <p:selectBooleanCheckbox value="#{selectBooleanView.value1}" />
+                    <h:outputText value="Can Print Invoice: " />
+                </h:panelGrid>
+                <br/>
+                <p:commandButton class="btn btn-success btn-sm"  value="Save" 
+                                 actionListener="#{mgt.insertData()}"
+                                 update="firstPanelRpt" 
+                                 style="margin-right: 15px;"/>
+
+            </h:panelGrid>
+
+            <p:panel  id="secondPanelRpt" 
+                      header="Roles: " 
+                      style="margin-bottom: 10px; margin-left: 20px;">
+
+                <p:messages id="msg" showSummary="true"/>
+
+                <p:dataTable id="logOfApproval" var="papprv_rpt" 
+                             value="#{payreportX.listPaymentReportXModel}"
+                             paginatorTemplate="{CurrentPageReport}  
+                             {FirstPageLink} {PreviousPageLink} 
+                             {PageLinks} {NextPageLink} {LastPageLink} "
+                             paginator="true" style="margin-bottom:20px">
+
+
+                    <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="First Name"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.ref_id}"/>
+
+                    </p:column>
+
+                    <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="Last Name"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                    </p:column>
+
+                    <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="User Name"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.districtCadastralZone}"/>
+
+                    </p:column>
+
+                    <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="Can Add Invoice"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                    </p:column>
+                     <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="Can Print Invoice"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                    </p:column>
+                     <p:column>
+
+                        <f:facet name="header">
+                            <h:outputText value="Can Print Invoice"/>
+                        </f:facet>
+
+                        <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                    </p:column>
+
+
+
+
+
+                </p:dataTable> 
+
+
+                <h3>Export Page Data Only</h3>
+                <h:commandLink>
+                    <p:graphicImage value="/images/excel.png" />
+                    <p:dataExporter type="xls" target="logOfApproval" fileName="report" pageOnly="true"/>
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/pdf.png" />
+                    <p:dataExporter type="pdf" target="logOfApproval" fileName="report" pageOnly="true" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/csv.png" />
+                    <p:dataExporter type="csv" target="logOfApproval" fileName="report" pageOnly="true" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/xml.png" />
+                    <p:dataExporter type="xml" target="logOfApproval" fileName="report" pageOnly="true" />
+                </h:commandLink>
+
+
+            </p:panel>
+
+
+        </p:panel> 
+           
+
+
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

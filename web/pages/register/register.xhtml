@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+        Register User
+    </ui:define>
+
+
+    <ui:define name="content">
+
+
+        <p:messages id="message" closable="true"/>
+        <div class="ibox-content">
+            <div class="row">
+                <p:panel class="panel-default" id="reg" style="border: none;" header="Register">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <p:outputLabel for="fname" value="First Name: "/>
+                            <p:inputText id="fname" required="true" value="#{reg.fname}" class="form-control"></p:inputText>
+                            <p:message for="fname"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="lname" value="Last Name: "/>
+                            <p:inputText id="lname" required="true" value="#{reg.lname}" class="form-control"></p:inputText>
+                            <p:message for="lname"/>
+                        </div>
+
+                        <div class="form-group">
+                            <p:outputLabel for="uname" value="Phone Number: "/>
+                            <p:inputText id="uname" class="form-control" value="#{reg.username}" maxlength="11" required="true"/>                                
+                            <p:message for="uname"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Highest Qualification: "/>
+                            <p:inputTextarea id="qual" required="true" autoResize="true" value="#{reg.highQua}" class="form-control"/>
+                            <p:message for="qual"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Address: "/>
+                            <p:inputTextarea id="add" required="true" autoResize="true" value="#{reg.address}" class="form-control"/>
+                            <p:message for="add"/>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Class Assigned: "/>
+                            <p:selectOneMenu id="sclass" class="form-control" value="#{reg.staffClass}" required="true" requiredMessage="Class required">
+
+
+                                <p:ajax listener="#{classmode.onClassChanges(reg.staffClass)}" update="grad" />
+                                <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.classmodel}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.tbclass}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu>   
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Class: "></p:outputLabel>
+                            <p:selectOneMenu id="grad" class="form-control" value="#{reg.staffGrade}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{classmode.ontermChanges()}" update="gr"/> 
+                                <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.grademodels}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.grade}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel value="Year: "></p:outputLabel>
+                            <p:selectOneMenu id="gr" class="form-control" value="#{reg.year}" required="true" requiredMessage="Year required">                                  
+                                <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.term}"/>
+                            </p:selectOneMenu>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <p:outputLabel for="mname" value="Middle Name: "/>
+                            <p:inputText id="mname" class="form-control" value="#{reg.mname}" /> 
+                            <p:message for="mname"/>
+                        </div>
+                        <div class="form-group">
+
+                            <p:outputLabel for="email" value="Email Address: "/>
+                            <p:inputText id="email" required="true" value="#{reg.emailadd}" class="form-control" label="email" size="40"
+                                         requiredMessage="Please enter your email address."
+                                         validatorMessage="Invalid email format"
+                                         >
+
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                            </p:inputText>
+                            <p:message for="email"/>
+                        </div>                       
+                        <div class="form-group">
+
+                            <p:outputLabel value="Select Image: *" />
+                            <p:fileUpload id="upload_pix_data" value="#{reg.passport_file}" auto="true"
+                                          fileUploadListener="#{reg.handleFileUpload}" 
+                                          mode="advanced" dragDropSupport="false"
+                                          update="pst_img" sizeLimit="2097152" fileLimit="1" 
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+
+                            <p:outputLabel value="Passport:"/>
+                            <p:graphicImage id="pst_img" value="#{reg.passport_url}" style="width: 100px; height: 100px;" />
+
+                            <p:commandButton value="clear" immediate="true" ajax="false"
+                                             actionListener="#{reg.clearPix}" 
+                                             update="upload_pix_data,pst_img"/>                                 
+
+                        </div>
+                        <div class="form-group">
+                            <p:outputLabel  for="dob" value="Date Employed: "/>
+                            <p:calendar id="dob" class="form-control" yearRange="1980:2030" pattern="dd/MM/yyyy" value="#{reg.doe}"  navigator="true" required="true" />
+                            <p:message for="dob"/>
+                        </div>
+
+
+
+                    </div>
+                    <p:commandButton class="btn btn-sm btn-primary m-t-n-xs" update="message,reg"
+                                     actionListener="#{reg.register}" process="@this fname,lname,uname,email,mname,qual,add,grad,sclass,reg" value="Register"/>
+
+
+                </p:panel>
+
+
+            </div>
+        </div>
+
+
+
+    </ui:define>
+    <ui:define name="footer">
+        <div>
+            <strong>Copyright</strong> GOT IT
+        </div>
+    </ui:define>
+
+</ui:composition>

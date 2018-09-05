@@ -1,0 +1,366 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template1.xhtml">
+
+
+
+    <ui:define name="title">
+        Student Profile
+    </ui:define>
+
+    <ui:define name="Subtitle">
+        Edit Profile
+    </ui:define>
+
+
+    <ui:define name="content2">
+        <div class="row">            
+
+            <p:panel visible="#{edit.fpanel}" id="pan">
+                <div class="ibox-content">
+                    <p:accordionPanel id="ss">
+                        <p:tab title="Personal Details" id="sss">                               
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Student Reg. No: "/> <h:outputText value="#{edit.studentid}"/> 
+                                <h:outputText value="First Name: "/> <h:outputText value="#{edit.fname}"/> 
+                                <h:outputText value="Middle Name: "/> <h:outputText value="#{edit.mname}"/> 
+                                <h:outputText value="Last Name: "/> <h:outputText value="#{edit.lname}"/>                     
+                                <h:outputText value="Phone Number: "/> <h:outputText value="#{edit.sphone}"/> 
+                                <h:outputText value="Email: "/> <h:outputText value="#{edit.semail}"/> 
+                                <h:outputText value="Date Of Birth: "/> <h:outputText value="#{edit.dob}"/>
+                                <h:outputText value="Sex: "/> <h:outputText value="#{edit.sexs}"/>
+
+                                <p:commandButton value="Update" class="pull-left" type="button" onclick="PF('dlg2').show();" />                               
+                            </h:panelGrid>                                                                                                       
+                        </p:tab>
+                        <p:tab title="Parent/Guardian Details">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:panelGrid columns="2" cellpadding="10">
+                                    <h:outputText value="First Name: "/> <h:outputText value="#{edit.gfname}"/> 
+                                    <h:outputText value="Middle Name: "/> <h:outputText value="#{edit.gmname}"/> 
+                                    <h:outputText value="Last Name: "/> <h:outputText value="#{edit.glname}"/>                        
+                                    <h:outputText value="Relationship: "/> <h:outputText value="#{classmode.relationshipGet(edit.relationship)}"/> 
+                                    <h:outputText value="Other Realtionship: "/> <h:outputText value="#{edit.relationship_other}"/> 
+                                    <h:outputText value="Phone Numner: "/> <h:outputText value="#{edit.gphone}"/>                                            
+                                    <h:outputText value="Email:  "/> <h:outputText value="#{edit.gmemail}"/> 
+                                    <h:outputText value="Country: "/> <h:outputText value="#{classmode.countryOrigin(edit.gcountry)}"/> 
+                                    <h:outputText value="State: "/> <h:outputText value="#{classmode.stateOrigin(edit.state)}"/> 
+                                    <h:outputText value="L.G.A.: "/> <h:outputText value="#{classmode.lgaValue(edit.lga)}"/> 
+                                    <h:outputText value="Address: "/> <h:outputText value="#{edit.address}"/> 
+                                    <p:commandButton value="Update" class="pull-left" type="button" onclick="PF('dlg').show();" />
+                                </h:panelGrid>
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Previous Education History">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Previous School: "/> <h:outputText value="#{edit.previousSchl}"/> 
+                                <h:outputText value="Previous Class: "/> <h:outputText value="#{classmode.gradeGet(edit.previousClass)}"/>    
+                                <p:commandButton value="Update" class="pull-left" type="button" onclick="PF('dlg1').show();" />
+                            </h:panelGrid>
+                        </p:tab>           
+                        <p:tab title="Health History">
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="Disability: "/> <h:outputText value="#{classmode.disabilityGet(edit.disability)}"/> 
+                                <h:outputText value="Other Disability: "/> <h:outputText value="#{edit.otherDis}"/>  
+                                <h:outputText value="Blood Group: "/> <h:outputText value="#{classmode.bloodGet(edit.bgroup)}"/>  
+                                <p:commandButton value="Update" class="pull-left" type="button" onclick="PF('dlg3').show();" />
+                            </h:panelGrid>
+                        </p:tab>
+                        <p:tab title="Image">
+                            <p:panel id="imgPan">
+                                <h:panelGrid columns="9" cellpadding="10">
+                                    <div class="profile-userpic" style="height: 100px; width: 100px;" >
+                                        <img src="#{edit.imagelink}" class="img-responsive img-thumbnail" alt="#{edit.fullname}"/>
+                                    </div>  
+                                    <p:outputLabel value=""></p:outputLabel>
+                                    <p:outputLabel value=""></p:outputLabel>   
+                                    <p:fileUpload required="true" id="upload_pix_data" value="#{edit.passport}" auto="true"
+                                                  fileUploadListener="#{edit.handleFileUpload}" 
+                                                  mode="advanced" dragDropSupport="false"
+                                                  update="pst_img" sizeLimit="2097152" fileLimit="1" />                               
+                                    <p:commandButton value="clear" immediate="true" ajax="false"
+                                                     actionListener="#{edit.clearPix}" 
+                                                     update="upload_pix_data,pst_img"/>    
+                                    <p:outputLabel value="Passport:"/>
+                                    <p:graphicImage id="pst_img" class="img-responsive img-thumbnail" value="#{edit.passport_url}" style="width: 100px; height: 100px;" />
+                                    <p:outputLabel value=""></p:outputLabel>
+                                    <p:outputLabel value=""></p:outputLabel>                                
+                                    <p:commandButton value="Update" process="@this upload_pix_data" actionListener="#{edit.uploadPix}" update=":templateForm:growl,:templateForm:pan,:templateForm:okay1" class="pull-left" />    
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:tab>
+                    </p:accordionPanel>   
+                    <p:dialog header="Edit Profile" widgetVar="dlg2"                              
+                              position="center"
+                              minimizable="true"
+                              maximizable="true">                                        
+
+                        <h:form id="formProces">
+                            <p:panel id="damn">                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="fnames" value="First Name: "></p:outputLabel> 
+                                    <p:inputText id="fnames" required="true" value="#{edit.fname}" requiredMessage="First name is required" />
+                                    <p:message for="fnames"/>
+                                    <p:outputLabel for="mnames" value="Middle Name: "></p:outputLabel> 
+                                    <p:inputText id="mnames" value="#{edit.mname}" requiredMessage="Middle name is required" />
+                                    <p:message for="mnames"/>
+                                    <p:outputLabel for="lnames" value="Last Name: "></p:outputLabel> 
+                                    <p:inputText id="lnames" required="true" value="#{edit.lname}" requiredMessage="Last name is required" />
+                                    <p:message for="lnames"/>
+                                    <p:outputLabel for="pnums" value="Phone Number: "></p:outputLabel>
+                                    <p:inputText id="pnums" required="true" value="#{edit.sphone}" requiredMessage="Phone is required" maxlength="11" />
+                                    <p:message for="pnums"/>
+                                    <p:outputLabel for="emails" value="Email: "></p:outputLabel> 
+                                    <p:inputText id="emails" value="#{edit.semail}" label="email"
+                                                 requiredMessage="Please enter your email address."
+                                                 validatorMessage="Invalid email format"
+                                                 >
+
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                    </p:inputText>
+                                    <p:message for="emails"/>
+                                    <p:outputLabel for="dobs" value="DOB: "/> 
+                                    <p:calendar id="dobs" yearRange="1980:2017" value="#{edit.dateOfBirth}" pattern="dd/MM/yyyy"  navigator="true" requiredMessage="Date of Birth is required" required="true">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:calendar>
+                                    <p:message for="dobs"/>  
+                                    <p:outputLabel for="sex" value="Sex: "></p:outputLabel>
+                                    <p:selectOneMenu id="sex" requiredMessage="Sex is required" value="#{edit.sex}" style="width:125px" required="true">
+                                        <f:selectItem itemLabel="Select Sex" itemValue=""  noSelectionOption="true" />
+                                        <f:selectItem itemLabel="Male" itemValue="1" />
+                                        <f:selectItem itemLabel="Female" itemValue="2" />                                   
+                                    </p:selectOneMenu> 
+                                    <p:message for="sex"/>  
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this fnames,mnames,lnames,pnums,emails,dobs" update=":templateForm:growl,:templateForm:pan,:templateForm:okayy" actionListener="#{edit.updateStudentDetails}" oncomplete="handleLoginRequests(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>   
+
+                    <p:dialog header="Edit Parent/Guardian Details" widgetVar="dlg">                                        
+
+                        <h:form>
+                            <p:panel>                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="gfname" value="First Name: "></p:outputLabel> 
+                                    <p:inputText id="gfname" required="true" value="#{edit.gfname}" requiredMessage="First name is required" />
+                                    <p:message for="gfname"/>
+                                    <p:outputLabel for="gmname" value="Middle Name: "></p:outputLabel> 
+                                    <p:inputText id="gmname" value="#{edit.gmname}" requiredMessage="Middle name is required" />
+                                    <p:message for="gmname"/>
+                                    <p:outputLabel for="glname" value="Last Name: "></p:outputLabel> 
+                                    <p:inputText id="glname" required="true" value="#{edit.glname}" requiredMessage="Last name is required" />
+                                    <p:message for="glname"/>
+
+                                    <p:outputLabel for="relation" value="Relationship: "></p:outputLabel>
+                                    <p:selectOneMenu id="relation" value="#{edit.relationship}" required="true" requiredMessage="Relationsip required">
+                                        <p:ajax listener="#{edit.onRelationshipChange()}" update="relate"/>
+                                        <f:selectItem itemLabel="--Select Relationship--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.relation}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.relation}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>                                     
+                                    <p:message for="relation"/>
+
+                                    <p:outputLabel ></p:outputLabel>
+                                    <p:panel visible="#{edit.relatio}" style="border:none;" id="relate">
+                                        <p:inputText id="relateOther" rendered="#{edit.relatio}" required="true" value="#{edit.relationship_other}"></p:inputText>
+                                    </p:panel>
+                                    <p:outputLabel ></p:outputLabel>
+
+                                    <p:outputLabel for="gpnum" value="Phone Number: "></p:outputLabel>
+                                    <p:inputText id="gpnum" required="true" value="#{edit.sphone}" requiredMessage="Phone is required" maxlength="11" />
+                                    <p:message for="gpnum"/>
+
+                                    <p:outputLabel for="gemail" value="Email: "></p:outputLabel> 
+                                    <p:inputText id="gemail" value="#{edit.semail}" label="email"
+                                                 requiredMessage="Please enter your email address."
+                                                 validatorMessage="Invalid email format"
+                                                 >
+
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                    </p:inputText>
+                                    <p:message for="gemail"/>
+
+                                    <p:outputLabel for="gcount" value="Country "/> 
+                                    <p:selectOneMenu id="gcount" class="form-control" value="#{edit.gcountry}" required="true" requiredMessage="Country required">
+                                        <p:ajax listener="#{edit.onCountryChange}" update="gstate" />
+                                        <f:selectItem itemLabel="--Select Country--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.coun}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.country}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>                               
+                                    <p:message for="gcount"/>
+
+                                    <p:outputLabel for="gstate" value="State of Origin: "></p:outputLabel>
+                                    <p:selectOneMenu id="gstate" class="form-control" value="#{edit.state}" required="true" requiredMessage="State required">
+                                        <p:ajax listener="#{edit.onStateChange}" update="lga" />
+                                        <f:selectItem itemLabel="--Select State--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.states}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.state}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>    
+                                    <p:message for="gstate"/>  
+
+                                    <p:outputLabel for="lga" value="LGA of Origin: "/>
+
+                                    <p:selectOneMenu id="lga" class="form-control" value="#{edit.lga}" required="true" requiredMessage="Lga required">
+
+                                        <f:selectItem itemLabel="--Select LGA--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.lgamodel}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.lga}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>                               
+                                    <p:message for="lga"/>
+
+
+                                    <p:outputLabel for="add" value="Address of Residence: "/>
+                                    <p:inputTextarea id="add" required="true" value="#{edit.address}" class="form-control"></p:inputTextarea>
+                                    <p:message for="add"/>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" actionListener="#{edit.updateParent}" process="@this gfname,gmname,glname,relation,relateOther,gpnum,gemail,gcount,gstate,lga,add" update=":templateForm:growl,:templateForm:okay,:templateForm:pan" oncomplete="handleLoginRequest(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog> 
+
+                    <p:dialog header="Edit Previous Educational History" widgetVar="dlg1">                                        
+
+                        <h:form>
+                            <p:panel >                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="pschl" value="Previous School: "></p:outputLabel> 
+                                    <p:inputTextarea id="pschl" required="true" value="#{edit.previousSchl}" requiredMessage="Previous School is required" />
+                                    <p:message for="pschl"/>
+
+                                    <p:outputLabel for="class" value="Class: "></p:outputLabel>
+                                    <p:selectOneMenu id="class" class="form-control" value="#{edit.previousCla}" required="true" requiredMessage="Class required">
+                                        <p:ajax listener="#{edit.onClassChange}" update="grade" />
+                                        <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.classmodel}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.tbclass}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="class"/>
+
+                                    <p:outputLabel for="grade" value="Grade: "></p:outputLabel>                                                                                                               
+                                    <p:selectOneMenu id="grade" class="form-control" value="#{edit.previousClass}" required="true" requiredMessage="Class required">                                        
+                                        <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.grademodels}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.grade}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="grade"/>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" actionListener="#{edit.updatePrevious}" process="@this pschl,class,grade" update=":templateForm:growl,:templateForm:pan,:templateForm:okay" oncomplete="handleLoginReques(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog> 
+
+                    <p:dialog header="Edit Health History" widgetVar="dlg3">                                        
+
+                        <h:form>
+                            <p:panel>                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="disability" value="Disability: "></p:outputLabel>
+                                    <p:selectOneMenu id="disability" class="form-control" value="#{edit.disability}" required="true" requiredMessage="Disability required">
+                                        <p:ajax listener="#{edit.onDisabilityChange}" update="stats,:templateForm:okay" />
+                                        <f:selectItem itemLabel="--Select Disability--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{edit.dismodel}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.disability}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>                                       
+                                    <p:message for="disability"/>
+
+                                    <p:outputLabel ></p:outputLabel>
+                                    <p:panel visible="#{edit.status}" style="border:none;" id="stats">
+                                        <p:inputText id="disab" rendered="#{edit.status}" required="true" value="#{edit.otherDis}"></p:inputText>
+                                    </p:panel>
+                                    <p:outputLabel ></p:outputLabel>
+
+                                    <p:outputLabel for="bgrp" value="Blood Group: "></p:outputLabel> 
+                                    <p:selectOneMenu id="bgrp" class="form-control" value="#{edit.bgroup}" required="true" requiredMessage="Blood group required">
+
+                                        <f:selectItem itemLabel="--Select Blood Group--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{freg.modelgroup}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.bloodgroup}"
+                                                       itemValue="#{singlevalue.id}"/>
+                                    </p:selectOneMenu>   
+                                    <p:message for="bgrp"/>  
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this disability,bgrp,disab" update=":templateForm:growl,:templateForm:pan,:templateForm:okay" actionListener="#{edit.updateHealth}" oncomplete="handleLoginReque(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog> 
+
+
+                </div>                    
+            </p:panel>               
+            <script type="text/javascript">
+                function handleLoginRequests(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg2').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg2').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+
+                function handleLoginReques(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg1').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg1').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+
+                function handleLoginReque(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg3').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg3').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+
+            </script>          
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

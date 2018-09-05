@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template1.xhtml">
+
+
+
+    <ui:define name="title">
+        Student Profile
+    </ui:define>
+
+    <ui:define name="Subtitle">
+        View Subject
+    </ui:define>
+
+
+    <ui:define name="content2">
+        <div class="row">  
+            <div class="ibox-content">
+                <p:panel id="damn" style="border: none">
+                    <p:selectOneMenu id="gra" class="form-control" value="#{vaClass.term}" required="true" requiredMessage="Term required">
+                        <p:ajax listener="#{vaClass.ontermchange(vaClass.term)}" update="gr"/>
+                        <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{vaClass.terms}" var="singlevalue"  
+                                       itemLabel="#{singlevalue.term}"
+                                       itemValue="#{singlevalue.id}"/>
+                    </p:selectOneMenu> 
+                    <p:selectOneMenu id="gr" class="form-control" value="#{vaClass.year}" required="true" requiredMessage="Year required">   
+                        <p:ajax listener="#{vaClass.onYearChange(vaClass.term, vaClass.year)}" update="su,damn" />
+                        <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{vaClass.years}"/>
+                    </p:selectOneMenu> 
+
+                    <h3><p:outputLabel value="#{classmode.termGet(vaClass.term)} Subject Offered, #{vaClass.year}"></p:outputLabel></h3>
+                    <p:dataList value="#{vaClass.sub}" id="su" var="sub" type="ordered">
+                        <f:facet name="header">
+                            #{classmode.gradeGet(vaClass.currentClass)}
+                        </f:facet>
+                        #{sub.subject}
+                    </p:dataList>
+                </p:panel>
+
+            </div>
+
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

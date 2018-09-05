@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+        Update Subjects     
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="row">
+            <p:messages id="wat" closable="true"></p:messages>
+            <p:dialog header="Edit" style="margin-top: -200px; margin-left: -250px;" position="center" widgetVar="dlg2">                                        
+                <h:form id="ooo">
+                    <p:panel id="okay">                                          
+                        <p:outputPanel id="upda">
+                            <h:panelGrid columns="2">
+                                <p:inputTextarea id="txt" required="true" value="#{subjectUpdate.tab.subject}"/>
+
+                                <p:commandButton class="btn btn-primary pull-right" update=":templateForm:n,:templateForm:wat" process="@this txt" actionListener="#{subjectUpdate.updateSubject}" oncomplete="handleLoginRequest(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                            </h:panelGrid>
+                        </p:outputPanel>
+
+                    </p:panel>
+                </h:form>
+            </p:dialog> 
+            <div class="ibox-content" style="height: 80px;">
+
+                <div class="form-group">
+                    <div class="text-center">
+
+                        <p:panel id="dude" style="border: none;">
+
+                            <p:selectOneMenu id="sclass" class="form-control" value="#{subjectUpdate.studentClass}" required="true" requiredMessage="Class required">
+
+
+                                <p:ajax listener="#{classmode.onClassChanges(subjectUpdate.studentClass)}" update="grad" />
+                                <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.classmodel}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.tbclass}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu>   
+
+
+                            <p:selectOneMenu id="grad" class="form-control" value="#{subjectUpdate.studentGrade}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{classmode.ongradeChanges}" update="gra" />
+                                <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.grademodels}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.grade}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu> 
+
+                            <p:selectOneMenu id="gra" class="form-control" value="#{subjectUpdate.term}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{classmode.ontermChanges(subjectUpdate.term)}" update="gr" />
+                                <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.termList}" var="singlevalue"  
+                                               itemLabel="#{singlevalue.term}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu> 
+                            <p:selectOneMenu id="gr" class="form-control" value="#{subjectUpdate.year}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{subjectUpdate.onYearChange()}" update="nursery,nur" />
+                                <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.term}"/>
+                            </p:selectOneMenu> 
+
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6" style="margin-top: 20px;"> 
+                <p:panel visible="#{subjectUpdate.status}" id="nursery">
+                    <div class="ibox-content">
+                        <p:outputLabel value="#{classmode.gradeGet(subjectUpdate.studentGrade)}"></p:outputLabel>
+                        <br/>
+                        <p:outputLabel value="#{classmode.termGet(subjectUpdate.term)}, #{subjectUpdate.year}"></p:outputLabel>
+
+                        <p:dataTable id="n" class="table table-responsive" scrollable="true" scrollHeight="150" var="papprv_rpt" 
+                                     value="#{subjectUpdate.sesTab}"
+                                     selection="#{subjectUpdate.sesTab1}"
+                                     rowKey="#{papprv_rpt.id}"
+                                     paginatorTemplate="{CurrentPageReport}  
+                                     {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                     paginator="true"
+                                     rowsPerPageTemplate="5,10,15"
+                                     draggableColumns="true" rows="15" style="margin-bottom:20px">  
+                            <f:facet name="{Exporters}">
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                    <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true" >
+                                    <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+                            </f:facet>                            
+                            <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                            <p:column headerText="Subject">
+                                <h:outputText value="#{papprv_rpt.subject}"/>
+
+                            </p:column>
+                            <p:column headerText="Action" style="width:60px" exportable="false">                                
+                                <p:commandButton value="" alt="search" id="please" icon="ui-icon-pencil" update=":templateForm:ooo:okay,:templateForm:ooo:upda" process="@this" 
+                                                 oncomplete="PF('dlg2').show()"> 
+                                    <f:setPropertyActionListener value="#{papprv_rpt}" target="#{subjectUpdate.tab}" />
+                                </p:commandButton>                               
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton style="margin-right: 380px;" process="@this n" actionListener="#{subjectUpdate.deleteRecord}" update=":templateForm:n,:templateForm:wat" icon="ui-icon-trash" value="delete">
+                                    <p:confirm header="Delete" message="Are you sure you want to delete record?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog id="pop" global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" immediate="true" process="@this" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" process="@this" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </f:facet>
+                        </p:dataTable> 
+
+                    </div>
+                </p:panel> 
+
+
+
+
+            </div>   
+
+            <div class="col-md-6" style="margin-top: 20px;">
+                <p:panel visible="#{subjectUpdate.status}" id="nur">
+                    <div class="ibox-content">
+                        <div class="row profile">
+                            <h:panelGrid columns="2">
+                                <p:outputLabel value="Select File:" />
+                                <p:outputLabel value="" />
+                                <p:fileUpload required="true" id="upload_pix_data" value="#{subjectUpdate.csv}"
+                                              fileUploadListener="#{subjectUpdate.handleFileUpload}" 
+                                              allowTypes="/(\.|\/)(xls|xlsx)$/"
+                                              invalidFileMessage="Excel is only Required"
+                                              mode="advanced"  dragDropSupport="false"
+                                              update="wat,nursery,n,upload_pix_data" sizeLimit="2097152" fileLimit="1" />                                                               
+                            </h:panelGrid>
+                        </div>
+                    </div>
+                </p:panel>
+            </div>
+
+            <script type="text/javascript">
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg2').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg2').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+            </script>          
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,260 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+    <ui:define name="title">
+        Message
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="row">
+            <p:messages id="wata" closable="true"></p:messages>
+            <p:growl id="watta" ></p:growl>
+            <p:dialog header="Enter Message Body" style="margin-top: -200px; margin-left: -250px;" position="center" widgetVar="dlg2">                                        
+                <h:form id="ooo">
+                    <p:panel id="okay">                                          
+                        <p:outputPanel id="upda">
+                            <h:panelGrid columns="2">
+                                <p:inputTextarea id="txt" required="true" value="#{sms.search_item}"/>
+
+                                <p:commandButton class="btn btn-primary pull-right" update="okay,:templateForm:wata,:templateForm:watta" process="@this txt" action="#{sms.sendStudent}" oncomplete="handleLoginRequest(xhr, status, args)" style="margin-top: 20px;" value="Send Message" />
+                            </h:panelGrid>
+                        </p:outputPanel>
+
+                    </p:panel>
+                </h:form>
+            </p:dialog> 
+            <p:dialog header="Enter Message Body" style="margin-top: -200px; margin-left: -250px;" position="center" widgetVar="dlg3">                                        
+                <h:form id="staffAs">
+                    <p:panel id="staffWe">                                          
+                        <p:outputPanel id="upas">
+                            <h:panelGrid columns="2">
+                                <p:inputTextarea id="txts" required="true" value="#{sms.gohome}"/>
+
+                                <p:commandButton class="btn btn-primary pull-right" update="staffWe,:templateForm:wata,:templateForm:watta" process="@this txts" action="#{sms.sendStaff}" oncomplete="handleLogin(xhr, status, args)" style="margin-top: 20px;" value="Send Message"/>
+                            </h:panelGrid>
+                        </p:outputPanel>
+
+                    </p:panel>
+                </h:form>
+            </p:dialog> 
+            <div class="ibox-content" style="height: 80px;">
+
+                <div class="form-group">
+                    <div class="text-center">
+
+                        <p:panel id="dude" style="border: none;">
+
+                            <p:selectOneMenu id="sclass" class="form-control" value="#{sms.student_class}" required="true" requiredMessage="Class required">
+
+
+                                <p:ajax listener="#{classmode.onClassChanges(sms.student_class)}" update="grad" />
+                                <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.classmodel}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.tbclass}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu>   
+
+
+                            <p:selectOneMenu id="grad" class="form-control" value="#{sms.student_grade}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{classmode.ontermChanges}" update="gr" />
+                                <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.grademodels}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.grade}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu> 
+                            <p:selectOneMenu id="gr" class="form-control" value="#{sms.year}" required="true" requiredMessage="Grade required">                                
+                                <p:ajax listener="#{sms.ongradeChanges(sms.student_class,sms.student_grade)}" update="nursery,stafff" />
+                                <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.term}"/>
+                            </p:selectOneMenu> 
+                            <br/>
+                            <p:commandButton value="Send To Staff" actionListener="#{sms.onStaffChange()}" process="@this" update="stafff,nursery" />
+
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div style="margin-top: 20px;"> 
+                <p:panel visible="#{sms.status}" id="nursery">
+                    <div class="ibox-content">
+                        <p:outputLabel value="#{classmode.gradeGet(sms.student_grade)}"></p:outputLabel>
+                        <br/>
+                        <p:dataTable id="ne" class="table table-responsive" scrollable="true" var="papprv_rpt" 
+                                     value="#{sms.secModel}"
+                                     selection="#{sms.secModel1}"
+                                     rowKey="#{papprv_rpt.id}"
+                                     paginatorTemplate="{CurrentPageReport}  
+                                     {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                     scrollHeight="350" 
+                                     widgetVar="resultTable"
+                                     draggableColumns="true" rows="15" style="margin-bottom:20px"
+                                     emptyMessage="No Result found with given criteria" filteredValue="#{sms.secModel2}"> 
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Search all fields" />
+                                    <p:inputText id="globalFilter" onkeyup="PF('resultTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet> 
+                            <f:facet name="{Exporters}">
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                    <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true" >
+                                    <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+                            </f:facet>                            
+                            <p:column exportable="false" selectionMode="multiple" style="width:30px;text-align:center"/>
+                            <p:column headerText="First Name" filterBy="#{papprv_rpt.first_name}">
+                                <h:outputText value="#{papprv_rpt.first_name}"/>
+
+                            </p:column>
+                            <p:column headerText="Middle Name" filterBy="#{papprv_rpt.middle_name}">
+                                <h:outputText value="#{papprv_rpt.middle_name}"/>
+
+                            </p:column>
+                            <p:column headerText="Last Name" filterBy="#{papprv_rpt.last_name}">
+                                <h:outputText value="#{papprv_rpt.last_name}"/>
+
+                            </p:column>
+                            <p:column headerText="Arm" filterBy="#{papprv_rpt.arm}">
+                                <h:outputText value="#{papprv_rpt.arm}"/>
+
+                            </p:column>                            
+                            <f:facet name="footer">
+                                <p:column headerText="Action" style="width:60px" exportable="false">                                
+                                    <p:commandButton value="Send Message" id="please" icon="ui-icon-pencil" update=":templateForm:watta" process="@this ne" 
+                                                     oncomplete="PF('dlg2').show()">                                         
+                                    </p:commandButton>                               
+                                </p:column>
+                            </f:facet>
+                        </p:dataTable> 
+
+                    </div>
+                </p:panel> 
+                <p:panel visible="#{sms.status1}" id="stafff">
+                    <div class="ibox-content">
+
+                        <br/>
+
+                        <p:dataTable id="no" class="table table-responsive" scrollable="true" var="papprv_rpt" 
+                                     value="#{sms.staffModel}"
+                                     selection="#{sms.staffModel1}"
+                                     rowKey="#{papprv_rpt.staffId}"
+                                     paginatorTemplate="{CurrentPageReport}  
+                                     {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                     scrollHeight="350" 
+                                     widgetVar="resultTable1"
+                                     draggableColumns="true" rows="15" style="margin-bottom:20px"
+                                     emptyMessage="No Result found with given criteria" filteredValue="#{sms.staffModel2}"> 
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Search all fields" />
+                                    <p:inputText id="globalFilter" onkeyup="PF('resultTable1').filter()" style="width:150px" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet> 
+                            <f:facet name="{Exporters}">
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                    <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true" >
+                                    <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+                            </f:facet>                            
+                            <p:column exportable="false" selectionMode="multiple" style="width:30px;text-align:center"/>
+                            <p:column headerText="First Name" filterBy="#{papprv_rpt.fname}">
+                                <h:outputText value="#{papprv_rpt.fname}"/>
+
+                            </p:column>
+                            <p:column headerText="Middle Name" filterBy="#{papprv_rpt.mname}">
+                                <h:outputText value="#{papprv_rpt.mname}"/>
+
+                            </p:column>
+                            <p:column headerText="Last Name" filterBy="#{papprv_rpt.lname}">
+                                <h:outputText value="#{papprv_rpt.lname}"/>
+
+                            </p:column>
+                            <p:column headerText="Class Assigned" filterBy="#{papprv_rpt.staffGrade}">
+                                <h:outputText value="#{classmode.gradeGet(papprv_rpt.staffGrade)}"/>
+
+                            </p:column>                            
+                            <f:facet name="footer">
+                                <p:column headerText="Action" style="width:60px" exportable="false">                                
+                                    <p:commandButton value="Send Message" id="please" icon="ui-icon-pencil" process="@this no" 
+                                                     oncomplete="PF('dlg3').show()">                                             
+                                    </p:commandButton>                                       
+                                </p:column>
+                            </f:facet>
+                        </p:dataTable> 
+
+                    </div>
+                </p:panel> 
+
+
+
+
+            </div>   
+
+
+            <script type="text/javascript">
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg2').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg2').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+
+                function handleLogin(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg3').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg3').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+            </script>          
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

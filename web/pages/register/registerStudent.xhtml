@@ -1,0 +1,562 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="head">
+        <style type="text/css">
+            .first{               
+                font-size: 14px;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="title">
+
+        Register Student       
+    </ui:define>
+
+
+    <ui:define name="content">
+
+        <div class="ibox-content">
+
+            <p:panel class="panel-default" visible="#{freg.studentPanel}" id="reg" style="border: none;">
+                <p:messages id="messages" closable="true" />
+                <div class="row">                
+
+                    <fieldset>
+                        <legend>Personal Details</legend>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="fname" value="First Name: "/>
+                                <p:inputText id="fname" required="true" value="#{freg.fname}" class="form-control"></p:inputText>
+                                <p:message for="fname"/>
+                            </div>    
+                            <div class="form-group">
+                                <p:outputLabel  for="dob" value="Date Of Birth: "/>
+                                <p:calendar id="dob" class="form-control" yearRange="1980:2017" pattern="dd/MM/yyyy" value="#{freg.dob}"  navigator="true" required="true" />
+                                <p:message for="dob"/>
+                            </div>
+
+                            <div class="form-group">
+                                <p:outputLabel  for="sex" value="Sex: "/>
+                                <br/>
+                                <p:selectOneMenu id="sex" value="#{freg.sex}" class="form-control" requiredMessage="Sex is required" style="width:125px" required="true">
+                                    <f:selectItem itemLabel="Select Sex" itemValue="" noSelectionOption="true" />
+                                    <f:selectItem itemLabel="Male" itemValue="1" />
+                                    <f:selectItem itemLabel="Female" itemValue="2" />                                   
+                                </p:selectOneMenu>
+                                <p:message for="sex"/>
+                            </div>
+
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="mname" value="Middle Name: "/>
+                                <p:inputText id="mname" value="#{freg.mname}" class="form-control"></p:inputText>
+                                <p:message for="mname"/>
+                            </div>
+
+                            <div class="form-group">
+                                <p:outputLabel for="uname" value="Phone Number: "/>
+                                <p:inputText id="uname" class="form-control" value="#{freg.pnum}" maxlength="11"/>                                
+                                <p:message for="uname"/>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="lname" value="Last Name: "/>
+                                <p:inputText id="lname" required="true" value="#{freg.lname}" class="form-control"></p:inputText>
+                                <p:message for="lname"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="email" value="Email Address: "/>
+                                <p:inputText id="email" value="#{freg.email}" class="form-control" label="email" size="40"
+                                             requiredMessage="Please enter your email address." placeholder="student@mail.com"                                             
+                                             >                                   
+
+                                </p:inputText>
+                                <p:message for="email"/>
+                            </div>                                              
+
+                        </div>
+
+
+                    </fieldset>                   
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Parent/Guardian's Details</legend>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="gfname" value="First Name: "/>
+                                <p:inputText id="gfname" required="true" value="#{freg.gfname}" class="form-control"></p:inputText>
+                                <p:message for="gfname"/>
+
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <p:panel id="relate" style="border: none;">
+                                        <div class="col-md-6">
+                                            <p:outputLabel for="relation" value="Relationship: "/>
+                                            <br/>
+                                            <p:selectOneMenu id="relation" class="form-control" value="#{freg.modes.relation}" required="true" requiredMessage="Relationsip required">
+                                                <p:ajax listener="#{freg.onRelationshipChange}" update="relate,city" />
+                                                <f:selectItem itemLabel="--Select Relationship--" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{freg.relation}"
+                                                               var="singlevalue"  
+                                                               itemLabel="#{singlevalue.relation}"
+                                                               itemValue="#{singlevalue.id}"/>
+                                            </p:selectOneMenu>   
+                                            <br/>
+                                            <br/>                                        
+                                            <p:inputText rendered="#{freg.relatio}" value="#{freg.relationOption}" required="true" id="city" />
+                                            <p:message for="relation"/>
+                                        </div>   
+                                    </p:panel>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <p:outputLabel for="country" value="Country of origin: "/>
+                                <br/>
+                                <p:selectOneMenu id="country" class="form-control" value="#{freg.counts.country}" required="true" requiredMessage="Country required">
+                                    <p:ajax listener="#{freg.onCountryChange}" update="state" />
+                                    <f:selectItem itemLabel="--Select Country--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.country}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.country}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>                               
+                                <p:message for="country"/>
+
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="add" value="Address of Residence: "/>
+                                <p:inputTextarea id="add" required="true" value="#{freg.gaddress}" class="form-control"></p:inputTextarea>
+                                <p:message for="add"/>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="gmname" value="Middle Name: "/>
+                                <p:inputText id="gmname" value="#{freg.gmname}" class="form-control"></p:inputText>
+                                <p:message for="gmname"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="pnum" value="Phone Number: "/>
+                                <p:inputText id="pnum" required="true" value="#{freg.gpnum}" class="form-control" maxlength="11" ></p:inputText>
+                                <p:message for="pnum"/>
+                                <br/>                                
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="state" value="State of origin: "/>
+                                <br/>
+                                <p:selectOneMenu id="state" class="form-control" value="#{freg.citys.state}" required="true" requiredMessage="State required">
+                                    <p:ajax listener="#{freg.onStateChange}" update="lga" />
+                                    <f:selectItem itemLabel="--Select State--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.state}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.state}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>                               
+                                <p:message for="state"/>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="glname" value="Last Name: "/>
+                                <p:inputText id="glname" required="true" value="#{freg.glname}" class="form-control"></p:inputText>
+                                <p:message for="glname"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="mail" value="Email Address: "/>
+                                <p:inputText id="mail" required="true" value="#{freg.gemail}" class="form-control" label="email" size="40"
+                                             requiredMessage="Please enter your email address."
+                                             validatorMessage="Invalid email format"
+                                             >
+
+                                    <f:validateRegex
+                                        pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                </p:inputText>
+                                <p:message for="mail"/>
+                                <br/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="lga" value="LGA of Origin: "/>
+                                <br/>
+                                <p:selectOneMenu id="lga" class="form-control" value="#{freg.lgas.lga}" required="true" requiredMessage="Lga required">
+
+                                    <f:selectItem itemLabel="--Select LGA--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.lgamodel}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.lga}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>                               
+                                <p:message for="lga"/>
+
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Previous Education History</legend>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="pschool" value="Name of Previous School: "/>
+                                <p:inputTextarea id="pschool" required="true" value="#{freg.pschl}" class="form-control"></p:inputTextarea>
+                                <p:message for="pschool"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="class" value="Class: "/>
+                                <br/>
+                                <p:selectOneMenu id="class" class="form-control" value="#{freg.modelclass.tbclass}" required="true" requiredMessage="Class required">
+                                    <p:ajax listener="#{freg.onClassChange}" update="grade" />
+                                    <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.classmodel}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.tbclass}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>   
+                                <p:message for="class"/>
+                            </div>                           
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="form-group">
+                                <p:outputLabel for="grade" value="Grade: "/>
+                                <br/>
+                                <p:selectOneMenu id="grade" class="form-control" value="#{freg.modelgrade.grade}" required="true" requiredMessage="Grade required">
+
+                                    <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.grademodel}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.grade}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>   
+                                <p:message for="grade"/>
+                            </div>                            
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Current Education</legend>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="sclass" value="Class: "/>
+                                <br/>
+                                <p:selectOneMenu id="sclass" class="form-control" value="#{freg.classmode.tbclass}" required="true" requiredMessage="Class required">
+
+
+                                    <p:ajax listener="#{freg.onClassChanges}" update="grad" />
+                                    <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.classmodel}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.tbclass}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>   
+                                <p:message for="sclass"/>                               
+
+                            </div>
+                            <div class="form-group">
+
+                                <p:outputLabel for="gra" value="Term: "></p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="gra" class="form-control" value="#{freg.term}" required="true" requiredMessage="Grade required">                                
+                                    <p:ajax listener="#{classmode.ontermChanges(freg.term)}" update="gr" />
+                                    <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>                                    
+                                    <f:selectItems value="#{classmode.termList}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.term}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="gra"/>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="grad" value="Grade: "/>
+                                <br/>
+                                <p:selectOneMenu id="grad" class="form-control" value="#{freg.gradeMode.grade}" required="true" requiredMessage="Grade required">
+                                    <p:ajax listener="#{classmode.onarmChanges()}" update="arm" />
+                                    <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.grademodels}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.grade}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>  
+                                <p:message for="grad"/>
+                            </div>
+                            <div class="form-group">
+
+                                <p:outputLabel for="gr" value="Year:"></p:outputLabel>
+                                <br/>
+                                <p:selectOneMenu id="gr" class="form-control" value="#{freg.year}" required="true" requiredMessage="Year is required" >                                                                    
+                                    <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{classmode.term}"/>
+                                </p:selectOneMenu> 
+                                <p:message for="gr"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="arm" value="Arm: "/>
+                                <br/>
+                                <p:selectOneMenu id="arm" value="#{freg.arm}"  class="form-control" requiredMessage="Arm is required" style="width:125px" required="true">
+                                    <p:ajax listener="#{classmode.ongradeChanges()}" update="gra" />
+                                    <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{classmode.arm}"/>
+                                </p:selectOneMenu>
+                                <p:message for="arm"/>
+                            </div>
+
+
+                        </div>
+
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Health History:</legend>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="dis" value="Disability: "/>
+                                <br/>
+                                <p:selectOneMenu id="dis" class="form-control" value="#{freg.modeldis.disability}" required="true" requiredMessage="Disability required">
+                                    <p:ajax listener="#{freg.onDisabilityChange}" update="stat,distat" />
+                                    <f:selectItem itemLabel="--Select Disability--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.dismodel}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.disability}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>   
+                                <p:message for="dis"/>
+                                <br/>
+                                <p:panel style="border:none;" id="stat">
+                                    <p:inputText value="#{freg.disoption}" required="true" id="distat" rendered="#{freg.dStatus}"/>
+                                </p:panel>
+                            </div>                           
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <p:outputLabel for="bgroup" value="Blood Group: "/>
+                                <br/>
+                                <p:selectOneMenu id="bgroup" class="form-control" value="#{freg.grpmodel.bloodgroup}" required="true" requiredMessage="Blood group required">
+
+                                    <f:selectItem itemLabel="--Select Blood Group--" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{freg.modelgroup}"
+                                                   var="singlevalue"  
+                                                   itemLabel="#{singlevalue.bloodgroup}"
+                                                   itemValue="#{singlevalue.id}"/>
+                                </p:selectOneMenu>   
+                                <p:message for="bgroup"/>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="row">
+                    <fieldset>
+                        <legend>Image Upload</legend>
+                        <p:outputLabel value="Select Image: *" />
+                        <p:fileUpload required="true" id="upload_pix_data" value="#{freg.passport}" auto="true"
+                                      fileUploadListener="#{freg.handleFileUpload}" 
+                                      mode="advanced" dragDropSupport="false"
+                                      update="pst_img" sizeLimit="2097152" fileLimit="1" 
+                                      allowTypes="/(\.|\/)(gif|jpe?g|png)$/"  />
+
+                        <p:commandButton value="clear" immediate="true" ajax="false"
+                                         actionListener="#{freg.clearPix}" 
+                                         update="upload_pix_data,pst_img"/>    
+                        <p:outputLabel value="Passport:"/>
+                        <p:graphicImage id="pst_img" class="img-responsive img-thumbnail" value="#{freg.passport_url}" style="width: 100px; height: 100px;" />
+
+
+                    </fieldset>
+                </div>
+                <div claass="row">
+                    <p:commandButton value="Save" actionListener="#{freg.confirmDetails}" process="@this fname,dob,mname,uname,lname,
+                                     email,gfname,relation,city,distat,
+                                     city,country,add,gmname,pnum,state,glname,
+                                     mail,lga,pschool,class,grade,sclass,grad,gr,gra,
+                                     arm,sex,dis,bgroup,upload_pix_data"
+                                     update="reg,messages,confirm"/>
+                </div>
+            </p:panel>
+
+            <p:panel header="Student Registration" id="confirm" visible="#{freg.confirmPanel}">
+                <p:messages id="messagess" closable="true" />
+                <fieldset>
+                    <legend>Personal Details</legend>
+                    <div class="row">                
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="First Name: "/><p:outputLabel class="first" value="#{freg.fname}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Middle Name: "/><p:outputLabel class="first" value="#{freg.mname}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Last Name: "/><p:outputLabel class="first" value="#{freg.lname}"/>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Date Of Birth: "/>
+                            <h:outputText class="first" value="#{freg.dob}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Phone Number: "/><p:outputLabel class="first" value="#{freg.pnum}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Email Address: "/><p:outputLabel class="first" value="#{freg.email}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Sex: "/><p:outputLabel class="first" value="#{freg.sexs}"/>
+                        </div>
+                    </div>
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Parent/Guardian's Details</legend>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="First Name: "/><p:outputLabel class="first" value="#{freg.gfname}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Middle Name: "/><p:outputLabel class="first" value="#{freg.gmname}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Last Name: "/><p:outputLabel class="first" value="#{freg.glname}"/>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Relatioinship: "/><p:outputLabel class="first" value="#{classmode.relationshipGet(freg.modes.relation)}"/>
+                            <br/>
+                            <p:outputLabel class="first" value="#{freg.relationOption}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Phone Number: "/><p:outputLabel class="first" value="#{freg.gpnum}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Email Address: "/><p:outputLabel class="first" value="#{freg.gemail}"/>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Country of Origin: "/><p:outputLabel class="first" value="#{classmode.countryOrigin(freg.gcount)}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="State of Origin: "/><p:outputLabel class="first" value="#{classmode.stateOrigin(freg.gstate)}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="L.G.A of Origin: "/><p:outputLabel class="first" value="#{classmode.lgaValue(freg.glga)}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <p:outputLabel class="first"  value="Address of Residence: "/><p:outputLabel class="first" value="#{freg.gaddress}"/>
+
+
+                    </div>
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Previous Education</legend>                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Name Of Previous School: "/><p:outputLabel class="first" value="#{freg.pschl}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Class: "/><p:outputLabel class="first" value="#{classmode.classGet(freg.modelclass.tbclass)}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Grade: "/><p:outputLabel class="first" value="#{classmode.gradeGet(freg.modelgrade.grade)}"/>
+                        </div>
+                    </div>                    
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Current Education</legend>                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Class: "/><p:outputLabel class="first" value="#{classmode.classGet(freg.classmode.tbclass)}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Grade: "/><p:outputLabel class="first" value="#{classmode.gradeGet(freg.gradeMode.grade)}"/>
+                        </div>  
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Arm: "/><p:outputLabel class="first" value="#{freg.arm}"/>
+                        </div>  
+                    </div> 
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Term: "/><p:outputLabel class="first" value="#{classmode.termGet(freg.term)}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Year: "/><p:outputLabel class="first" value="#{freg.year}"/>
+                        </div>                          
+                    </div> 
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Health History</legend>                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Disability "/><p:outputLabel class="first" value="#{classmode.disabilityGet(freg.modeldis.disability)}"/>
+                            <br/>
+                            <p:outputLabel class="first" value="#{freg.disoption}"/>
+                        </div>
+                        <div class="col-md-4">
+                            <p:outputLabel class="first" value="Blood Group: "/><p:outputLabel class="first" value="#{classmode.bloodGet(freg.grpmodel.bloodgroup)}"/>
+                        </div>
+                    </div>                    
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Image</legend>                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="#{freg.passport_url}" class="img-responsive img-thumbnail" style="height: 100px; width: 100px" alt="pix"/>
+
+                        </div>                        
+                    </div>                    
+                </fieldset>  
+
+                <div class="row">
+                    <div class="col-md-offset-4 col-md-3 ">
+                        <p:commandButton value="Register" actionListener="#{freg.registerStudent}" update="reg,confirm,messagess"/>
+                        <p:commandButton value="Back" actionListener="#{freg.back}" update="reg,confirm"/>
+                    </div>                        
+                </div>
+            </p:panel>
+
+        </div>
+    </ui:define>
+
+</ui:composition>

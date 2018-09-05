@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+    <ui:define name="title">
+        Test Student Details
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="frmx1">
+            
+            <p:commandButton value="Search" actionListener="#{tstd.search()}" update="mydata"/>
+            
+       
+        
+        
+
+        <p:panel  id="mydata">
+            <p:dataTable var="simple" value="#{tstd.listOfTestStudentXModel}"> 
+                 
+
+                <p:column>
+
+                    <f:facet name="header">
+                        <h:outputText value=" Name"/>
+                    </f:facet>
+
+                    <h:outputText value="#{simple.name}"/>
+
+                </p:column>
+
+                <p:column>
+
+                    <f:facet name="header">
+                        <h:outputText value="Department"/>
+                    </f:facet>
+
+                    <h:outputText value="#{simple.dept}"/>
+
+                </p:column>
+
+                <p:column>
+
+                    <f:facet name="header">
+                        <h:outputText value="Age"/>
+                    </f:facet>
+
+                    <h:outputText value="#{simple.age}"/>
+
+                </p:column>
+
+                <p:column>
+
+                    <p:commandButton value="" icon="ui-icon-search" 
+                                     actionListener="#{tstd.selectRecord(simple)}"/>
+
+                </p:column>
+                 
+            </p:dataTable> 
+        </p:panel>
+ </h:form>
+
+    </ui:define>
+
+
+</ui:composition>

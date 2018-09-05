@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template1.xhtml">
+
+
+    <ui:define name="title">
+        Student Result
+    </ui:define>
+
+    <ui:define name="Subtitle">
+        View Result
+    </ui:define>
+
+
+    <ui:define name="content2">
+        <p:growl id="wat"></p:growl>      
+        <div class="row"> 
+
+            <div class="ibox-content">
+                <p:selectOneMenu id="sclass" class="form-control" value="#{resultView.sclass}" required="true" requiredMessage="Class required">
+
+
+                    <p:ajax listener="#{classmode.onClassChanges(resultView.sclass)}" update="grad" />
+                    <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{classmode.classmodel}"
+                                   var="singlevalue"  
+                                   itemLabel="#{singlevalue.tbclass}"
+                                   itemValue="#{singlevalue.id}"/>
+                </p:selectOneMenu>   
+
+
+
+                <p:selectOneMenu id="grad" class="form-control" value="#{resultView.grade}" required="true" requiredMessage="Grade required">                                
+                    <p:ajax listener="#{classmode.onarmChanges()}" update="arm" />
+                    <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{classmode.grademodels}"
+                                   var="singlevalue"  
+                                   itemLabel="#{singlevalue.grade}"
+                                   itemValue="#{singlevalue.id}"/>
+                </p:selectOneMenu> 
+                <p:selectOneMenu id="arm" class="form-control" value="#{resultView.arm}" required="true" requiredMessage="Arm required">                                
+                    <p:ajax listener="#{classmode.ongradeChanges}" update="gra" />                    
+                    <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{classmode.arm}"/>
+                </p:selectOneMenu> 
+
+                <p:selectOneMenu id="gra" class="form-control" value="#{resultView.term}" required="true" requiredMessage="Term required">                                
+                    <p:ajax listener="#{classmode.ontermChanges(resultView.term)}" update="gr" />
+                    <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{classmode.termList}" var="singlevalue"
+                                   itemLabel="#{singlevalue.term}"
+                                   itemValue="#{singlevalue.id}"/>
+                </p:selectOneMenu>                 
+                <p:selectOneMenu id="gr" class="form-control" value="#{resultView.year}" required="true" requiredMessage="Year required">                                                    
+                    <p:ajax listener="#{resultView.viewResult()}" update="n" />                    
+                    <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{classmode.term}"/>
+                </p:selectOneMenu>  
+            </div>
+            <br/>
+            <div class="ibox-content">                 
+                <p:dataTable id="n" class="table table-responsive table-striped" scrollable="true" var="papprv_rpt" 
+                             value="#{resultView.resultmodel}"                            
+                             rowKey="#{papprv_rpt.id}"
+                             paginatorTemplate="{CurrentPageReport}  
+                             {FirstPageLink} {PreviousPageLink} 
+                             {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                             paginator="true"
+                             rowsPerPageTemplate="5,10,15"
+                             draggableColumns="true" rows="15" style="margin-bottom:20px">  
+                    <f:facet name="{Exporters}">
+                        <h:commandLink immediate="true">
+                            <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                            <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                        </h:commandLink>
+
+                        <h:commandLink immediate="true">
+                            <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                            <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink immediate="true">
+                            <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                            <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                        </h:commandLink>
+
+                        <h:commandLink immediate="true" >
+                            <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                            <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                        </h:commandLink>
+                    </f:facet>                                                                 
+                    <p:column headerText="Subject">
+                        <h:outputText value="#{papprv_rpt.subject}"/>
+
+                    </p:column>
+                    <p:column headerText="First Test">
+                        <h:outputText value="#{papprv_rpt.firstTest}"/>
+
+                    </p:column>
+                    <p:column headerText="Second Test">
+                        <h:outputText value="#{papprv_rpt.secondTest}"/>
+
+                    </p:column>
+                    <p:column headerText="Exam">
+                        <h:outputText value="#{papprv_rpt.exam}"/>
+
+                    </p:column>
+                    <p:column headerText="Total">
+                        <h:outputText value="#{papprv_rpt.total}"/>
+
+                    </p:column>                                    
+                </p:dataTable> 
+                <p:commandButton value="" icon="ui-icon-print" process="@this"
+                                 onclick="window.open('#{resultView.selectReco()}');"/>                
+                <p:button value="Print" 
+                          onclick="window.open('#{resultView.selectReco()}');return false;" />
+
+            </div>
+
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

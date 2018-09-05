@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+
+    <ui:define name="title">
+        User Management
+    </ui:define>
+
+    <ui:define name="content">
+        <p:messages id="wow" closable="true" />
+        <div class="row">
+
+            <p:panel id="nur">                
+                <p:panel id="nurs" style="border: none;">
+                    <p:dataTable id="n" class="table table-responsive" scrollable="true" var="papprv_rpt" 
+                                 value="#{roleManager.roleManager}"  
+                                 selection="#{roleManager.roleManager2}"
+                                 rowKey="#{papprv_rpt.id}"
+                                 paginatorTemplate="{Exporters}"
+                                 paginator="true"
+                                 scrollHeight="350"                                 
+                                 draggableColumns="true" style="margin-bottom:20px"
+                                 widgetVar="resultTable"
+                                 emptyMessage="No Result found with given criteria" filteredValue="#{result.resultmodel2}">  
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Search all fields" />
+                                <p:inputText id="globalFilter" onkeyup="PF('resultTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                            </p:outputPanel>
+                        </f:facet> 
+                        <f:facet name="{Exporters}">
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true" >
+                                <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+                        </f:facet>  
+                         <p:column selectionMode="single" style="width:30px;text-align:center"/>
+                        <p:column headerText="First Name" filterBy="#{papprv_rpt.firstName}">
+                            <h:outputText value="#{papprv_rpt.firstName}"/>
+
+                        </p:column>
+                        <p:column headerText="Middle Name" filterBy="#{papprv_rpt.middleName}">
+                            <h:outputText value="#{papprv_rpt.middleName}"/>
+
+                        </p:column>
+                        <p:column headerText="Last Name" filterBy="#{papprv_rpt.lastName}">
+                            <h:outputText value="#{papprv_rpt.lastName}"/>
+
+                        </p:column>
+                        <p:column headerText="Can update Result">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canUpdateResult}" />                            
+                        </p:column>
+                        <p:column headerText="Can Update Subject">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canUpdateSubject}" />                            
+
+                        </p:column>
+                        <p:column headerText="Can Register Student">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canRegisterStudent}" />                            
+
+                        </p:column>
+                        <p:column headerText="Can Register Staff">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canRegisterStaff}" />                            
+
+                        </p:column>
+                        <p:column headerText="Can Send Text Message">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canSendMessage}" />                            
+
+                        </p:column>
+                        <p:column headerText="Action" exportable="false"> 
+                            <p:commandButton process="@this n" actionListener="#{roleManager.updateRole}" update=":templateForm:n,:templateForm:wow"  value="update">                                                                                             
+                            </p:commandButton>                                                                               
+                        </p:column>
+
+                    </p:dataTable> 
+                </p:panel>                    
+            </p:panel>
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

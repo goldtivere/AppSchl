@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+
+    <ui:define name="title">
+        Student Details
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="row">
+            <div class="ibox-content" style="height: 80px;">
+                <div class="form-group">
+                    <div class="pull-right">
+                        <p:panel id="dude" style="border: none;">
+                            <p:outputLabel value="Search By: "/>
+
+                            <p:selectOneMenu id="class" class="form-control"  value="#{prof.model.tbclass}" required="true" requiredMessage="Class required">                    
+                                <p:ajax listener="#{prof.onClassChange}" update="secondary,svendor,dude,s" />
+                                <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{prof.classmodel}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.tbclass}"
+                                               itemValue="#{singlevalue.id}"/>
+                            </p:selectOneMenu>   
+
+                            <h:outputText value="&#160;" /><h:outputText value="&#160;" />                                           
+                            <p:autoComplete id="svendor" maxResults="10" class="form-control" emptyMessage="no record found" required="true" forceSelection="true" requiredMessage="value ID is required" value="#{prof.sfname}" completeMethod="#{prof.completSecondary}" dropdown="true" /> 
+                            <p:commandButton value="Search" actionListener="#{prof.searchTab}" process="@this class,svendor" update="secondary" />
+                            <p:message for="class"/>
+                        </p:panel>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox-content" style="margin-top: 20px;">
+                <div class="form-group">                                     
+                    <p:panel visible="#{prof.secondary}" id="secondary">
+                        <p:dataTable id="s" class="table table-responsive" var="papprv_rpt" 
+                                     value="#{prof.secModel}"
+                                     rowKey="#{papprv_rpt.id}"
+                                     paginatorTemplate="{CurrentPageReport}  
+                                     {FirstPageLink} {PreviousPageLink} 
+                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters} "
+                                     paginator="true"
+                                     rowsPerPageTemplate="5,10,15"
+                                     draggableColumns="true" rows="15" style="margin-bottom:20px">
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                    <p:dataExporter type="xls" target="s" fileName="report" pageOnly="true"/>
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="pdf" target="s" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="csv" target="s" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true" >
+                                    <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                    <p:dataExporter type="xml" target="s" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+                            </f:facet>  
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="Student ID"/>
+                                </f:facet>
+
+                                <h:outputText value="#{papprv_rpt.studentid}"/>
+
+                            </p:column>
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="First Name"/>
+                                </f:facet>
+
+                                <h:outputText value="#{papprv_rpt.first_name}"/>
+
+                            </p:column>
+
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="Middle Name"/>
+                                </f:facet>
+
+                                <h:outputText value="#{papprv_rpt.middle_name}"/>
+
+                            </p:column>
+
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="Last Name"/>
+                                </f:facet>
+
+                                <h:outputText value="#{papprv_rpt.last_name}"/>
+
+                            </p:column>
+
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="Class"/>
+                                </f:facet>
+
+                                <h:outputText value="#{classmode.gradeGet(papprv_rpt.sclass)}"/>
+
+                            </p:column>
+                            <p:column>
+
+                                <f:facet name="header">
+                                    <h:outputText value="Arm"/>
+                                </f:facet>
+
+                                <h:outputText value="#{papprv_rpt.arm}"/>
+
+                            </p:column>      
+                            <p:column style="width:60px" exportable="false">
+                                <f:facet name="header">Action</f:facet>
+                                <p:commandButton value="" icon="ui-icon-search" process="@this"
+                                                 actionListener="#{prof.selectReco(papprv_rpt)}"/>                               
+                            </p:column>
+                        </p:dataTable> 
+                    </p:panel>
+                </div>
+            </div>
+
+        </div>
+    </ui:define>
+
+
+</ui:composition>

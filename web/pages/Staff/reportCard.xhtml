@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>School Report Card</title>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"></link>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <h:outputStylesheet name="main/css/report.css" /> 
+
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="reciept">
+                <div class="row" style="margin-top:10px;">
+
+                    <!--  <div class="col-xs-5">
+                          <img class="media-object img-thumbnail user-img" style="height: 80px;" alt="User Picture" src="http://via.placeholder.com/80x80"></img>
+                      </div>
+                    -->
+                    <div class="text-center">
+                        <h4 class="heading">Name of School</h4>                            
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="text-center">
+                        <h4 class="heading">Terminal Report Card For: #{report.sec.fullname} </h4>                            
+                    </div>
+
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-xs-12">                      
+                        <div class="form-group">                           
+                            <div class="col-xs-5">
+                                <label for="">Session :</label>                                
+                                <input id="" name="name" type="text" value="#{report.sec.studentSession}" disabled="true"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>                               
+                <div class="row">
+                    <div class="col-xs-12">                      
+                        <div class="form-group">                           
+                            <div class="col-xs-5">
+                                <label for="">Term :</label>
+                                <input id="" name="name" type="text" value="#{classmode.termGet(report.sec.studentTerm)}" disabled="true" placeholder="Course"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">                      
+                        <div class="form-group">                           
+                            <div class="col-xs-5">
+                                <label for="">Class Average :</label>
+                                <input id="" name="name" type="text" value="#{report.sec.studentAverage}" disabled="true" placeholder="Course"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">                      
+                        <div class="form-group">                           
+                            <div class="col-xs-5">
+                                <label for="">Position :</label>
+                                <input id="" name="name" type="text" value="#{report.sec.position}" disabled="true" placeholder="Course"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">                      
+                        <div class="form-group">                           
+                            <div class="col-xs-5">
+                                <label for="">Total Score :</label>
+                                <input id="" name="name" type="text" value="#{report.sec.termTotal}" disabled="true" placeholder="Course"></input>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-xs-9" style="margin-left: 150px;">
+                        <p:dataTable var="papprv_rpt" 
+                                     value="#{report.mode}">
+                            <p:column headerText="Subject">
+                                <h:outputText value="#{papprv_rpt.subject}" />
+                            </p:column>
+
+                            <p:column headerText="First C/A">
+                                <h:outputText value="#{papprv_rpt.firstTest}" />
+                            </p:column>
+
+                            <p:column headerText="Second C/A">
+                                <h:outputText value="#{papprv_rpt.secondTest}" />
+                            </p:column>
+
+                            <p:column headerText="Exam">
+                                <h:outputText value="#{papprv_rpt.exam}" />
+                            </p:column>
+
+                            <p:column headerText="Total">
+                                <h:outputText value="#{papprv_rpt.total}" />
+                            </p:column>
+
+                            <p:column headerText="Grade">
+                                <h:outputText value="#{papprv_rpt.mark}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:80px;">
+                    <div class="col-xs-9">
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="form-group">
+                            <label class="control" for="name"><u>Authorised Signatory</u></label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <form>
+            <input type="button" value="print" onclick="window.print();" />
+        </form>
+
+    </h:body>
+</html>
+

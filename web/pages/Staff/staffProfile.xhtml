@@ -1,0 +1,325 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template2.xhtml">
+
+
+
+    <ui:define name="title">
+        Staff Profile
+    </ui:define>
+
+    <ui:define name="Subtitle">
+        Edit Profile
+    </ui:define>
+
+
+    <ui:define name="content2">
+        <div class="row">
+            <p:growl id="grow"></p:growl>
+            <div class="ibox-content">
+                <p:panel id="pan">
+                    <p:accordionPanel id="ss">
+                        <p:tab title="Staff Details" id="sss">                               
+                            <h:panelGrid columns="2" cellpadding="10">
+                                <h:outputText value="First Name: "/> <h:outputText value="#{staffProfile.fname}"/> 
+                                <h:outputText value="Middle Name: "/> <h:outputText value="#{staffProfile.mname}"/> 
+                                <h:outputText value="Last Name: "/> <h:outputText value="#{staffProfile.lname}"/>                     
+                                <h:outputText value="Phone Number: "/> <h:outputText value="#{staffProfile.pnum}"/> 
+                                <h:outputText value="Email: "/> <h:outputText value="#{staffProfile.email}"/> 
+                                <h:outputText value="Date Employed: "/> <h:outputText value="#{staffProfile.dateEmployed}"/>                               
+                                <h:outputText value="Designation: " rendered="#{staffProfile.roleAssigned}" /> <h:outputText value="#{staffProfile.designation}" rendered="#{staffProfile.roleAssigned}"/>
+                                <h:outputText value="Staff Qualification: "/> <h:outputText value="#{staffProfile.highQua}"/>
+                                <h:outputText value="Staff Address "/> <h:outputText value="#{staffProfile.address}"/>
+
+                                <p:commandButton value="Update" class="pull-left" type="button" onclick="PF('dlg2').show();" />                               
+                            </h:panelGrid>                                                                                                       
+                        </p:tab>
+                        <p:tab title="Asigned Class" rendered="#{staffProfile.roleAssigned}">
+                            <p:panel id="classAssigned">
+                                <h:panelGrid columns="2" cellpadding="10">
+                                    <h:outputText value="Class Assigned: "/> <h:outputText value="#{staffProfile.staffGrade2}"/> 
+                                    <h:outputText value="Year: "/> <h:outputText value="#{staffProfile.year1}"/> 
+                                    <p:commandButton value="Insert" class="pull-left" type="button" update=":templateForm:poiu:dan" onclick="PF('dlg1').show();" />                                                                   
+                                </h:panelGrid>
+                                <br/>
+                                <p:dataTable id="staffTab" class="table table-responsive" var="papprv_rpt" 
+                                             value="#{staffProfile.sesTab1}"
+                                             selection="#{staffProfile.sesTab}"
+                                             rowKey="#{papprv_rpt.id}"
+                                             paginatorTemplate="{CurrentPageReport}  
+                                             {FirstPageLink} {PreviousPageLink} 
+                                             {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                             paginator="true"
+                                             rowsPerPageTemplate="5,10,15"
+                                             draggableColumns="true" rows="15" style="margin-bottom:20px">  
+                                    <f:facet name="{Exporters}">
+                                        <h:commandLink immediate="true">
+                                            <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                            <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                                        </h:commandLink>
+
+                                        <h:commandLink immediate="true">
+                                            <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                            <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                                        </h:commandLink>
+
+                                        <h:commandLink immediate="true">
+                                            <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                            <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                                        </h:commandLink>
+
+                                        <h:commandLink immediate="true" >
+                                            <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                            <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                                        </h:commandLink>
+                                    </f:facet>                                                                
+                                    <p:column headerText="Staff class">
+                                        <h:outputText value="#{papprv_rpt.staffGrade}"/>
+
+                                    </p:column>
+                                    <p:column headerText="Year">
+                                        <h:outputText value="#{papprv_rpt.year}"/>
+
+                                    </p:column>
+                                    <p:column headerText="Action" style="width:60px" exportable="false">                                
+                                        <p:commandButton value="" alt="search" id="please" icon="ui-icon-pencil" update=":templateForm:oo:oay" process="@this" 
+                                                         oncomplete="PF('dlg3').show()"> 
+                                            <f:setPropertyActionListener value="#{papprv_rpt}" target="#{staffProfile.tab}" />
+                                        </p:commandButton>                               
+                                    </p:column>                                        
+                                </p:dataTable>                                     
+                            </p:panel>
+                        </p:tab>
+
+                        <p:tab title="Image">
+                            <p:panel id="imgPan">
+                                <h:panelGrid columns="9" cellpadding="10">
+                                    <div class="profile-userpic" style="height: 100px; width: 100px;" >
+                                        <img src="#{staffProfile.imagelink}" class="img-responsive img-thumbnail" alt="#{staffProfile.fullname}"/>
+                                    </div>  
+                                    <p:outputLabel value=""></p:outputLabel>
+                                    <p:outputLabel value=""></p:outputLabel>   
+                                    <p:fileUpload required="true" id="upload_pix_data" value="#{staffProfile.passport}" auto="true"
+                                                  fileUploadListener="#{staffProfile.handleFileUpload}" 
+                                                  mode="advanced" dragDropSupport="false"
+                                                  update="pst_img" sizeLimit="2097152" fileLimit="1" />                               
+                                    <p:commandButton value="clear" immediate="true" ajax="false"
+                                                     actionListener="#{staffProfile.clearPix}" 
+                                                     update="upload_pix_data,pst_img"/>    
+                                    <p:outputLabel value="Passport:"/>
+                                    <p:graphicImage id="pst_img" class="img-responsive img-thumbnail" value="#{staffProfile.passport_url}" style="width: 100px; height: 100px;" />
+                                    <p:outputLabel value=""></p:outputLabel>
+                                    <p:outputLabel value=""></p:outputLabel>                                
+                                    <p:commandButton value="Update" process="@this upload_pix_data" actionListener="#{staffProfile.uploadPix}" update=":templateForm:grow,:templateForm:pan,:templateForm:okay2" class="pull-left" />    
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:tab>                        
+                    </p:accordionPanel> 
+
+                    <p:dialog header="Edit Profile" widgetVar="dlg2"                              
+                              position="center"
+                              minimizable="true"
+                              maximizable="true" id="dudd">                                        
+
+                        <h:form id="formexpress">
+                            <p:panel id="damn">                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="fnames" value="First Name: "></p:outputLabel> 
+                                    <p:inputText id="fnames" required="true" value="#{staffProfile.fname}" requiredMessage="First name is required" />
+                                    <p:message for="fnames"/>
+                                    <p:outputLabel for="mnames" value="Middle Name: "></p:outputLabel> 
+                                    <p:inputText id="mnames" value="#{staffProfile.mname}" requiredMessage="Middle name is required" />
+                                    <p:message for="mnames"/>
+                                    <p:outputLabel for="lnames" value="Last Name: "></p:outputLabel> 
+                                    <p:inputText id="lnames" required="true" value="#{staffProfile.lname}" requiredMessage="Last name is required" />
+                                    <p:message for="lnames"/>
+                                    <p:outputLabel for="pnums" value="Phone Number: "></p:outputLabel>
+                                    <p:inputText id="pnums" required="true" value="#{staffProfile.pnum}" requiredMessage="Phone is required" maxlength="11" />
+                                    <p:message for="pnums"/>
+                                    <p:outputLabel for="emails" value="Email: "></p:outputLabel> 
+                                    <p:inputText id="emails" value="#{staffProfile.email}" label="email"
+                                                 requiredMessage="Please enter your email address."
+                                                 validatorMessage="Invalid email format"
+                                                 >
+
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                    </p:inputText>
+                                    <p:message for="emails"/>
+                                    <p:outputLabel for="add" value="Address: "></p:outputLabel>
+                                    <p:inputText id="add" required="true" value="#{staffProfile.address}" requiredMessage="Address is required" />
+                                    <p:message for="add"/>
+
+                                    <p:outputLabel for="qua" value="Highest Qualification: "></p:outputLabel>
+                                    <p:inputText id="qua" required="true" value="#{staffProfile.highQua}" requiredMessage="Highest Qualification is required" />
+                                    <p:message for="qua"/>
+
+                                    <p:outputLabel for="desc" value="Designation: " rendered="#{staffProfile.roleAssigned}"></p:outputLabel>
+                                    <p:inputText id="desc" required="true"  rendered="#{staffProfile.roleAssigned}" value="#{staffProfile.designation}" requiredMessage="Designation is required" />
+                                    <p:message for="desc" rendered="#{staffProfile.roleAssigned}"/>
+
+                                    <p:outputLabel for="dobs" value="Date Employed: "/> 
+                                    <p:calendar id="dobs" yearRange="1980:2017" value="#{staffProfile.doe}" pattern="dd/MM/yyyy"  navigator="true" requiredMessage="Date Employed is required" required="true">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:calendar>
+                                    <p:message for="dobs"/>                                       
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this fnames,mnames,lnames,pnums,emails,dobs,add,qua,desc" update=":templateForm:growl,:templateForm:pan" actionListener="#{staffProfile.staffUpload}" oncomplete="handleLoginRequests(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>
+
+
+                    <p:dialog header="Assign New Class" widgetVar="dlg1"                              
+                              position="center"
+                              minimizable="true"
+                              maximizable="true">                                        
+
+                        <h:form id="poiu">
+                            <p:panel id="dan" style="border:none;">                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="sclass" value="Class: "/>
+                                    <p:selectOneMenu id="sclass" class="form-control" value="#{staffProfile.staffClass1}" required="true" requiredMessage="Class required">
+                                        <p:ajax listener="#{staffProfile.onClassChange}" update="grad" />
+                                        <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.classmodel}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.tbclass}"
+                                                       itemValue="#{singlevalue.tbclass}"/>
+                                    </p:selectOneMenu>                                    
+                                    <p:message for="sclass"/>
+
+                                    <p:outputLabel for="grad" value="Grade: "/> 
+                                    <p:selectOneMenu id="grad" class="form-control" value="#{staffProfile.staffGrade2}" required="true" requiredMessage="Grade required">                                        
+                                        <p:ajax listener="#{staffProfile.ontermChanges()}" update="gr" />
+                                        <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.grademodels}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.grade}"
+                                                       itemValue="#{singlevalue.grade}"/>
+                                    </p:selectOneMenu>                                    
+                                    <p:message for="grad"/>  
+                                    <p:outputLabel for="gr" value="Year: "></p:outputLabel>
+                                    <p:selectOneMenu id="gr" class="form-control" value="#{staffProfile.year1}" required="true" requiredMessage="Year required">                                  
+                                        <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.term}"/>
+                                    </p:selectOneMenu>   
+                                    <p:message for="gr"/>
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this sclass,grad,gr" update=":templateForm:growl,:templateForm:pan,:templateForm:ss:staffTab" actionListener="#{staffProfile.staffInsert}" oncomplete="handleLoginRequest(xhr, status, args)" style="margin-top: 20px;" value="Insert"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Edit Class Assigned" widgetVar="dlg3"                              
+                              position="center"
+                              minimizable="true"
+                              maximizable="true">                                        
+
+                        <h:form id="oo">
+                            <p:panel id="oay" style="border:none;">                                          
+                                <h:panelGrid columns="3" cellpadding="10">
+                                    <p:outputLabel for="sclass" value="Class: "/>
+                                    <p:selectOneMenu id="sclass" class="form-control" value="#{staffProfile.tab.staffClass}" required="true" requiredMessage="Class required">
+                                        <p:ajax listener="#{staffProfile.onClassChange}" update="grad" />
+                                        <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.classmodel}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.tbclass}"
+                                                       itemValue="#{singlevalue.tbclass}"/>
+                                    </p:selectOneMenu>                                    
+                                    <p:message for="sclass"/>
+
+                                    <p:outputLabel for="grad" value="Grade: "/> 
+                                    <p:selectOneMenu id="grad" class="form-control" value="#{staffProfile.tab.staffGrade}" required="true" requiredMessage="Grade required">                                        
+                                        <p:ajax listener="#{staffProfile.ontermChanges()}" update="gr" />
+                                        <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.grademodels}"
+                                                       var="singlevalue"  
+                                                       itemLabel="#{singlevalue.grade}"
+                                                       itemValue="#{singlevalue.grade}"/>
+                                    </p:selectOneMenu>                                    
+                                    <p:message for="grad"/>  
+                                    <p:outputLabel for="gr" value="Year: "></p:outputLabel>
+                                    <p:selectOneMenu id="gr" class="form-control" value="#{staffProfile.tab.year}" required="true" requiredMessage="Year required">                                  
+                                        <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{staffProfile.term}"/>
+                                    </p:selectOneMenu>   
+                                    <p:message for="gr"/>
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this gr,grad,sclass" update=":templateForm:growl,:templateForm:pan,:templateForm:ss:staffTab" actionListener="#{staffProfile.staffUpdate}" oncomplete="handleLogin(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Employment Status" widgetVar="dlg4"                              
+                              position="center"
+                              minimizable="true"
+                              maximizable="true">                                        
+
+                        <h:form id="op">
+                            <p:panel id="oa" style="border:none;">                                          
+                                <h:panelGrid columns="3" cellpadding="10">                                   
+                                    <p:outputLabel for="dos" value="Date Suspended: "/>
+                                    <p:calendar id="dos" class="form-control" yearRange="1980:2030" pattern="dd/MM/yyyy" value="#{staffProfile.dos}"  navigator="true" />                         
+                                    <p:message for="dos"/>            
+
+                                    <f:facet name="footer">
+                                        <p:commandButton class="btn btn-primary pull-right" process="@this dos" update=":templateForm:growl,:templateForm:pan" actionListener="#{staffProfile.UpdateStaffSuspend}" oncomplete="handle(xhr, status, args)" style="margin-top: 20px;" value="update"/>
+                                    </f:facet>
+                                </h:panelGrid>
+                            </p:panel>
+                        </h:form>
+                    </p:dialog>
+                </p:panel>
+            </div>
+            <script type="text/javascript">
+                function handleLoginRequests(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg2').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg2').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+                function handleLoginRequest(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg1').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg1').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+                function handleLogin(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg3').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg3').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+                function handle(xhr, status, args) {
+                    if (args.validationFailed || !args.loggedIn) {
+                        PF('dlg4').jq.effect("shake", {times: 5}, 100);
+                    } else {
+                        PF('dlg4').hide();
+                        $('#loginLink').fadeOut();
+                    }
+                }
+            </script>
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>

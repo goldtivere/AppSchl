@@ -1,0 +1,120 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template2.xhtml">
+
+
+
+    <ui:define name="title">
+        Staff Profile
+    </ui:define>
+
+    <ui:define name="Subtitle">
+        Class Assigned
+    </ui:define>
+
+
+    <ui:define name="content2">
+        <div class="row">  
+            <div class="ibox-content">
+                <p:messages closable="true" id="dude"></p:messages>
+                <p:panel style="border: none" id="up">
+                    <p:outputLabel value="Current Class: "/> <p:outputLabel value="#{classmode.gradeGet(classAssigned.staffgrade)}"/>
+                    <br/>                   
+                    <p:outputLabel value="Year: "/> <p:outputLabel value="#{classAssigned.year}"/>
+                    <br/>
+                    <p:outputLabel value=" Next Class: " />
+
+                    <p:selectOneMenu id="sclass" class="form-control" value="#{classmode.classGet(classAssigned.staffClass)}" required="true" requiredMessage="Class required">
+
+
+                        <p:ajax listener="#{classmode.onClassChanges(classAssigned.staffClass)}" update="grad" />
+                        <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{classmode.classmodel}"
+                                       var="singlevalue"  
+                                       itemLabel="#{singlevalue.tbclass}"
+                                       itemValue="#{singlevalue.id}"/>
+                    </p:selectOneMenu>   
+
+
+
+                    <p:selectOneMenu id="grad" class="form-control" value="#{classmode.gradeGet(classAssigned.staffgrade)}" required="true" requiredMessage="Grade required">                                
+                        <p:ajax listener="#{classmode.ontermChanges()}" update="gr" />
+                        <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{classmode.grademodels}"
+                                       var="singlevalue"  
+                                       itemLabel="#{singlevalue.grade}"
+                                       itemValue="#{singlevalue.id}"/>
+                    </p:selectOneMenu> 
+
+
+                 
+                    <p:selectOneMenu id="gr" class="form-control" value="#{classAssigned.year}" required="true" requiredMessage="Year required">                                                    
+                        <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{classmode.term}"/>
+                    </p:selectOneMenu>  
+                    <br/>
+                    <p:commandButton value="Set Current Class" process="@this gr,grad,sclass" actionListener="#{editClass.currentClass()}" />
+
+                    <p:dataTable id="s" class="table table-responsive" var="papprv_rpt" 
+                                 value="#{classAssigned.listmodel}"
+                                 rowKey="#{papprv_rpt.id}"
+                                 paginatorTemplate="{CurrentPageReport}  
+                                 {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {Exporters} "
+                                 paginator="true"
+                                 rowsPerPageTemplate="5,10,15"
+                                 draggableColumns="true" rows="15" style="margin-bottom:20px">
+
+                        <f:facet name="{Exporters}">
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                <p:dataExporter type="xls" target="s" fileName="report" pageOnly="true"/>
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="pdf" target="s" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="csv" target="s" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink immediate="true" >
+                                <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="xml" target="s" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+                        </f:facet>                           
+                        <p:column>
+
+                            <f:facet name="header">
+                                <h:outputText value="Previous Class"/>
+                            </f:facet>
+
+                            <h:outputText value="#{classmode.gradeGet(papprv_rpt.staffGrade)}"/>
+
+                        </p:column>                       
+
+                        <p:column>
+
+                            <f:facet name="header">
+                                <h:outputText value="Year"/>
+                            </f:facet>
+
+                            <h:outputText value="#{papprv_rpt.year}"/>
+
+                        </p:column>                    
+                    </p:dataTable> 
+                </p:panel>
+            </div>
+
+        </div>
+
+    </ui:define>
+
+
+</ui:composition>
