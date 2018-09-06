@@ -94,7 +94,7 @@ public class SchoolManagement implements Serializable {
             return false;
         } catch (Exception e) {
             e.printStackTrace();
-           
+
         }
         return false;
     }
@@ -535,6 +535,15 @@ public class SchoolManagement implements Serializable {
             pstmt.setInt(9, createdId);
             pstmt.setString(10, DateManipulation.dateAndTime());
 
+            pstmt.executeUpdate();
+
+            String insertSchoolStructure = "insert into tbschltablestructure "
+                    + "(schoolname,dbname) "
+                    + "values"
+                    + "(?,?)";
+            pstmt = con.prepareStatement(insertSchoolStructure);
+            pstmt.setString(1, mode.getSchoolName());
+            pstmt.setString(2, tableName);           
             pstmt.executeUpdate();
             insert(tableName);
         } catch (Exception ex) {
