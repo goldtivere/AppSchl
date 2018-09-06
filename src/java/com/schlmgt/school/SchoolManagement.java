@@ -113,48 +113,77 @@ public class SchoolManagement implements Serializable {
         return false;
     }
 
-//    public List<SchoolManagementModel> displaySubject() throws Exception {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//
-//        try {
-//
-//            con = dbConnections.mySqlDBconnection();
-//            String query = "SELECT * FROM tbschlmgt where isdeleted=?";           
-//            pstmt.setBoolean(1, false);
-//            rs = pstmt.executeQuery();
-//            //
-//            List<SchoolManagementModel> lst = new ArrayList<>();
-//            while (rs.next()) {
-//
-//                SchoolManagementModel coun = new SchoolManagementModel();
-//                coun.setId(rs.getInt("id"));
-//                coun.setSclass(rs.getString("class"));
-//                coun.setSubject(rs.getString("subject"));
-//                coun.setTerm(rs.getString("term"));
-//                coun.setGrade(rs.getString("grade"));
-//
-//                //
-//                lst.add(coun);
-//            }
-//
-//            return lst;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return null;
-//
-//        } finally {
-//
-//            if (!(con == null)) {
-//                con.close();
-//                con = null;
-//            }
-//            if (!(pstmt == null)) {
-//                pstmt.close();
-//                pstmt = null;
-//            }
-//
-//        }
-//    }
+    public void studentCount() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        try {
+            int i = 0;
+            System.out.println("Value: " + (i++));
+            int countmale = 0;
+            int countfemale = 0;
+            int counttotal = 0;
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT student.*, stu.dbname FROM tbschlmgt student inner "
+                    + "join tbschltablestructure stu on stu.schoolname=student.schlname where student.isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setBoolean(1, false);
+            rs = pstmt.executeQuery();
+            //
+            List<SchoolManagementModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                SchoolManagementModel coun = new SchoolManagementModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTableName(rs.getString("dbname"));
+
+                //
+                lst.add(coun);
+            }
+
+            for (SchoolManagementModel val : lst) {
+                String queryCount = "SELECT count(*) studentCount from " + val.getTableName() + "_student_details where is_deleted=false";
+                pstmt = con.prepareStatement(queryCount);
+                rs = pstmt.executeQuery();
+                rs.next();
+                counttotal = rs.getInt("studentCount");
+                String queryCount1 = "SELECT count(*) studentCount1 from " + val.getTableName() + "_student_details where sex='1' and is_deleted=false";
+                pstmt = con.prepareStatement(queryCount1);
+                rs = pstmt.executeQuery();
+                rs.next();
+                countmale = rs.getInt("studentCount1");
+                String queryCount2 = "SELECT count(*) studentCount2 from " + val.getTableName() + "_student_details where sex='2' and is_deleted=false";
+                pstmt = con.prepareStatement(queryCount2);
+                rs = pstmt.executeQuery();
+                rs.next();
+                countfemale = rs.getInt("studentCount2");
+
+                String updateCount = "update tbschltablestructure set totalstudent=?, totalmale=?, totalfemale=? where dbname=?";
+                pstmt = con.prepareStatement(updateCount);
+                pstmt.setInt(1, counttotal);
+                pstmt.setInt(2, countmale);
+                pstmt.setInt(3, countfemale);
+                pstmt.setString(4, val.getTableName());
+                pstmt.executeUpdate();
+                System.out.println("Total: " + counttotal + " male: " + countmale + " Female: " + countfemale);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
     public void handleFileUpload(FileUploadEvent event) {
         FacesMessage msg;
         FacesMessage message;
@@ -292,13 +321,14 @@ public class SchoolManagement implements Serializable {
                             break;
                         }
                     }
+                    studentCount();
                     setMessangerOfTruth(success + " School(s) Data Upload Successful");
 
                     message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                     context.addMessage(null, message);
                     setCsv(null);
                 } else {
-                    setMessangerOfTruth("oad Successful");
+                    setMessangerOfTruth("Error !! Please check excel file");
 
                     message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                     context.addMessage(null, message);
@@ -307,7 +337,7 @@ public class SchoolManagement implements Serializable {
             }
 
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
 
     }
@@ -538,12 +568,13 @@ public class SchoolManagement implements Serializable {
             pstmt.executeUpdate();
 
             String insertSchoolStructure = "insert into tbschltablestructure "
-                    + "(schoolname,dbname) "
+                    + "(schoolname,dbname,isdeleted) "
                     + "values"
-                    + "(?,?)";
+                    + "(?,?,?)";
             pstmt = con.prepareStatement(insertSchoolStructure);
             pstmt.setString(1, mode.getSchoolName());
-            pstmt.setString(2, tableName);           
+            pstmt.setString(2, tableName);
+            pstmt.setBoolean(3, false);
             pstmt.executeUpdate();
             insert(tableName);
         } catch (Exception ex) {
