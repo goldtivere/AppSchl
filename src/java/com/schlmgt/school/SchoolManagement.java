@@ -10,6 +10,7 @@ import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.DateManipulation;
 import com.schlmgt.login.UserDetails;
+import com.schlmgt.profile.SecondaryModel;
 import com.schlmgt.register.StudentModel;
 import com.schlmgt.updateSubject.SessionTable;
 import java.io.InputStream;
@@ -22,7 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -50,6 +53,24 @@ public class SchoolManagement implements Serializable {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     DbConnectionX dbConnections = new DbConnectionX();
+    
+    
+    @PostConstruct
+    public void init()
+    {
+        try
+        {
+       schlmgtModel= displaySchool();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     public boolean EmailCheck(String email, Connection con) throws SQLException {
         String testemail = "Select * from tbschlmgt where emailaddress=? and isdeleted=?";
@@ -111,6 +132,51 @@ public class SchoolManagement implements Serializable {
 
         }
         return false;
+    }
+
+    public List<SchoolManagementModel> displaySchool() throws SQLException{
+        try {
+            studentCount();
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT student.*, stu.dbname,stu.totalstudent,stu.totalmale,totalfemale FROM tbschlmgt student inner "
+                    + "join tbschltablestructure stu on stu.schoolname=student.schlname where student.isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setBoolean(1, false);
+            rs = pstmt.executeQuery();
+            //
+            List<SchoolManagementModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                SchoolManagementModel coun = new SchoolManagementModel();
+                coun.setId(rs.getInt("id"));
+                coun.setSchoolName(rs.getString("schlname"));
+                coun.setSchoolHeadName(rs.getString("schoolheadname"));
+                coun.setPnum(rs.getString("phonenumber"));
+                coun.setEmailAdd(rs.getString("emailaddress"));
+                coun.setDesignation(rs.getString("designation"));
+                coun.setTotalstudent(rs.getInt("totalstudent"));
+                coun.setTotalmale(rs.getInt("totalmale"));
+                coun.setTotalfemale(rs.getInt("totalfemale"));
+
+                //
+                lst.add(coun);
+            }
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
     }
 
     public void studentCount() throws Exception {
@@ -338,6 +404,23 @@ public class SchoolManagement implements Serializable {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+    
+    public void selectReco(SchoolManagementModel schlDetails) {
+
+        try {
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            NavigationHandler nav = ctx.getApplication().getNavigationHandler();
+            ctx.getExternalContext().getApplicationMap().remove("schlData");
+            ctx.getExternalContext().getApplicationMap().put("schlData", schlDetails);
+            String url = "editprofile.xhtml?faces-redirect=true";
+            nav.handleNavigation(ctx, null, url);
+            ctx.renderResponse();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
     }

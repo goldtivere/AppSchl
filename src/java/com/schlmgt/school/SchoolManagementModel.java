@@ -20,6 +20,9 @@ public class SchoolManagementModel  implements Serializable{
     private String emailAdd;
     private String pnum;
     private String lga;
+    private int totalstudent;
+    private int totalmale;
+    private int totalfemale;
 
     public int getId() {
         return id;
@@ -83,6 +86,30 @@ public class SchoolManagementModel  implements Serializable{
 
     public void setLga(String lga) {
         this.lga = lga;
+    }
+
+    public int getTotalstudent() {
+        return totalstudent;
+    }
+
+    public void setTotalstudent(int totalstudent) {
+        this.totalstudent = totalstudent;
+    }
+
+    public int getTotalmale() {
+        return totalmale;
+    }
+
+    public void setTotalmale(int totalmale) {
+        this.totalmale = totalmale;
+    }
+
+    public int getTotalfemale() {
+        return totalfemale;
+    }
+
+    public void setTotalfemale(int totalfemale) {
+        this.totalfemale = totalfemale;
     }
     
     
