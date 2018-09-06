@@ -43,16 +43,16 @@
                     <div class="ibox-content">
                         
 
-                        <p:dataTable id="n" class="table table-responsive" scrollable="true" scrollHeight="150" var="papprv_rpt" 
+                        <p:dataTable id="s" class="table table-responsive" var="papprv_rpt" 
                                      value="#{schoolManagement.schlmgtModel}"
-                                     selection="#{subjectUpdate.sesTab1}"
                                      rowKey="#{papprv_rpt.id}"
+                                     resizableColumns="true"
                                      paginatorTemplate="{CurrentPageReport}  
                                      {FirstPageLink} {PreviousPageLink} 
-                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                     {PageLinks} {NextPageLink} {LastPageLink} {Exporters} "
                                      paginator="true"
                                      rowsPerPageTemplate="5,10,15"
-                                     draggableColumns="true" rows="15" style="margin-bottom:20px">  
+                                     draggableColumns="true" rows="15" style="margin-bottom:20px"> 
                             <f:facet name="{Exporters}">
                                 <h:commandLink immediate="true">
                                     <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
@@ -73,8 +73,7 @@
                                     <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
                                     <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
                                 </h:commandLink>
-                            </f:facet>                            
-                            <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+                            </f:facet>                                                       
                             <p:column headerText="School Name">
                                 <h:outputText value="#{papprv_rpt.schoolName}"/>
 
