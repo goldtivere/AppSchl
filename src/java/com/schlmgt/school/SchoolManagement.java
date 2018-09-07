@@ -53,21 +53,14 @@ public class SchoolManagement implements Serializable {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     DbConnectionX dbConnections = new DbConnectionX();
-    
-    
+
     @PostConstruct
-    public void init()
-    {
-        try
-        {
-       schlmgtModel= displaySchool();
-        }
-        catch(SQLException e)
-        {
+    public void init() {
+        try {
+            schlmgtModel = displaySchool();
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -134,7 +127,7 @@ public class SchoolManagement implements Serializable {
         return false;
     }
 
-    public List<SchoolManagementModel> displaySchool() throws SQLException{
+    public List<SchoolManagementModel> displaySchool() throws SQLException {
         try {
             studentCount();
             con = dbConnections.mySqlDBconnection();
@@ -388,6 +381,7 @@ public class SchoolManagement implements Serializable {
                         }
                     }
                     studentCount();
+                    schlmgtModel = displaySchool();
                     setMessangerOfTruth(success + " School(s) Data Upload Successful");
 
                     message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
@@ -407,7 +401,7 @@ public class SchoolManagement implements Serializable {
         }
 
     }
-    
+
     public void selectReco(SchoolManagementModel schlDetails) {
 
         try {

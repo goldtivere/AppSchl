@@ -8,6 +8,7 @@ package com.schlmgt.profile;
 import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.login.UserDetails;
 import com.schlmgt.register.GradeModel;
+import com.schlmgt.school.SchoolManagementModel;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +25,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.swing.table.TableModel;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -50,11 +52,13 @@ public class Profile implements Serializable {
     private String grade;
     private Boolean nursery, primary, secondary;
     private Boolean nbool, pbool, sbool, fbool;
+    private String schoolValue;
+    private String school;
 
     @PostConstruct
     public void init() {
         try {
-            classmodel = classDropdown();
+
             nursery = false;
             primary = false;
             secondary = false;
@@ -69,11 +73,10 @@ public class Profile implements Serializable {
             ExternalContext externalContext = context.getExternalContext();
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
 
-            if (userObj.getRoleAssigned() == 1) {
-
-                secModel = onSecondaryChange(classGet(userObj.getId()));
+            if (userObj.getRoleAssigned() == 1) {                
+                secModel = onSecondaryChange(classGet(userObj.getId()),getSchool());
                 setSecondary(true);
-              
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -100,7 +103,7 @@ public class Profile implements Serializable {
     public void searchTab() {
         try {
 
-            secModel = onSecondarySearch(getSfname());            
+            secModel = onSecondarySearch(getSfname());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -188,14 +191,14 @@ public class Profile implements Serializable {
         }
     }
 
-    public List<SecondaryModel> onSecondaryChange(String tbclas) throws SQLException {
+    public List<SecondaryModel> onSecondaryChange(String tbclas,String tbname) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        try {           
+        try {
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbstudentclass where classtype=? and currentclass=?";
+            String query = "SELECT * FROM "+tbname+"_tbstudentclass where classtype=? and currentclass=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, tbclas);
             pstmt.setBoolean(2, true);
@@ -245,7 +248,7 @@ public class Profile implements Serializable {
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        try {        
+        try {
             con = dbConnections.mySqlDBconnection();
             String query = "SELECT * FROM tbstaffclass where staffid=? and status=?";
             pstmt = con.prepareStatement(query);
@@ -323,6 +326,56 @@ public class Profile implements Serializable {
         }
     }
 
+    public List<SchoolManagementModel> displaySchool() throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT student.*, stu.dbname,stu.totalstudent,stu.totalmale,totalfemale FROM tbschlmgt student inner "
+                    + "join tbschltablestructure stu on stu.schoolname=student.schlname where student.isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setBoolean(1, false);
+            rs = pstmt.executeQuery();
+            //
+            List<SchoolManagementModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                SchoolManagementModel coun = new SchoolManagementModel();
+                coun.setId(rs.getInt("id"));
+                coun.setSchoolName(rs.getString("schlname"));
+                coun.setSchoolHeadName(rs.getString("schoolheadname"));
+                coun.setPnum(rs.getString("phonenumber"));
+                coun.setTableName(rs.getString("tablename"));
+                coun.setEmailAdd(rs.getString("emailaddress"));
+                coun.setDesignation(rs.getString("designation"));
+                coun.setTotalstudent(rs.getInt("totalstudent"));
+                coun.setTotalmale(rs.getInt("totalmale"));
+                coun.setTotalfemale(rs.getInt("totalfemale"));
+
+                //
+                lst.add(coun);
+            }
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
     public List<String> completSecondary(String val) {
         List<String> com = new ArrayList();
         try {
@@ -341,9 +394,74 @@ public class Profile implements Serializable {
 
     }
 
+    public List<String> completeSchool(String val) {
+        List<String> com = new ArrayList<>();
+        try {
+            for (SchoolManagementModel value : displaySchool()) {
+                if (value.getSchoolName().toUpperCase().contains(val.toUpperCase())) {
+                    com.add(value.getSchoolName());
+                }
+
+            }
+            return com;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
+    }
+
+    public String tableNameDisplay(String tablename) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT student.*, stu.dbname,stu.totalstudent,stu.totalmale,totalfemale FROM tbschlmgt student inner "
+                    + "join tbschltablestructure stu on stu.schoolname=student.schlname where student.schlname=? and student.isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, tablename);
+            pstmt.setBoolean(2, false);
+            rs = pstmt.executeQuery();
+            //           
+            if (rs.next()) {
+                return rs.getString("tablename");
+
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public void onItemSelect(SelectEvent event) {
+        try {
+            setSchool(tableNameDisplay(event.getObject().toString()));
+            System.out.println(event.getObject().toString() + " table name: " + tableNameDisplay(event.getObject().toString()));
+            classmodel = classDropdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void onClassChange() throws Exception {
 
-        secModel = onSecondaryChange(model.getTbclass());
+        secModel = onSecondaryChange(model.getTbclass(),getSchool());
         setSecondary(true);
 
     }
@@ -567,6 +685,22 @@ public class Profile implements Serializable {
 
     public void setSecModel1(List<SecondaryModel> secModel1) {
         this.secModel1 = secModel1;
+    }
+
+    public String getSchoolValue() {
+        return schoolValue;
+    }
+
+    public void setSchoolValue(String schoolValue) {
+        this.schoolValue = schoolValue;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
 }
