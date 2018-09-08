@@ -59,14 +59,16 @@ public class Login implements Serializable {
             con = dbConnections.mySqlDBconnection();
 
             String queryProfile = "select * from user_details "
-                    + "where username=? and Password=?";
+                    + "where username=? and Password=? and is_deleted=?";
 
             //encrypt the password entered and then compared with what you have in the DB
-            String doEncPwd = AESencrp.encrypt(getPassword());
+            String doEncPwd = AESencrp.encrypt(getPassword());            
+            System.out.println(getUsername()+ " username password: "+ doEncPwd);
             //
             pstmt = con.prepareStatement(queryProfile);
             pstmt.setString(1, getUsername());
             pstmt.setString(2, doEncPwd);
+            pstmt.setBoolean(3, false);
 
             //System.out.println(getUsername() + "," + doEncPwd  + "<>" + getPassword() );
             //pstmt.setString(2, "ok");

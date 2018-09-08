@@ -429,6 +429,7 @@ public class SchoolManagement implements Serializable {
         String studentResult = tablename + "_tbstudentresult";
         String studentResultCompute = tablename + "_tbresultcompute";
         String finalCompute = tablename + "_tbfinalCompute";
+        String studentStatus = tablename + "_studentstatus";
 
         try {
 
@@ -549,6 +550,22 @@ public class SchoolManagement implements Serializable {
                     + ") ";
 
             pstmt = con.prepareStatement(computeResult);
+            pstmt.executeUpdate();
+
+            String computeResultStatus = "CREATE TABLE " + studentStatus + " ("
+                    + "  `id` int(11) NOT NULL AUTO_INCREMENT,"
+                    + "  `guid` varchar(200) DEFAULT NULL,\n"
+                    + "  `full_name` varchar(200) DEFAULT NULL,"
+                    + "  `status` tinyint(4) DEFAULT NULL,"
+                    + "  `datelogged` date DEFAULT NULL,\n"
+                    + "  `studentEmail` varchar(200) DEFAULT NULL,"
+                    + "  `date_time` datetime DEFAULT NULL,"
+                    + "  `studentid` bigint(20) DEFAULT NULL,"
+                    + "  `link` varchar(200) DEFAULT NULL,"
+                    + "  PRIMARY KEY (`id`)"
+                    + ")  ";
+
+            pstmt = con.prepareStatement(computeResultStatus);
             pstmt.executeUpdate();
 
             String classStudent = "CREATE TABLE " + studentClass + " ("
