@@ -5,6 +5,7 @@
  */
 package com.schlmgt.profile;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.DateManipulation;
@@ -127,10 +128,26 @@ public class EditStudent implements Serializable {
     private String GradeCurrent;
     private String ClassCurrent;
     private String yearCurrent;
+    private String school;
 
     @PostConstruct
     public void init() {
         try {
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            FacesMessage msg;
+
+            String stuValue = null;
+            stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
+
+            if (stuValue != null) {
+                stuValue = stuValue.replaceAll("\\s", "_");
+                setSchool(stuValue);
+            } else {
+                setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                ctx.addMessage(null, msg);
+            }
+
             setSpanel(false);
             setFpanel(true);
             relation = relationModel();
@@ -463,7 +480,7 @@ public class EditStudent implements Serializable {
             try {
                 lgamodel = lgaModels();
             } catch (Exception ex) {
-                Logger.getLogger(FreshReg.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
         }
     }
@@ -713,6 +730,8 @@ public class EditStudent implements Serializable {
     }
 
     public void studDetails() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        FacesMessage msg;
         try {
             DbConnectionX dbConnections = new DbConnectionX();
             Connection con = null;
@@ -730,7 +749,7 @@ public class EditStudent implements Serializable {
                 setStudentid(secModel.getStudentid());
             }
 
-            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from student_details a inner join tbstudentclass b on "
+            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from " + getSchool() + "_student_details a inner join " + getSchool() + "_tbstudentclass b on "
                     + "b.studentid=a.id where b.currentclass=true and a.id=?";
             pstmt = con.prepareStatement(testguid);
             pstmt.setString(1, getStudentid());
@@ -779,7 +798,7 @@ public class EditStudent implements Serializable {
             }
 
             //for studentclassupload
-            String testStud = "Select * from tbstudentclass where studentid=? and currentclass=?";
+            String testStud = "Select * from " + getSchool() + "_tbstudentclass where studentid=? and currentclass=?";
             pstmt = con.prepareStatement(testStud);
             pstmt.setString(1, getStudentid());
             pstmt.setBoolean(2, true);
@@ -798,6 +817,11 @@ public class EditStudent implements Serializable {
             System.out.println(getImagelink());
         } catch (NullPointerException e) {
             e.printStackTrace();
+
+        } catch (MySQLSyntaxErrorException e) {
+            setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -826,7 +850,7 @@ public class EditStudent implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select count(*) studentCount from student_details where first_name=? and middle_name=? and last_name=? and is_deleted=?";
+        String testflname = "Select count(*) studentCount from " + getSchool() + "_student_details where first_name=? and middle_name=? and last_name=? and is_deleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, fname);
         pstmt.setString(2, mname);
@@ -845,12 +869,12 @@ public class EditStudent implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select studentid from student_details where first_name=? and middle_name=? and last_name=? and is_deleted=?";
+        String testflname = "Select studentid from " + getSchool() + "_student_details where first_name=? and middle_name=? and last_name=? and is_deleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, fname);
         pstmt.setString(2, mname);
         pstmt.setString(3, lname);
-        pstmt.setBoolean(4, false);        
+        pstmt.setBoolean(4, false);
         rs = pstmt.executeQuery();
 
         if (rs.next()) {
@@ -878,7 +902,7 @@ public class EditStudent implements Serializable {
             String dobs = format.format(getDateOfBirth());
             con = dbConnections.mySqlDBconnection();
 
-            String personalDetails = "update tbstudentclass set first_name=? ,middle_name=?, last_name=?, full_name=?,"
+            String personalDetails = "update " + getSchool() + "_tbstudentclass set first_name=? ,middle_name=?, last_name=?, full_name=?,"
                     + "updatedby=?,updaterid=?,dateupdated=? where studentid=? and class=?";
 
             pstmt = con.prepareStatement(personalDetails);
@@ -920,9 +944,9 @@ public class EditStudent implements Serializable {
             int createdId = userObj.getId();
             SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
             String dobs = format.format(getDateOfBirth());
-            con = dbConnections.mySqlDBconnection();           
+            con = dbConnections.mySqlDBconnection();
             if (studentNameCheck(getFname(), getMname(), getLname()) <= 1) {
-                String personalDetails = "update student_details set first_name=? ,middle_name=?, last_name=?, fullname=?, dob=?,"
+                String personalDetails = "update " + getSchool() + "_student_details set first_name=? ,middle_name=?, last_name=?, fullname=?, dob=?,"
                         + "student_phone=? , student_email=?, sex=? ,updated_by=?,updated_id=?,date_updated=? where studentid=?";
 
                 pstmt = con.prepareStatement(personalDetails);
@@ -977,7 +1001,7 @@ public class EditStudent implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
             String nameFull = getGlname() + " " + getGmname() + " " + getGfname();
-            String personalDetails = "update student_details set guardian_firstname=? ,guardian_middlename=?, guardian_lastname=?, relationship=?,"
+            String personalDetails = "update " + getSchool() + "_student_details set guardian_firstname=? ,guardian_middlename=?, guardian_lastname=?, relationship=?,"
                     + "relationship_other=?,"
                     + "guardian_phone=? , guardian_email=?, guardian_country=? ,guardian_state=?,"
                     + "guardian_lga=?,guardian_address=?,updated_by=?,updated_id=?,date_updated=?,guardian_fullname=? where studentid=?";
@@ -1033,7 +1057,7 @@ public class EditStudent implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
 
-            String previous = "update student_details set previous_school=? ,previous_class=?, previous_grade=?,"
+            String previous = "update " + getSchool() + "_student_details set previous_school=? ,previous_class=?, previous_grade=?,"
                     + "updated_by=?,updated_id=?,date_updated=? where studentid=?";
 
             pstmt = con.prepareStatement(previous);
@@ -1078,7 +1102,7 @@ public class EditStudent implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
 
-            String previous = "update student_details set disability=? ,other_disability=?, bgroup=?,"
+            String previous = "update " + getSchool() + "_student_details set disability=? ,other_disability=?, bgroup=?,"
                     + "updated_by=?,updated_id=?,date_updated=? where studentid=?";
 
             pstmt = con.prepareStatement(previous);
@@ -1124,7 +1148,7 @@ public class EditStudent implements Serializable {
                 int createdId = userObj.getId();
                 con = dbConnections.mySqlDBconnection();
 
-                String previous = "update student_details set image=?,imgLocation=?,"
+                String previous = "update " + getSchool() + "_student_details set image=?,imgLocation=?,"
                         + "updated_by=?,updated_id=?,date_updated=? where studentid=?";
 
                 pstmt = con.prepareStatement(previous);
@@ -1176,7 +1200,7 @@ public class EditStudent implements Serializable {
             String dobs = format.format(getDateOfBirth());
             con = dbConnections.mySqlDBconnection();
 
-            String personalDetails = "update tbstudentclass set imagelink=?,"
+            String personalDetails = "update " + getSchool() + "_tbstudentclass set imagelink=?,"
                     + "updatedby=?,updaterid=?,dateupdated=? where studentid=? and class=? and currentclass=?";
 
             pstmt = con.prepareStatement(personalDetails);
@@ -1762,6 +1786,14 @@ public class EditStudent implements Serializable {
 
     public void setYearCurrent(String yearCurrent) {
         this.yearCurrent = yearCurrent;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
 }

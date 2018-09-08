@@ -37,10 +37,26 @@ public class ClassEdit implements Serializable {
     private String year;
     private String arm;
     private String messangerOfTruth;
+    private String school;
 
     @PostConstruct
     public void init() {
         try {
+
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            FacesMessage msg;
+
+            String stuValue = null;
+            stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
+
+            if (stuValue != null) {
+                stuValue = stuValue.replaceAll("\\s", "_");
+                setSchool(stuValue);
+            } else {
+                setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                ctx.addMessage(null, msg);
+            }
             subModel = clasEdit();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -56,7 +72,7 @@ public class ClassEdit implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbstudentclass where studentid=? and currentclass=? order by id desc";
+            String query = "SELECT * FROM "+getSchool()+"_tbstudentclass where studentid=? and currentclass=? order by id desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, edits.getStudentid());
             System.out.println(edits.getStudentid());
@@ -112,7 +128,7 @@ public class ClassEdit implements Serializable {
 
             con = dbConnections.mySqlDBconnection();
 
-            String personalDetails = "update tbstudentclass set currentclass=?,"
+            String personalDetails = "update "+getSchool()+"_tbstudentclass set currentclass=?,"
                     + "updatedby=?,updaterid=?,dateupdated=? where studentid=? and id=?";
 
             pstmt = con.prepareStatement(personalDetails);
@@ -126,7 +142,7 @@ public class ClassEdit implements Serializable {
 
             pstmt.executeUpdate();
 
-            String nurseryInsert = "insert into tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
+            String nurseryInsert = "insert into "+getSchool()+"_tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
                     + "classtype,isdeleted,datecreated,datetime_created,createdby,imagelink,Arm,currentclass,term,year) values "
                     + "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -227,6 +243,14 @@ public class ClassEdit implements Serializable {
 
     public void setSubModel(List<SecondaryModel> subModel) {
         this.subModel = subModel;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
 }

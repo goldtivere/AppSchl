@@ -73,8 +73,8 @@ public class Profile implements Serializable {
             ExternalContext externalContext = context.getExternalContext();
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
 
-            if (userObj.getRoleAssigned() == 1) {                
-                secModel = onSecondaryChange(classGet(userObj.getId()),getSchool());
+            if (userObj.getRoleAssigned() == 1) {
+                secModel = onSecondaryChange(classGet(userObj.getId()), getSchool());
                 setSecondary(true);
 
             }
@@ -89,7 +89,9 @@ public class Profile implements Serializable {
             FacesContext ctx = FacesContext.getCurrentInstance();
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
             ctx.getExternalContext().getApplicationMap().remove("SecData");
+            ctx.getExternalContext().getApplicationMap().remove("reDet");
             ctx.getExternalContext().getApplicationMap().put("SecData", secRecord);
+            ctx.getExternalContext().getApplicationMap().put("reDet", getSchool());
             String url = "editprofile.xhtml?faces-redirect=true";
             nav.handleNavigation(ctx, null, url);
             ctx.renderResponse();
@@ -120,7 +122,7 @@ public class Profile implements Serializable {
             con = dbConnections.mySqlDBconnection();
             if (!fullname.isEmpty()) {
 
-                String query = "SELECT * FROM tbstudentclass where full_name=? and classtype=? and currentclass=?";
+                String query = "SELECT * FROM " + getSchool() + "_tbstudentclass where full_name=? and classtype=? and currentclass=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, fullname);
                 pstmt.setString(2, model.getTbclass());
@@ -147,7 +149,7 @@ public class Profile implements Serializable {
                     lst.add(coun);
                 }
             } else {
-                String query = "SELECT * FROM tbstudentclass where classtype=?";
+                String query = "SELECT * FROM " + getSchool() + "_tbstudentclass where classtype=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, model.getTbclass());
                 rs = pstmt.executeQuery();
@@ -191,14 +193,14 @@ public class Profile implements Serializable {
         }
     }
 
-    public List<SecondaryModel> onSecondaryChange(String tbclas,String tbname) throws SQLException {
+    public List<SecondaryModel> onSecondaryChange(String tbclas, String tbname) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
         try {
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM "+tbname+"_tbstudentclass where classtype=? and currentclass=?";
+            String query = "SELECT * FROM " + tbname + "_tbstudentclass where classtype=? and currentclass=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, tbclas);
             pstmt.setBoolean(2, true);
@@ -292,7 +294,7 @@ public class Profile implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbstudentclass where classtype=? and currentclass=?";
+            String query = "SELECT * FROM " + getSchool() + "_tbstudentclass where classtype=? and currentclass=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, model.getTbclass());
             pstmt.setBoolean(2, true);
@@ -461,7 +463,7 @@ public class Profile implements Serializable {
 
     public void onClassChange() throws Exception {
 
-        secModel = onSecondaryChange(model.getTbclass(),getSchool());
+        secModel = onSecondaryChange(model.getTbclass(), getSchool());
         setSecondary(true);
 
     }

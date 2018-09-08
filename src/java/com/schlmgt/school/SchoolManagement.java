@@ -430,6 +430,7 @@ public class SchoolManagement implements Serializable {
         String studentResultCompute = tablename + "_tbresultcompute";
         String finalCompute = tablename + "_tbfinalCompute";
         String studentStatus = tablename + "_studentstatus";
+        String sessionTable= tablename+"_sessiontable";
 
         try {
 
@@ -451,6 +452,26 @@ public class SchoolManagement implements Serializable {
                     + ")";
 
             pstmt = con.prepareStatement(smstablename);
+            pstmt.executeUpdate();
+
+            String sessionTab = "CREATE TABLE "+sessionTable+" ("
+                    + "  `Id` int(11) NOT NULL AUTO_INCREMENT,"
+                    + "  `Term` varchar(100) DEFAULT NULL,"
+                    + "  `Class` varchar(100) DEFAULT NULL,"
+                    + "  `Grade` varchar(100) DEFAULT NULL,"
+                    + "  `Year` varchar(100) DEFAULT NULL,"
+                    + "  `Subject` varchar(200) DEFAULT NULL,"
+                    + "  `CreatedBy` varchar(100) DEFAULT NULL,"
+                    + "  `DateCreated` datetime DEFAULT NULL,"
+                    + "  `updatedBy` varchar(100) DEFAULT NULL,"
+                    + "  `updateTime` datetime DEFAULT NULL,"
+                    + "  `isdeleted` tinyint(4) DEFAULT NULL,"
+                    + "  `deletedby` varchar(200) DEFAULT NULL,"
+                    + "  `dateDeleted` datetime DEFAULT NULL,"
+                    + "  PRIMARY KEY (`Id`)"
+                    + ") ";
+
+            pstmt = con.prepareStatement(sessionTab);
             pstmt.executeUpdate();
 
             String studentDetailsName = "CREATE TABLE " + studentDetails + " ("

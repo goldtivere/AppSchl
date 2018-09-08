@@ -130,11 +130,11 @@ public class FreshReg implements Serializable {
 
             FacesContext ctx = FacesContext.getCurrentInstance();
             stuValue = (String) ctx.getExternalContext().getApplicationMap().get("regDet");
-            stuValue = stuValue.replaceAll("\\s", "_");
-            setSchool(stuValue);
             System.out.println(getSchool() + " hi");
             //test for null...
-            if (getSchool() != null) {                
+            if (stuValue != null) {
+                stuValue = stuValue.replaceAll("\\s", "_");
+                setSchool(stuValue);
             } else {
                 setMessangerOfTruth("Please click on register and select name of school and registration type to proceed!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
