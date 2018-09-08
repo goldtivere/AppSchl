@@ -21,20 +21,20 @@
             <div class="ibox-content">
                 <p:messages closable="true" id="dude"></p:messages>
                 <p:panel style="border: none" id="up">
-                    <p:outputLabel value="Current Class: "/> <p:outputLabel value="#{classmode.gradeGet(editClass.edits.currentClass)}"/>
+                    <p:outputLabel value="Current Class: "/> <p:outputLabel value="#{classmode.gradeGet(editClass.gradeType)}"/>
                     <br/>
-                    <p:outputLabel value="Term: "/> <p:outputLabel value="#{classmode.termGet(editClass.edits.term)}"/>
+                    <p:outputLabel value="Term: "/> <p:outputLabel value="#{classmode.termGet(editClass.term)}"/>
                     <br/>
-                    <p:outputLabel value="Arm: "/> <p:outputLabel value="#{editClass.edits.tbarm}"/>
+                    <p:outputLabel value="Arm: "/> <p:outputLabel value="#{editClass.arm}"/>
                     <br/>
-                    <p:outputLabel value="Year: "/> <p:outputLabel value="#{editClass.edits.year}"/>
+                    <p:outputLabel value="Year: "/> <p:outputLabel value="#{editClass.year}"/>
                     <br/>
                     <p:outputLabel value=" Next Class: " />
 
-                    <p:selectOneMenu id="sclass" class="form-control" value="#{editClass.sclass}" required="true" requiredMessage="Class required">
+                    <p:selectOneMenu id="sclass" class="form-control" value="#{editClass.grade1}" required="true" requiredMessage="Class required">
 
 
-                        <p:ajax listener="#{classmode.onClassChanges(editClass.sclass)}" update="grad" />
+                        <p:ajax listener="#{classmode.onClassChanges(editClass.grade1)}" update="grad" />
                         <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{classmode.classmodel}"
                                        var="singlevalue"  
@@ -44,7 +44,7 @@
 
 
 
-                    <p:selectOneMenu id="grad" class="form-control" value="#{editClass.grade}" required="true" requiredMessage="Grade required">                                
+                    <p:selectOneMenu id="grad" class="form-control" value="#{editClass.gradeType1}" required="true" requiredMessage="Grade required">                                
                         <p:ajax listener="#{classmode.onarmChanges()}" update="arm" />
                         <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{classmode.grademodels}"
@@ -52,25 +52,25 @@
                                        itemLabel="#{singlevalue.grade}"
                                        itemValue="#{singlevalue.id}"/>
                     </p:selectOneMenu> 
-                    <p:selectOneMenu id="arm" class="form-control" value="#{editClass.arm}" required="true" requiredMessage="Arm required">                                
+                    <p:selectOneMenu id="arm" class="form-control" value="#{editClass.arm1}" required="true" requiredMessage="Arm required">                                
                         <p:ajax listener="#{classmode.ongradeChanges}" update="gra" />                    
                         <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{classmode.arm}"/>
                     </p:selectOneMenu> 
 
-                    <p:selectOneMenu id="gra" class="form-control" value="#{editClass.term}" required="true" requiredMessage="Term required">                                
+                    <p:selectOneMenu id="gra" class="form-control" value="#{editClass.term1}" required="true" requiredMessage="Term required">                                
                         <p:ajax listener="#{classmode.ontermChanges(editClass.term)}" update="gr" />
                         <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{classmode.termList}" var="singlevalue"  
                                        itemLabel="#{singlevalue.term}"
                                        itemValue="#{singlevalue.id}"/>
                     </p:selectOneMenu>                 
-                    <p:selectOneMenu id="gr" class="form-control" value="#{editClass.year}" required="true" requiredMessage="Year required">                                                    
+                    <p:selectOneMenu id="gr" class="form-control" value="#{editClass.year1}" required="true" requiredMessage="Year required">                                                    
                         <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
                         <f:selectItems value="#{classmode.term}"/>
                     </p:selectOneMenu>  
                     <br/>
-                    <p:commandButton value="Set Current Class" process="@this gr,gra,grad,sclass,arm" actionListener="#{editClass.currentClass()}" update="dude,up,s"/>
+                    <p:commandButton value="Set Current Class" process="@this gr,gra,grad,sclass,arm" actionListener="#{editClass.currentClass}" update="dude,up,s"/>
 
                     <p:dataTable id="s" class="table table-responsive" var="papprv_rpt" 
                                  value="#{editClass.subModel}"

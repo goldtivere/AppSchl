@@ -151,7 +151,7 @@ public class EditStudent implements Serializable {
             setSpanel(false);
             setFpanel(true);
             relation = relationModel();
-            StudentNumber();
+            studDetails(getSchool());
             studentClass();
             modelgroup = bloodgroupDropdown();
             dismodel = disabilityDropdown();
@@ -729,7 +729,7 @@ public class EditStudent implements Serializable {
 
     }
 
-    public void studDetails() {
+    public void studDetails(String tbname) {
         FacesContext context = FacesContext.getCurrentInstance();
         FacesMessage msg;
         try {
@@ -749,7 +749,7 @@ public class EditStudent implements Serializable {
                 setStudentid(secModel.getStudentid());
             }
 
-            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from " + getSchool() + "_student_details a inner join " + getSchool() + "_tbstudentclass b on "
+            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from " + tbname + "_student_details a inner join " + getSchool() + "_tbstudentclass b on "
                     + "b.studentid=a.id where b.currentclass=true and a.id=?";
             pstmt = con.prepareStatement(testguid);
             pstmt.setString(1, getStudentid());
@@ -819,29 +819,14 @@ public class EditStudent implements Serializable {
             e.printStackTrace();
 
         } catch (MySQLSyntaxErrorException e) {
-            setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
+            setMessangerOfTruth("Sessionsss Expired for this Student. Please select student and try again!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
+            e.printStackTrace();
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    public void StudentNumber() throws SQLException {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        FacesMessage msg;
-        try {
-            DbConnectionX dbConnections = new DbConnectionX();
-            Connection con = null;
-            PreparedStatement pstmt = null;
-            ResultSet rs = null;
-            studDetails();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
     }
 
     public int studentNameCheck(String fname, String mname, String lname) throws SQLException {
@@ -969,7 +954,7 @@ public class EditStudent implements Serializable {
                 setMessangerOfTruth("Personal Details Updated!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                 context.addMessage(null, msg);
-                StudentNumber();
+                studDetails(getSchool());
                 cont.addCallbackParam("loggedIn", loggedIn);
             } else {
                 setMessangerOfTruth("First Name and Lastname Already Exists !!");
@@ -1030,7 +1015,7 @@ public class EditStudent implements Serializable {
             setMessangerOfTruth("Parent/Guardian Details Updated!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
-            StudentNumber();
+            studDetails(getSchool());
             cont.addCallbackParam("loggedIn", loggedIn);
 
         } catch (Exception ex) {
@@ -1075,7 +1060,7 @@ public class EditStudent implements Serializable {
             setMessangerOfTruth("Previous School Details Updated!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
-            StudentNumber();
+            studDetails(getSchool());
             cont.addCallbackParam("loggedIn", loggedIn);
 
         } catch (Exception ex) {
@@ -1120,7 +1105,7 @@ public class EditStudent implements Serializable {
             setMessangerOfTruth("Health Details Updated!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
-            StudentNumber();
+            studDetails(getSchool());
             cont.addCallbackParam("loggedIn", loggedIn);
 
         } catch (Exception ex) {
@@ -1173,7 +1158,7 @@ public class EditStudent implements Serializable {
                 }
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                 context.addMessage(null, msg);
-                StudentNumber();
+                studDetails(getSchool());
             }
 
         } catch (Exception ex) {

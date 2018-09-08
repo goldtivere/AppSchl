@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -36,11 +37,36 @@ public class ClassView implements Serializable {
     private String classType;
     private List<TermModel> terms;
     private List<String> years;
+    private String school;
+    private String messangerOfTruth;
+    private String studentid;
+    private SecondaryModel secModel = new SecondaryModel();
 
     @PostConstruct
     public void init() {
 
         try {
+
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            FacesMessage msg;
+
+            String stuValue = null;
+            stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
+            SecondaryModel secResult = (SecondaryModel) ctx.getExternalContext().getApplicationMap().get("SecData");
+            //test for null...
+            secModel = secResult;
+
+            if (secModel != null) {
+                setStudentid(secModel.getStudentid());
+            }
+            if (stuValue != null) {
+                stuValue = stuValue.replaceAll("\\s", "_");
+                setSchool(stuValue);
+            } else {
+                setMessangerOfTruth("Session Expired for** this Student. Please select student and try again!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                ctx.addMessage(null, msg);
+            }
             sub = testMic();
             terms = termDropdown();
             years = yearDropdown(getTerm());
@@ -50,7 +76,7 @@ public class ClassView implements Serializable {
     }
 
     public void onYearChange(String term, String year) throws Exception {
-        
+
         sub = testMic(term, year);
     }
 
@@ -63,8 +89,6 @@ public class ClassView implements Serializable {
                 = null;
         con = dbConnections.mySqlDBconnection();
         String studId;
-
-        
 
         try {
             setTerm(term);
@@ -84,7 +108,7 @@ public class ClassView implements Serializable {
 
                 lst.add(coun);
             }
-            
+
             return lst;
 
         } catch (Exception e) {
@@ -123,7 +147,7 @@ public class ClassView implements Serializable {
         PreparedStatement pstmt = null;
 
         try {
-            
+
             con = dbConnections.mySqlDBconnection();
             String query = "SELECT distinct year FROM yearterm where term=?";
             pstmt = con.prepareStatement(query);
@@ -204,19 +228,19 @@ public class ClassView implements Serializable {
 
     public void studentCurrentClass() {
         try {
-            edits.studDetails();
+
             DbConnectionX dbConnections = new DbConnectionX();
             Connection con = null;
             PreparedStatement pstmt = null;
             ResultSet rs = null;
             con = dbConnections.mySqlDBconnection();
 
-            String testguid = "Select * from tbstudentclass where studentid=? and currentclass =  ?";
+            String testguid = "Select * from " + getSchool() + "_tbstudentclass where studentid=? and currentclass =  ?";
             pstmt = con.prepareStatement(testguid);
-            pstmt.setString(1, edits.getStudentid());
+            pstmt.setString(1, getStudentid());
             pstmt.setBoolean(2, true);
             rs = pstmt.executeQuery();
-            
+
             if (rs.next()) {
                 setCurrentClass(rs.getString("class"));
                 setClassType(rs.getString("classtype"));
@@ -240,11 +264,12 @@ public class ClassView implements Serializable {
         String studId;
 
         try {
-            String testguid = "Select * from sessiontable where term=? and grade =? and year=?";
+            String testguid = "Select * from sessiontable where term=? and grade =? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(testguid);
             pstmt.setString(1, getTerm());
             pstmt.setString(2, getCurrentClass());
             pstmt.setString(3, getYear());
+            pstmt.setBoolean(4, false);
             rs = pstmt.executeQuery();
 
             List<SubjectModel> lst = new ArrayList<>();
@@ -255,7 +280,7 @@ public class ClassView implements Serializable {
 
                 lst.add(coun);
             }
-            
+
             return lst;
 
         } catch (Exception e) {
@@ -339,6 +364,38 @@ public class ClassView implements Serializable {
 
     public void setEdits(EditStudent edits) {
         this.edits = edits;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getMessangerOfTruth() {
+        return messangerOfTruth;
+    }
+
+    public void setMessangerOfTruth(String messangerOfTruth) {
+        this.messangerOfTruth = messangerOfTruth;
+    }
+
+    public String getStudentid() {
+        return studentid;
+    }
+
+    public void setStudentid(String studentid) {
+        this.studentid = studentid;
+    }
+
+    public SecondaryModel getSecModel() {
+        return secModel;
+    }
+
+    public void setSecModel(SecondaryModel secModel) {
+        this.secModel = secModel;
     }
 
 }

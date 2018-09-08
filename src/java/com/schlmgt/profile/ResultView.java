@@ -5,6 +5,7 @@
  */
 package com.schlmgt.profile;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.updateResult.ResultModel;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -40,6 +42,41 @@ public class ResultView implements Serializable {
     private double stuTotal;
     private int position;
     private String fullname;
+    private String school;
+    private String messangerOfTruth;
+    private String studentid;
+    private SecondaryModel secModel = new SecondaryModel();
+
+    @PostConstruct
+    public void init() {
+        try {
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            FacesMessage msg;
+
+            String stuValue = null;
+            stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
+                       
+            SecondaryModel secResult = (SecondaryModel) ctx.getExternalContext().getApplicationMap().get("SecData");
+            //test for null...
+            secModel = secResult;
+
+            if (secModel != null) {
+                setStudentid(secModel.getStudentid());
+            }
+
+
+            if (stuValue != null) {
+                stuValue = stuValue.replaceAll("\\s", "_");
+                setSchool(stuValue);
+            } else {
+                setMessangerOfTruth("Session Expired for** this Student. Please select student and try again!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                ctx.addMessage(null, msg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public SessionModel displayResultDetails(List<ResultModel> mode) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -47,8 +84,7 @@ public class ResultView implements Serializable {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        edits.studDetails();
+        PreparedStatement pstmt = null;        
 
         try {
 
@@ -57,7 +93,7 @@ public class ResultView implements Serializable {
             if (mode != null) {
                 for (ResultModel m : mode) {
 
-                    String nameSearch = "SELECT * FROM tbstudentclass where class=? and term=? and year=? and isdeleted=? and studentid=?";
+                    String nameSearch = "SELECT * FROM "+getSchool()+"_tbstudentclass where class=? and term=? and year=? and isdeleted=? and studentid=?";
                     pstmt = con.prepareStatement(nameSearch);
                     pstmt.setString(1, m.getGrade());
                     pstmt.setString(2, m.getTerm());
@@ -70,14 +106,14 @@ public class ResultView implements Serializable {
                         mm.setFullname(rs.getString("full_name"));
                     }
 
-                    String query = "SELECT * FROM tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
+                    String query = "SELECT * FROM "+getSchool()+"_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
                     pstmt = con.prepareStatement(query);
                     pstmt.setString(1, m.getGrade());
                     pstmt.setString(2, m.getTerm());
                     pstmt.setString(3, m.getYear());
                     pstmt.setBoolean(4, false);
                     pstmt.setString(5, m.getStudentId());
-                    rs = pstmt.executeQuery();                    
+                    rs = pstmt.executeQuery();
                     List<SessionModel> lst = new ArrayList<>();
                     if (rs.next()) {
                         mm.setStudentClass(rs.getString("studentclass"));
@@ -121,19 +157,19 @@ public class ResultView implements Serializable {
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        edits.studDetails();
+        edits.studDetails(getSchool());
 
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbstudentresult where studentclass=? and arm=? and term=? and year=? and isdeleted=? and studentreg=?";
+            String query = "SELECT * FROM "+getSchool()+"_tbstudentresult where studentclass=? and arm=? and term=? and year=? and isdeleted=? and studentreg=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getArm());
             pstmt.setString(3, getTerm());
             pstmt.setString(4, getYear());
             pstmt.setBoolean(5, false);
-            pstmt.setString(6, edits.getStudentid());
+            pstmt.setString(6, getStudentid());
             rs = pstmt.executeQuery();
             //
 
@@ -285,6 +321,38 @@ public class ResultView implements Serializable {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getMessangerOfTruth() {
+        return messangerOfTruth;
+    }
+
+    public void setMessangerOfTruth(String messangerOfTruth) {
+        this.messangerOfTruth = messangerOfTruth;
+    }
+
+    public String getStudentid() {
+        return studentid;
+    }
+
+    public void setStudentid(String studentid) {
+        this.studentid = studentid;
+    }
+
+    public SecondaryModel getSecModel() {
+        return secModel;
+    }
+
+    public void setSecModel(SecondaryModel secModel) {
+        this.secModel = secModel;
     }
 
 }
