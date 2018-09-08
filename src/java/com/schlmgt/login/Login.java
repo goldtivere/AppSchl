@@ -62,8 +62,7 @@ public class Login implements Serializable {
                     + "where username=? and Password=? and is_deleted=?";
 
             //encrypt the password entered and then compared with what you have in the DB
-            String doEncPwd = AESencrp.encrypt(getPassword());            
-            System.out.println(getUsername()+ " username password: "+ doEncPwd);
+            String doEncPwd = AESencrp.encrypt(getPassword());                        
             //
             pstmt = con.prepareStatement(queryProfile);
             pstmt.setString(1, getUsername());

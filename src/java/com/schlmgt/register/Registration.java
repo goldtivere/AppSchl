@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -77,7 +78,6 @@ public class Registration implements Serializable {
         put = false;
 
     }
-   
 
     public List<SchoolManagementModel> displaySchool() throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
@@ -186,8 +186,8 @@ public class Registration implements Serializable {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchool(tableNameDisplay(event.getObject().toString()));
-            System.out.println(event.getObject().toString() + " table name: " + tableNameDisplay(event.getObject().toString()));
+            setSchool(tableNameDisplay(event.getObject().toString())); 
+            System.out.println(getSchool()+ " hi");
             FacesContext context = FacesContext.getCurrentInstance();
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
 
@@ -213,9 +213,14 @@ public class Registration implements Serializable {
         }
     }
 
-    public String regStudent() throws Exception {
-
-        return "registerStudent.xhtml?faces-redirect=true";
+    public void regStudent() throws Exception {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        NavigationHandler nav = ctx.getApplication().getNavigationHandler();
+        ctx.getExternalContext().getApplicationMap().remove("regDet");
+        ctx.getExternalContext().getApplicationMap().put("regDet", getSchool());
+        String url = "registerStudent.xhtml?faces-redirect=true";
+        nav.handleNavigation(ctx, null, url);
+        ctx.renderResponse();        
 
     }
 
@@ -512,7 +517,7 @@ public class Registration implements Serializable {
 
                                     String fullnames = mode.getLname() + " " + mode.getFname();
                                     String slink = "http://localhost:8080/SchlMgt/faces/pages/createStaff/index.xhtml?id=";
-                                    String insertemail = "insert into "+getSchool()+"_staffstatus (guid,fullname,status,datelogged,staffemail,datetime,staffphone,link)"
+                                    String insertemail = "insert into " + getSchool() + "_staffstatus (guid,fullname,status,datelogged,staffemail,datetime,staffphone,link)"
                                             + "values(?,?,?,?,?,?,?,?)";
 
                                     pstmt = con.prepareStatement(insertemail);
@@ -573,7 +578,7 @@ public class Registration implements Serializable {
 
     public int studentIdCheck(Connection con) throws SQLException {
 
-        String testflname = "Select * from "+getSchool()+"_student_details order by id DESC LIMIT 1";
+        String testflname = "Select * from " + getSchool() + "_student_details order by id DESC LIMIT 1";
         pstmt = con.prepareStatement(testflname);
         rs = pstmt.executeQuery();
 
@@ -584,7 +589,7 @@ public class Registration implements Serializable {
     }
 
     public boolean studentEmailCheck(String email, String gmail, Connection con) throws SQLException {
-        String testemail = "Select * from "+getSchool()+"_student_details where student_email=? or guardian_email=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where student_email=? or guardian_email=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, email);
         pstmt.setString(2, gmail);
@@ -599,7 +604,7 @@ public class Registration implements Serializable {
     }
 
     public boolean studentEmailCheckName(String gmail, String fname, String mname, String lname, Connection con) throws SQLException {
-        String testemail = "Select * from "+getSchool()+"_student_details where guardian_email=? and guardian_firstname=? and guardian_middlename=?"
+        String testemail = "Select * from " + getSchool() + "_student_details where guardian_email=? and guardian_firstname=? and guardian_middlename=?"
                 + " and guardian_lastname=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, gmail);
@@ -617,7 +622,7 @@ public class Registration implements Serializable {
     }
 
     public boolean studentPhoneCheck(String pnum, String gpnum, Connection con) throws SQLException {
-        String testemail = "Select * from "+getSchool()+"_student_details where student_phone=? or Guardian_phone=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where student_phone=? or Guardian_phone=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, pnum);
         pstmt.setString(2, gpnum);
@@ -632,7 +637,7 @@ public class Registration implements Serializable {
     }
 
     public boolean studentPhoneCheckName(String gpnum, String fname, String mname, String lname, Connection con) throws SQLException {
-        String testemail = "Select * from "+getSchool()+"_student_details where Guardian_phone=? and guardian_firstname=? and guardian_middlename=?"
+        String testemail = "Select * from " + getSchool() + "_student_details where Guardian_phone=? and guardian_firstname=? and guardian_middlename=?"
                 + " and guardian_lastname=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, gpnum);
@@ -651,7 +656,7 @@ public class Registration implements Serializable {
 
     public boolean studentNameCheck(String fname, String lname, Connection con) {
         try {
-            String testflname = "Select * from "+getSchool()+"_student_details where first_name=? and last_name=? and is_deleted=?";
+            String testflname = "Select * from " + getSchool() + "_student_details where first_name=? and last_name=? and is_deleted=?";
             pstmt = con.prepareStatement(testflname);
             pstmt.setString(1, fname);
             pstmt.setString(2, lname);
@@ -1047,7 +1052,7 @@ public class Registration implements Serializable {
         try {
             con = dbConnections.mySqlDBconnection();
             UUID idOne = UUID.randomUUID();
-            String insertStudentDetails = "insert into "+getSchool()+"_Student_details"
+            String insertStudentDetails = "insert into " + getSchool() + "_Student_details"
                     + "(first_name,middle_name,last_name,fullname,DOB,student_phone,student_email,sex,Guardian_firstname,"
                     + "Guardian_middlename,Guardian_lastname,Guardian_fullname,Guardian_phone,"
                     + "Guardian_email,guardian_address,previous_school,"
@@ -1090,7 +1095,7 @@ public class Registration implements Serializable {
             pstmt.executeUpdate();
 
             String slink = "http://localhost:8080/SchlMgt/faces/pages/create/index.xhtml?id=";
-            String insertEmail = "insert into "+getSchool()+"_studentstatus (guid,full_name,status,datelogged,studentemail,date_time,studentId,link)"
+            String insertEmail = "insert into " + getSchool() + "_studentstatus (guid,full_name,status,datelogged,studentemail,date_time,studentId,link)"
                     + "values(?,?,?,?,?,?,?,?)";
 
             pstmt = con.prepareStatement(insertEmail);
@@ -1114,7 +1119,7 @@ public class Registration implements Serializable {
     public void classUpload(int studentId, String fname, String mname, String lname, String grade, String arm, String term, String year, String createdby, String fullname, String currentclass, Connection con) {
 
         try {
-            String nurseryInsert = "insert into "+getSchool()+"_tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
+            String nurseryInsert = "insert into " + getSchool() + "_tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
                     + "classtype,isdeleted,datecreated,datetime_created,createdby,Arm,currentclass,term,year) values "
                     + "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             pstmt = con.prepareStatement(nurseryInsert);

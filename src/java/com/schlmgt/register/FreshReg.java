@@ -5,12 +5,14 @@
  */
 package com.schlmgt.register;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.AESencrp;
 import com.schlmgt.logic.DateManipulation;
 import com.schlmgt.logic.LoadPPTfile;
 import com.schlmgt.login.UserDetails;
+import com.schlmgt.profile.SecondaryModel;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -105,10 +107,14 @@ public class FreshReg implements Serializable {
     private String imageLocation;
     private List<GradeModel> modeGrade;
     private String sexs;
+    private String school;
 
     @PostConstruct
     public void init() {
         try {
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            FacesMessage msg;
             confirmPanel = false;
             studentPanel = true;
             armStatus = true;
@@ -120,6 +126,20 @@ public class FreshReg implements Serializable {
             country = countryModel();
             relatio = false;
             dStatus = false;
+            String stuValue = null;
+
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            stuValue = (String) ctx.getExternalContext().getApplicationMap().get("regDet");
+            stuValue = stuValue.replaceAll("\\s", "_");
+            setSchool(stuValue);
+            System.out.println(getSchool() + " hi");
+            //test for null...
+            if (getSchool() != null) {                
+            } else {
+                setMessangerOfTruth("Please click on register and select name of school and registration type to proceed!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                context.addMessage(null, msg);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -656,18 +676,27 @@ public class FreshReg implements Serializable {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        con = dbConnections.mySqlDBconnection();
-        String testflname = "Select * from student_details where first_name=? and last_name=? and is_deleted=?";
-        pstmt = con.prepareStatement(testflname);
-        pstmt.setString(1, fname);
-        pstmt.setString(2, lname);
-        pstmt.setBoolean(3, false);
-        rs = pstmt.executeQuery();
+        FacesContext context = FacesContext.getCurrentInstance();
+        FacesMessage msg;
+        try {
+            con = dbConnections.mySqlDBconnection();
+            String testflname = "Select * from " + getSchool() + "_student_details where first_name=? and last_name=? and is_deleted=?";
+            pstmt = con.prepareStatement(testflname);
+            pstmt.setString(1, fname);
+            pstmt.setString(2, lname);
+            pstmt.setBoolean(3, false);
+            rs = pstmt.executeQuery();
 
-        if (rs.next()) {
-            return true;
+            if (rs.next()) {
+                return true;
+            }
+            return false;
+        } catch (MySQLSyntaxErrorException e) {
+            setMessangerOfTruth("Please click on register and select name of school and registration type to proceed!!");
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
+            return false;
         }
-        return false;
     }
 
     public int studentIdCheck() throws SQLException {
@@ -676,7 +705,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select * from student_details order by id DESC LIMIT 1";
+        String testflname = "Select * from " + getSchool() + "_student_details order by id DESC LIMIT 1";
         pstmt = con.prepareStatement(testflname);
         rs = pstmt.executeQuery();
 
@@ -692,7 +721,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where student_email=? or guardian_email=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where student_email=? or guardian_email=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, email);
         pstmt.setString(2, gmail);
@@ -712,7 +741,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where guardian_email=? and guardian_firstname=? and guardian_middlename=?"
+        String testemail = "Select * from " + getSchool() + "_student_details where guardian_email=? and guardian_firstname=? and guardian_middlename=?"
                 + " and guardian_lastname=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, gmail);
@@ -735,7 +764,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where student_phone=? or Guardian_phone=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where student_phone=? or Guardian_phone=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, pnum);
         pstmt.setString(2, gpnum);
@@ -755,7 +784,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where Guardian_phone=? and guardian_firstname=? and guardian_middlename=?"
+        String testemail = "Select * from " + getSchool() + "_student_details where Guardian_phone=? and guardian_firstname=? and guardian_middlename=?"
                 + " and guardian_lastname=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, gpnum);
@@ -778,7 +807,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where guardian_email=? or student_email=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where guardian_email=? or student_email=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, getGemail());
         pstmt.setString(2, getEmail());
@@ -798,7 +827,7 @@ public class FreshReg implements Serializable {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testemail = "Select * from student_details where Guardian_phone=? or Student_phone=? and is_deleted=?";
+        String testemail = "Select * from " + getSchool() + "_student_details where Guardian_phone=? or Student_phone=? and is_deleted=?";
         pstmt = con.prepareStatement(testemail);
         pstmt.setString(1, getGpnum());
         pstmt.setString(2, getPnum());
@@ -821,7 +850,7 @@ public class FreshReg implements Serializable {
         try {
             con = dbConnections.mySqlDBconnection();
 
-            String nurseryInsert = "insert into tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
+            String nurseryInsert = "insert into " + getSchool() + "_tbstudentclass (studentid,first_name,middle_name,last_name,full_name,class,"
                     + "classtype,isdeleted,datecreated,datetime_created,createdby,imagelink,Arm,currentclass,term,year) values "
                     + "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -923,7 +952,7 @@ public class FreshReg implements Serializable {
             String roleId = String.valueOf(userObj.getRole_id());
             con = dbConnections.mySqlDBconnection();
             UUID idOne = UUID.randomUUID();
-            String insertStudentDetails = "insert into Student_details"
+            String insertStudentDetails = "insert into " + getSchool() + "_Student_details"
                     + "(first_name,middle_name,last_name,fullname,DOB,student_phone,student_email,sex,Guardian_firstname,"
                     + "Guardian_middlename,Guardian_lastname,Guardian_fullname,relationship,relationship_other,Guardian_phone,"
                     + "Guardian_email,guardian_country,guardian_state,guardian_lga,guardian_address,previous_school,"
@@ -978,7 +1007,7 @@ public class FreshReg implements Serializable {
 
             pstmt.executeUpdate();
             String slink = "http://localhost:8080/SchlMgt/faces/pages/create/index.xhtml?id=";
-            String insertEmail = "insert into studentstatus (guid,full_name,status,datelogged,studentemail,date_time,studentId,link)"
+            String insertEmail = "insert into " + getSchool() + "_studentstatus (guid,full_name,status,datelogged,studentemail,date_time,studentId,link)"
                     + "values(?,?,?,?,?,?,?,?)";
 
             pstmt = con.prepareStatement(insertEmail);
@@ -1647,6 +1676,14 @@ public class FreshReg implements Serializable {
 
     public void setStudentPanel(boolean studentPanel) {
         this.studentPanel = studentPanel;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
 }

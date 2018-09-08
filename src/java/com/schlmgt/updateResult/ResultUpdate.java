@@ -10,6 +10,9 @@ import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.DateManipulation;
 import com.schlmgt.login.UserDetails;
 import com.schlmgt.profile.SecondaryModel;
+import com.schlmgt.register.ClassModel;
+import com.schlmgt.school.SchoolGetterMethod;
+import com.schlmgt.school.SchoolManagementModel;
 import com.schlmgt.updateSubject.SessionTable;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -36,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -58,6 +62,9 @@ public class ResultUpdate implements Serializable {
     private List<ResultModel> resultmodel1;
     private List<ResultModel> resultmodel2;
     private ResultModel modelResult = new ResultModel();
+    private String school;
+    private List<ClassModel> classmodel;
+    private SchoolGetterMethod schlGetterMethod= new SchoolGetterMethod();
 
     @PostConstruct
     public void init() {
@@ -1850,6 +1857,61 @@ public class ResultUpdate implements Serializable {
         }
     }
 
+    public List<ClassModel> classDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbclass";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<ClassModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public void onItemSelect(SelectEvent event) {
+        try {
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+            System.out.println(event.getObject().toString() + " table name: " + schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+            classmodel = classDropdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setResultmodel2(List<ResultModel> resultmodel2) {
         this.resultmodel2 = resultmodel2;
     }
@@ -1940,6 +2002,30 @@ public class ResultUpdate implements Serializable {
 
     public void setArm(String arm) {
         this.arm = arm;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public List<ClassModel> getClassmodel() {
+        return classmodel;
+    }
+
+    public void setClassmodel(List<ClassModel> classmodel) {
+        this.classmodel = classmodel;
+    }
+
+    public SchoolGetterMethod getSchlGetterMethod() {
+        return schlGetterMethod;
+    }
+
+    public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
+        this.schlGetterMethod = schlGetterMethod;
     }
 
 }

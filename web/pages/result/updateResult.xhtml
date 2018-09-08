@@ -17,6 +17,12 @@
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
                     <div class="text-center">
+                        <p:outputLabel value="Select School: " for="event"/>                            
+                        <p:autoComplete id="event" value="#{result.school}" emptyMessage="no record found" completeMethod="#{result.schlGetterMethod.completeSchool}">
+                            <p:ajax event="itemSelect" listener="#{result.onItemSelect}" update="sclass" />
+                        </p:autoComplete>
+                    </div>
+                    <div class="text-center">
                         <p:growl id="wat"></p:growl>
                         <p:panel id="dude" style="border: none;">
                             <p:selectOneMenu id="sclass" class="form-control" value="#{result.sclass}" required="true" requiredMessage="Class required">
@@ -24,7 +30,7 @@
 
                                 <p:ajax listener="#{classmode.onClassChanges(result.sclass)}" update="grad" />
                                 <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
-                                <f:selectItems value="#{classmode.classmodel}"
+                                <f:selectItems value="#{result.classmodel}"
                                                var="singlevalue"  
                                                itemLabel="#{singlevalue.tbclass}"
                                                itemValue="#{singlevalue.id}"/>
