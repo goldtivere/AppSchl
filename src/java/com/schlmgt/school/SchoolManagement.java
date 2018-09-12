@@ -424,7 +424,7 @@ public class SchoolManagement implements Serializable {
         FacesMessage message;
         FacesContext context = FacesContext.getCurrentInstance();
         String smstable = tablename + "_smstable";
-        String studentDetails = tablename + "_student_Details";
+        String studentDetails = tablename + "_student_details";
         String studentClass = tablename + "_tbstudentclass";
         String studentResult = tablename + "_tbstudentresult";
         String studentResultCompute = tablename + "_tbresultcompute";

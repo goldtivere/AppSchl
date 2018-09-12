@@ -1052,7 +1052,7 @@ public class Registration implements Serializable {
         try {
             con = dbConnections.mySqlDBconnection();
             UUID idOne = UUID.randomUUID();
-            String insertStudentDetails = "insert into " + getSchool() + "_Student_details"
+            String insertStudentDetails = "insert into " + getSchool() + "_student_details"
                     + "(first_name,middle_name,last_name,fullname,DOB,student_phone,student_email,sex,Guardian_firstname,"
                     + "Guardian_middlename,Guardian_lastname,Guardian_fullname,Guardian_phone,"
                     + "Guardian_email,guardian_address,previous_school,"
