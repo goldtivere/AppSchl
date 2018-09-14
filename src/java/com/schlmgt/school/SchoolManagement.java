@@ -738,7 +738,7 @@ public class SchoolManagement implements Serializable {
 
     }
 
-    public int schoolEmail(String schoolHName,int id) throws SQLException {
+    public int schoolEmail(String schoolHName, int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -756,7 +756,7 @@ public class SchoolManagement implements Serializable {
 
     }
 
-    public int schoolPhoneCheck(String schoolHName,int id) throws SQLException {
+    public int schoolPhoneCheck(String schoolHName, int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -791,12 +791,12 @@ public class SchoolManagement implements Serializable {
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
+            System.out.println(schoolEmail(modeSchool.getEmailAdd(), modeSchool.getId()) + " this is serious " + EmailCheck(modeSchool.getEmailAdd(), con));
+            if (schoolNameCheck(modeSchool.getSchoolName(), modeSchool.getId())==1 ||  !SchoolNameCheck(modeSchool.getSchoolName(), con)) {
+                if (schoolHNameCheck(modeSchool.getSchoolHeadName(), modeSchool.getId())==1 || !SchoolHeadNameCheck(modeSchool.getSchoolHeadName(), con)) {
 
-            if (schoolNameCheck(modeSchool.getSchoolName(),modeSchool.getId()) <= 1) {
-                if (schoolHNameCheck(modeSchool.getSchoolHeadName(),modeSchool.getId()) <= 1) {
-
-                    if (schoolEmail(modeSchool.getEmailAdd(),modeSchool.getId()) <= 1) {
-                        if (schoolPhoneCheck(modeSchool.getPnum(),modeSchool.getId()) <= 1) {
+                    if (schoolEmail(modeSchool.getEmailAdd(), modeSchool.getId()) == 1 || !EmailCheck(modeSchool.getEmailAdd(), con)) {
+                        if (schoolPhoneCheck(modeSchool.getPnum(), modeSchool.getId()) == 1 || !PhoneCheck(modeSchool.getPnum(), con)) {
                             String schoolDetails = "update tbschlmgt set schlname=? ,schoolheadname=?, designation=?, emailaddress=?, phonenumber=?, "
                                     + "updatedby=?, updatedid=?,dateupdated=? where id=? and tablename=?";
 
@@ -811,8 +811,7 @@ public class SchoolManagement implements Serializable {
                             pstmt.setInt(7, createdId);
                             pstmt.setString(8, DateManipulation.dateAndTime());
                             pstmt.setInt(9, modeSchool.getId());
-                            pstmt.setString(10, modeSchool.getTableName());
-                            System.out.println(modeSchool.getTableName() + " hi Gold " + modeSchool.getId()+ modeSchool.getSchoolName());
+                            pstmt.setString(10, modeSchool.getTableName());                            
                             pstmt.executeUpdate();
 
                             String struc = "update tbschltablestructure set schoolname=? where dbname=?";
