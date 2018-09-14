@@ -41,7 +41,7 @@
             <div style="margin-top: 20px;"> 
                 <p:panel id="nursery">
                     <div class="ibox-content">
-                        
+
 
                         <p:dataTable id="s" class="table table-responsive" var="papprv_rpt" 
                                      value="#{schoolManagement.schlmgtModel}"
@@ -78,6 +78,10 @@
                                 <h:outputText value="#{papprv_rpt.schoolName}"/>
 
                             </p:column>
+                             <p:column headerText="L.G.A">
+                                 <h:outputText value="#{papprv_rpt.lga}"/>
+
+                            </p:column>
                             <p:column headerText="School Head">
                                 <h:outputText value="#{papprv_rpt.schoolHeadName}"/>
 
@@ -106,17 +110,58 @@
                                 <h:outputText value="#{papprv_rpt.totalfemale}"/>
 
                             </p:column>
-                            <p:column style="width:60px" exportable="false">
-                                <f:facet name="header">Action</f:facet>
-                                <p:commandButton value="" icon="ui-icon-search" process="@this"
-                                                 actionListener="#{schoolManagement.selectReco(papprv_rpt)}"/>                               
-                            </p:column>                            
+                            
+                              <p:column headerText="Action" style="width:60px" exportable="false">                                
+                                <p:commandButton value="" alt="search" id="please" icon="ui-icon-pencil" update=":templateForm:ooo:okay,:templateForm:ooo:upda" process="@this" 
+                                                 oncomplete="PF('dlg2').show()"> 
+                                    <f:setPropertyActionListener value="#{papprv_rpt}" target="#{schoolManagement.modeSchool}" />
+                                </p:commandButton>                               
+                            </p:column>
+                                         
                         </p:dataTable> 
 
                     </div>
                 </p:panel> 
 
+                <p:dialog header="Edit School Details" style="margin-top: -200px; margin-left: -250px;" position="center" widgetVar="dlg2">                                        
+                    <h:form id="ooo">
+                        <p:panel id="okay"> 
+                            <p:messages id="hi" ></p:messages>
+                            <p:outputPanel id="upda">
+                                <h:panelGrid columns="2">
+                                    <p:outputLabel value="School Name: " for="schlName"/>
+                                    <p:inputTextarea id="schlName" class="form-control" value="#{schoolManagement.modeSchool.schoolName}" required="true" requiredMessage="School Name is required"/>                                
 
+                                    <p:outputLabel value="Local Government Area: " for="lgaa"/>
+                                    <p:inputText id="lgaa" class="form-control" value="#{schoolManagement.modeSchool.lga}" required="true" requiredMessage="Local Government is required"/>                                
+
+                                    <p:outputLabel value="School Head Name: " for="schlHName"/>
+                                    <p:inputText id="schlHName" class="form-control" value="#{schoolManagement.modeSchool.schoolHeadName}" required="true" requiredMessage="School Head Name is required"/>                                
+
+                                    <p:outputLabel value="Designation: " for="design"/>
+                                    <p:inputText id="design" class="form-control" value="#{schoolManagement.modeSchool.designation}" required="true" requiredMessage="Designation is required"/>                                
+
+                                    <p:outputLabel value="Phone Number: " for="pnn"/>
+                                    <p:inputText id="pnn" class="form-control" required="true" requiredMessage="Phone Number is required" value="#{schoolManagement.modeSchool.pnum}" maxlength="11"/>                                
+
+                                    <p:outputLabel value="Email Address: " for="emmail"/>
+                                     <p:inputText id="emmail" value="#{schoolManagement.modeSchool.emailAdd}" label="emmail"
+                                                 requiredMessage="Please enter your email address."
+                                                 validatorMessage="Invalid email format"
+                                                 >
+
+                                        <f:validateRegex
+                                            pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                                    </p:inputText>                                                                        
+
+                                    <p:commandButton value="update"  update=":templateForm:s,:templateForm:wat" process="@this schlName,lgaa,schlHName,design,pnn,emmail" actionListener="#{schoolManagement.updateSchoolDetails}" oncomplete="handleLoginRequest(xhr, status, args)"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+
+                        </p:panel>
+                    </h:form>
+                </p:dialog> 
 
 
             </div>            

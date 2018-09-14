@@ -28,6 +28,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.NavigationHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -48,6 +49,7 @@ public class SchoolManagement implements Serializable {
 
     private UploadedFile csv;
     private List<SchoolManagementModel> schlmgtModel;
+    private SchoolManagementModel modeSchool = new SchoolManagementModel();
     private String messangerOfTruth;
     Connection con = null;
     PreparedStatement pstmt = null;
@@ -145,6 +147,8 @@ public class SchoolManagement implements Serializable {
                 coun.setSchoolName(rs.getString("schlname"));
                 coun.setSchoolHeadName(rs.getString("schoolheadname"));
                 coun.setPnum(rs.getString("phonenumber"));
+                coun.setLga(rs.getString("lga"));
+                coun.setTableName(rs.getString("tablename"));
                 coun.setEmailAdd(rs.getString("emailaddress"));
                 coun.setDesignation(rs.getString("designation"));
                 coun.setTotalstudent(rs.getInt("totalstudent"));
@@ -430,7 +434,7 @@ public class SchoolManagement implements Serializable {
         String studentResultCompute = tablename + "_tbresultcompute";
         String finalCompute = tablename + "_tbfinalCompute";
         String studentStatus = tablename + "_studentstatus";
-        String sessionTable= tablename+"_sessiontable";
+        String sessionTable = tablename + "_sessiontable";
 
         try {
 
@@ -454,7 +458,7 @@ public class SchoolManagement implements Serializable {
             pstmt = con.prepareStatement(smstablename);
             pstmt.executeUpdate();
 
-            String sessionTab = "CREATE TABLE "+sessionTable+" ("
+            String sessionTab = "CREATE TABLE " + sessionTable + " ("
                     + "  `Id` int(11) NOT NULL AUTO_INCREMENT,"
                     + "  `Term` varchar(100) DEFAULT NULL,"
                     + "  `Class` varchar(100) DEFAULT NULL,"
@@ -663,22 +667,23 @@ public class SchoolManagement implements Serializable {
             UUID idOne = UUID.randomUUID();
             String tableName = mode.getSchoolName().replaceAll("\\s", "_");
             String insertStudentDetails = "insert into tbschlmgt"
-                    + "(schlname,tablename,schoolheadname,designation,emailaddress,phonenumber,isdeleted,createdby,createdid,"
+                    + "(schlname,tablename,schoolheadname,lga,designation,emailaddress,phonenumber,isdeleted,createdby,createdid,"
                     + "datecreated)"
                     + "values"
-                    + "(?,?,?,?,?,"
+                    + "(?,?,?,?,?,?,"
                     + "?,?,?,?,?)";
             pstmt = con.prepareStatement(insertStudentDetails);
             pstmt.setString(1, mode.getSchoolName());
             pstmt.setString(2, tableName);
             pstmt.setString(3, mode.getSchoolHeadName());
-            pstmt.setString(4, mode.getDesignation());
-            pstmt.setString(5, mode.getEmailAdd());
-            pstmt.setString(6, mode.getPnum());
-            pstmt.setBoolean(7, false);
-            pstmt.setString(8, createdby);
-            pstmt.setInt(9, createdId);
-            pstmt.setString(10, DateManipulation.dateAndTime());
+            pstmt.setString(4, mode.getLga());
+            pstmt.setString(5, mode.getDesignation());
+            pstmt.setString(6, mode.getEmailAdd());
+            pstmt.setString(7, mode.getPnum());
+            pstmt.setBoolean(8, false);
+            pstmt.setString(9, createdby);
+            pstmt.setInt(10, createdId);
+            pstmt.setString(11, DateManipulation.dateAndTime());
 
             pstmt.executeUpdate();
 
@@ -692,6 +697,154 @@ public class SchoolManagement implements Serializable {
             pstmt.setBoolean(3, false);
             pstmt.executeUpdate();
             insert(tableName);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public int schoolNameCheck(String schoolName) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        con = dbConnections.mySqlDBconnection();
+        String testflname = "Select count(*) schoolCount from tbschlmgt where schlname=? and isdeleted=?";
+        pstmt = con.prepareStatement(testflname);
+        pstmt.setString(1, schoolName);
+        pstmt.setBoolean(2, false);
+        rs = pstmt.executeQuery();
+
+        rs.next();
+        return rs.getInt("schoolCount");
+
+    }
+
+    public int schoolHNameCheck(String schoolHName) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        con = dbConnections.mySqlDBconnection();
+        String testflname = "Select count(*) schoolCount from tbschlmgt where schoolheadname=? and isdeleted=?";
+        pstmt = con.prepareStatement(testflname);
+        pstmt.setString(1, schoolHName);
+        pstmt.setBoolean(2, false);
+        rs = pstmt.executeQuery();
+
+        rs.next();
+        return rs.getInt("schoolCount");
+
+    }
+
+    public int schoolEmail(String schoolHName) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        con = dbConnections.mySqlDBconnection();
+        String testflname = "Select count(*) schoolCount from tbschlmgt where emailaddress=? and isdeleted=?";
+        pstmt = con.prepareStatement(testflname);
+        pstmt.setString(1, schoolHName);
+        pstmt.setBoolean(2, false);
+        rs = pstmt.executeQuery();
+
+        rs.next();
+        return rs.getInt("schoolCount");
+
+    }
+
+    public int schoolPhoneCheck(String schoolHName) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        con = dbConnections.mySqlDBconnection();
+        String testflname = "Select count(*) schoolCount from tbschlmgt where phonenumber=? and isdeleted=?";
+        pstmt = con.prepareStatement(testflname);
+        pstmt.setString(1, schoolHName);
+        pstmt.setBoolean(2, false);
+        rs = pstmt.executeQuery();
+
+        rs.next();
+        return rs.getInt("schoolCount");
+
+    }
+
+    public void updateSchoolDetails() {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FacesMessage msg;
+        FacesContext context = FacesContext.getCurrentInstance();
+        RequestContext cont = RequestContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        boolean loggedIn = true;
+
+        try {
+            UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+            String on = String.valueOf(userObj);
+            String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
+            int createdId = userObj.getId();
+            con = dbConnections.mySqlDBconnection();
+
+            if (schoolNameCheck(modeSchool.getSchoolName()) <= 1) {
+                if (schoolHNameCheck(modeSchool.getSchoolHeadName()) <= 1) {
+
+                    if (schoolEmail(modeSchool.getEmailAdd()) <= 1) {
+                        if (schoolPhoneCheck(modeSchool.getPnum()) <= 1) {
+                            String schoolDetails = "update tbschlmgt set schlname=? ,schoolheadname=?, designation=?, emailaddress=?, phonenumber=?, "
+                                    + "updatedby=?, updatedid=?,dateupdated=? where id=? and tablename=?";
+
+                            pstmt = con.prepareStatement(schoolDetails);
+
+                            pstmt.setString(1, modeSchool.getSchoolName());
+                            pstmt.setString(2, modeSchool.getSchoolHeadName());
+                            pstmt.setString(3, modeSchool.getDesignation());
+                            pstmt.setString(4, modeSchool.getEmailAdd());
+                            pstmt.setString(5, modeSchool.getPnum());
+                            pstmt.setString(6, createdby);
+                            pstmt.setInt(7, createdId);
+                            pstmt.setString(8, DateManipulation.dateAndTime());
+                            pstmt.setInt(9, modeSchool.getId());
+                            pstmt.setString(10, modeSchool.getTableName());
+                            System.out.println(modeSchool.getTableName() + " hi Gold " + modeSchool.getId()+ modeSchool.getSchoolName());
+                            pstmt.executeUpdate();
+
+                            String struc = "update tbschltablestructure set schoolname=? where dbname=?";
+
+                            pstmt = con.prepareStatement(struc);
+
+                            pstmt.setString(1, modeSchool.getSchoolName());
+                            pstmt.setString(2, modeSchool.getTableName());
+                            pstmt.executeUpdate();
+
+                            setMessangerOfTruth("School details Updated!!");
+                            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                            context.addMessage(null, msg);
+                            cont.addCallbackParam("loggedIn", loggedIn);
+                        } else {
+                            setMessangerOfTruth("School Head Name Phone number already Exist!!");
+                            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                            context.addMessage(null, msg);
+                        }
+                    } else {
+                        setMessangerOfTruth("School Head Name Email already Exist!!");
+                        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                        context.addMessage(null, msg);
+                    }
+
+                } else {
+                    setMessangerOfTruth("School Head Name already Exist!!");
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                    context.addMessage(null, msg);
+                }
+            } else {
+                setMessangerOfTruth("School Name already exist!!");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                context.addMessage(null, msg);
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -719,6 +872,46 @@ public class SchoolManagement implements Serializable {
 
     public void setMessangerOfTruth(String messangerOfTruth) {
         this.messangerOfTruth = messangerOfTruth;
+    }
+
+    public SchoolManagementModel getModeSchool() {
+        return modeSchool;
+    }
+
+    public void setModeSchool(SchoolManagementModel modeSchool) {
+        this.modeSchool = modeSchool;
+    }
+
+    public Connection getCon() {
+        return con;
+    }
+
+    public void setCon(Connection con) {
+        this.con = con;
+    }
+
+    public PreparedStatement getPstmt() {
+        return pstmt;
+    }
+
+    public void setPstmt(PreparedStatement pstmt) {
+        this.pstmt = pstmt;
+    }
+
+    public ResultSet getRs() {
+        return rs;
+    }
+
+    public void setRs(ResultSet rs) {
+        this.rs = rs;
+    }
+
+    public DbConnectionX getDbConnections() {
+        return dbConnections;
+    }
+
+    public void setDbConnections(DbConnectionX dbConnections) {
+        this.dbConnections = dbConnections;
     }
 
 }
