@@ -702,16 +702,17 @@ public class SchoolManagement implements Serializable {
         }
     }
 
-    public int schoolNameCheck(String schoolName) throws SQLException {
+    public int schoolNameCheck(String schoolName, int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select count(*) schoolCount from tbschlmgt where schlname=? and isdeleted=?";
+        String testflname = "Select count(*) schoolCount from tbschlmgt where schlname=? and id=? and isdeleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, schoolName);
-        pstmt.setBoolean(2, false);
+        pstmt.setInt(2, id);
+        pstmt.setBoolean(3, false);
         rs = pstmt.executeQuery();
 
         rs.next();
@@ -719,16 +720,17 @@ public class SchoolManagement implements Serializable {
 
     }
 
-    public int schoolHNameCheck(String schoolHName) throws SQLException {
+    public int schoolHNameCheck(String schoolHName, int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select count(*) schoolCount from tbschlmgt where schoolheadname=? and isdeleted=?";
+        String testflname = "Select count(*) schoolCount from tbschlmgt where schoolheadname=? and id=? and isdeleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, schoolHName);
-        pstmt.setBoolean(2, false);
+        pstmt.setInt(2, id);
+        pstmt.setBoolean(3, false);
         rs = pstmt.executeQuery();
 
         rs.next();
@@ -736,16 +738,17 @@ public class SchoolManagement implements Serializable {
 
     }
 
-    public int schoolEmail(String schoolHName) throws SQLException {
+    public int schoolEmail(String schoolHName,int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select count(*) schoolCount from tbschlmgt where emailaddress=? and isdeleted=?";
+        String testflname = "Select count(*) schoolCount from tbschlmgt where emailaddress=? and id=? and isdeleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, schoolHName);
-        pstmt.setBoolean(2, false);
+        pstmt.setInt(2, id);
+        pstmt.setBoolean(3, false);
         rs = pstmt.executeQuery();
 
         rs.next();
@@ -753,16 +756,17 @@ public class SchoolManagement implements Serializable {
 
     }
 
-    public int schoolPhoneCheck(String schoolHName) throws SQLException {
+    public int schoolPhoneCheck(String schoolHName,int id) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         con = dbConnections.mySqlDBconnection();
-        String testflname = "Select count(*) schoolCount from tbschlmgt where phonenumber=? and isdeleted=?";
+        String testflname = "Select count(*) schoolCount from tbschlmgt where phonenumber=? and id=? and isdeleted=?";
         pstmt = con.prepareStatement(testflname);
         pstmt.setString(1, schoolHName);
-        pstmt.setBoolean(2, false);
+        pstmt.setInt(2, id);
+        pstmt.setBoolean(3, false);
         rs = pstmt.executeQuery();
 
         rs.next();
@@ -788,11 +792,11 @@ public class SchoolManagement implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
 
-            if (schoolNameCheck(modeSchool.getSchoolName()) <= 1) {
-                if (schoolHNameCheck(modeSchool.getSchoolHeadName()) <= 1) {
+            if (schoolNameCheck(modeSchool.getSchoolName(),modeSchool.getId()) <= 1) {
+                if (schoolHNameCheck(modeSchool.getSchoolHeadName(),modeSchool.getId()) <= 1) {
 
-                    if (schoolEmail(modeSchool.getEmailAdd()) <= 1) {
-                        if (schoolPhoneCheck(modeSchool.getPnum()) <= 1) {
+                    if (schoolEmail(modeSchool.getEmailAdd(),modeSchool.getId()) <= 1) {
+                        if (schoolPhoneCheck(modeSchool.getPnum(),modeSchool.getId()) <= 1) {
                             String schoolDetails = "update tbschlmgt set schlname=? ,schoolheadname=?, designation=?, emailaddress=?, phonenumber=?, "
                                     + "updatedby=?, updatedid=?,dateupdated=? where id=? and tablename=?";
 
