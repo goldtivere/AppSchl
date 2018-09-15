@@ -92,7 +92,7 @@ public class Login implements Serializable {
                 dto.setCanUpdateResult(rs.getBoolean("canupdateresult"));
                 dto.setCanUpdateSubject(rs.getBoolean("canupdatesubject"));
                 dto.setCanSendMessage(rs.getBoolean("cansendtext"));
-                dto.setCanManageSchool(rs.getString("canmanageschool"));
+                dto.setCanManageSchool(rs.getBoolean("canmanageschool"));
                 
                 context.getExternalContext().getSessionMap().put("sessn_nums", getDto());
                 
