@@ -86,6 +86,10 @@
                             <p:selectBooleanCheckbox value="#{papprv_rpt.canSendMessage}" />                            
 
                         </p:column>
+                          <p:column headerText="Can Manage School">
+                              <p:selectBooleanCheckbox value="#{papprv_rpt.canManageSchool}" />                            
+
+                        </p:column>
                         <p:column headerText="Action" exportable="false"> 
                             <p:commandButton process="@this n" actionListener="#{roleManager.updateRole}" update=":templateForm:n,:templateForm:wow"  value="update">                                                                                             
                             </p:commandButton>                                                                               

@@ -123,7 +123,7 @@ public class RoleManager implements Serializable {
             } else {
 
                 String updateSubject = "update user_details set canupdateresult=?,canupdatesubject=?,canregisterstaff=?, "
-                        + " canregisterstudent=? , cansendtext=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
+                        + " canregisterstudent=? , cansendtext=?,canMessageSchool=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
 
                 pstmt = con.prepareStatement(updateSubject);
                 RoleManagerModel ta = roleManager2;
@@ -132,10 +132,11 @@ public class RoleManager implements Serializable {
                 pstmt.setBoolean(3, ta.isCanRegisterStaff());
                 pstmt.setBoolean(4, ta.isCanRegisterStudent());
                 pstmt.setBoolean(5, ta.isCanSendMessage());
-                pstmt.setString(6, DateManipulation.dateAlone());
-                pstmt.setString(7, DateManipulation.dateAndTime());
-                pstmt.setString(8, createdby);
-                pstmt.setInt(9, ta.getId());
+                pstmt.setBoolean(6, ta.isCanManageSchool());
+                pstmt.setString(7, DateManipulation.dateAlone());
+                pstmt.setString(8, DateManipulation.dateAndTime());
+                pstmt.setString(9, createdby);
+                pstmt.setInt(10, ta.getId());
                 pstmt.executeUpdate();
                 roleManager = displayRole();
                 setMessangerOfTruth("Role Updated for Admin!!");

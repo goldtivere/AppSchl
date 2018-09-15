@@ -59,7 +59,11 @@ public class filter implements Filter {
                      resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 } 
                 
-                 if (l.getRoleAssigned() == 2 && (!l.isCanRegisterStaff() || !l.isCanRegisterStaff()) && reqURI.contains("faces/pages/register/")) {
+                 if (l.getRoleAssigned() == 2 && (!l.isCanRegisterStaff() || !l.isCanRegisterStudent()) && reqURI.contains("faces/pages/register/")) {
+                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                } 
+                 
+                 if (l.getRoleAssigned() == 2 && !l.isCanManageSchool()&& reqURI.contains("faces/pages/role/")) {
                      resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 } 
                

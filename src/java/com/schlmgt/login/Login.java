@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSession;
 @ManagedBean(name = "login")
 @SessionScoped
 public class Login implements Serializable {
-
+    
     private String username;
     private String password;
     private String messangerOfTruth;
@@ -44,25 +44,25 @@ public class Login implements Serializable {
     private boolean cancreatestudent;
     private boolean cansendtext;
     private int assignedRole;
-
+    
     public void loginpage() throws Exception {
-
+        
         FacesContext context = FacesContext.getCurrentInstance();
-
+        
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-
+        
         try {
-
+            
             con = dbConnections.mySqlDBconnection();
-
+            
             String queryProfile = "select * from user_details "
                     + "where username=? and Password=? and is_deleted=?";
 
             //encrypt the password entered and then compared with what you have in the DB
-            String doEncPwd = AESencrp.encrypt(getPassword());                        
+            String doEncPwd = AESencrp.encrypt(getPassword());
             //
             pstmt = con.prepareStatement(queryProfile);
             pstmt.setString(1, getUsername());
@@ -72,9 +72,9 @@ public class Login implements Serializable {
             //System.out.println(getUsername() + "," + doEncPwd  + "<>" + getPassword() );
             //pstmt.setString(2, "ok");
             rs = pstmt.executeQuery();
-
+            
             if (rs.next()) {
-
+                
                 dto.setUser_name(getUsername());
                 dto.setFirst_name(rs.getString("first_name"));
                 dto.setId(rs.getInt("id"));
@@ -92,19 +92,20 @@ public class Login implements Serializable {
                 dto.setCanUpdateResult(rs.getBoolean("canupdateresult"));
                 dto.setCanUpdateSubject(rs.getBoolean("canupdatesubject"));
                 dto.setCanSendMessage(rs.getBoolean("cansendtext"));
-
+                dto.setCanManageSchool(rs.getString("canmanageschool"));
+                
                 context.getExternalContext().getSessionMap().put("sessn_nums", getDto());
-
+                
                 NavigationHandler nav = context.getApplication().getNavigationHandler();
-
+                
                 String url_ = "/pages/home/homepage.xhtml?faces-redirect=true";
                 nav.handleNavigation(context, null, url_);
                 context.renderResponse();
-
+                
                 if (getAssignedRole() == 1) {
                     setRoleAssigned(false);
                     setRoleAssigned1(true);
-
+                    
                 } else if (getAssignedRole() == 3) {
                     setRoleAssigned(true);
                     setRoleAssigned1(false);
@@ -114,13 +115,13 @@ public class Login implements Serializable {
                     setRoleAssigned1(false);
                     setCanupdateResult(true);
                 }
-
+                
                 if (getAssignedRole() == 2 && dto.isCanSendMessage()) {
                     setRoleAssigned(false);
                     setRoleAssigned1(false);
                     setCansendtext(true);
                 }
-
+                
                 if (getAssignedRole() == 2 && dto.isCanUpdateSubject()) {
                     setRoleAssigned(false);
                     setRoleAssigned1(false);
@@ -131,23 +132,23 @@ public class Login implements Serializable {
                     setRoleAssigned1(false);
                     setCancreatestaff(true);
                 }
-
+                
             } else {
-
+                
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid login details", "Invalid login details"));
 
                 //System.out.println("Failed.");
             }
-
+            
         } catch (NullPointerException e) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable111, please try again later."));
         } catch (Exception e) {
-
+            
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable, please try again later."));
             e.printStackTrace();
-
+            
         } finally {
-
+            
             if (!(con == null)) {
                 con.close();
                 con = null;
@@ -156,149 +157,149 @@ public class Login implements Serializable {
                 pstmt.close();
                 pstmt = null;
             }
-
+            
         }
-
+        
     }//end activities...
 
     public void noactivity(ActionEvent evt) {
         getLogout();
     }
-
+    
     public boolean getLogout() {
-
+        
         FacesContext context = FacesContext.getCurrentInstance();
-
+        
         try {
-
+            
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
             session.invalidate();
 
             // pageMover.setValue01("page1.xhtml");
             //context.getExternalContext().getSessionMap().clear();
             NavigationHandler nav = context.getApplication().getNavigationHandler();
-
+            
             nav.handleNavigation(context, null, "/index.xhtml?faces-redirect=true");
             //nav.handleNavigation(context, null, "/../../login.xhtml?faces-redirect=true");
 
             context.renderResponse();
-
+            
             if (context.getExternalContext().getSessionMap().isEmpty()) {
 
                 //System.out.println("Why:" + dto.getUsername());
                 return true;
-
+                
             } else {
-
+                
                 context.addMessage(null, new FacesMessage("App. cannot close at this time,try later."));
                 //System.out.println("Why:" + dto.getUsername());
                 return false;
             }
-
+            
         } catch (Exception e) {
-
+            
             context.addMessage(null, new FacesMessage("System Unavailable."));
             e.printStackTrace();
             return false;
-
+            
         }
-
+        
     }//end getLogout
 
     public String getMessangerOfTruth() {
         return messangerOfTruth;
     }
-
+    
     public void setMessangerOfTruth(String messangerOfTruth) {
         this.messangerOfTruth = messangerOfTruth;
     }
-
+    
     public UserDetails getDto() {
         return dto;
     }
-
+    
     public void setDto(UserDetails dto) {
         this.dto = dto;
     }
-
+    
     public String getUsername() {
         return username;
     }
-
+    
     public void setUsername(String username) {
         this.username = username;
     }
-
+    
     public String getPassword() {
         return password;
     }
-
+    
     public void setPassword(String password) {
         this.password = password;
     }
-
+    
     public boolean isRoleAssigned() {
         return roleAssigned;
     }
-
+    
     public void setRoleAssigned(boolean roleAssigned) {
         this.roleAssigned = roleAssigned;
     }
-
+    
     public int getAssignedRole() {
         return assignedRole;
     }
-
+    
     public void setAssignedRole(int assignedRole) {
         this.assignedRole = assignedRole;
     }
-
+    
     public boolean isRoleAssigned1() {
         return roleAssigned1;
     }
-
+    
     public void setRoleAssigned1(boolean roleAssigned1) {
         this.roleAssigned1 = roleAssigned1;
     }
-
+    
     public boolean isCanupdateResult() {
         return canupdateResult;
     }
-
+    
     public void setCanupdateResult(boolean canupdateResult) {
         this.canupdateResult = canupdateResult;
     }
-
+    
     public boolean isCanupdateSubject() {
         return canupdateSubject;
     }
-
+    
     public void setCanupdateSubject(boolean canupdateSubject) {
         this.canupdateSubject = canupdateSubject;
     }
-
+    
     public boolean isCancreatestaff() {
         return cancreatestaff;
     }
-
+    
     public void setCancreatestaff(boolean cancreatestaff) {
         this.cancreatestaff = cancreatestaff;
     }
-
+    
     public boolean isCancreatestudent() {
         return cancreatestudent;
     }
-
+    
     public void setCancreatestudent(boolean cancreatestudent) {
         this.cancreatestudent = cancreatestudent;
     }
-
+    
     public boolean isCansendtext() {
         return cansendtext;
     }
-
+    
     public void setCansendtext(boolean cansendtext) {
         this.cansendtext = cansendtext;
     }
-
+    
 }
