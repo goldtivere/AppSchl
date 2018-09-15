@@ -70,19 +70,22 @@ public class StudentReport {
     private List<ResultModel> tableData;
     private List<String> tableHeaderNames;
     private List<String> subHead;
+    private List<String> armValue;
+    private List<String> yearDrop;
     private String sclass;
     private String grade;
     private String term;
     private String year;
     private boolean vis;
     private boolean bis;
+    private String arm;
     private StreamedContent exportFile;
 
     @PostConstruct
     public void init() {
         try {
             vis = false;
-            bis = false;
+            bis = false;            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -461,6 +464,73 @@ public class StudentReport {
         }
     }
 
+    public void onArmChange() throws Exception {
+        armValue = armDropdown();
+    }
+
+    public void onYearDropDown() throws Exception {
+        yearDrop = yearDropdown();
+    }
+
+    public List<String> yearDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT distinct year FROM yearterm";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("year"));
+
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public List<String> armDropdown() throws Exception {
+
+        //
+        try {
+            List<String> lst = new ArrayList<>();
+            lst.add("A");
+            lst.add("B");
+            lst.add("C");
+            lst.add("D");
+            return lst;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+    }
+
     public void writeToExcel() throws Exception {
 
         Workbook workbook = new XSSFWorkbook();
@@ -572,7 +642,7 @@ public class StudentReport {
             sheet.autoSizeColumn(i, true);
         }
 
-        String filename="sheet.xlsx";
+        String filename = "sheet.xlsx";
         FileOutputStream fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
@@ -611,6 +681,30 @@ public class StudentReport {
 //        try (OutputStream fileOut = new FileOutputStream("C:/workbook.xlsx")) {
 //            wb.write(fileOut);
 //        }
+    }
+
+    public String getArm() {
+        return arm;
+    }
+
+    public void setArm(String arm) {
+        this.arm = arm;
+    }
+
+    public List<String> getArmValue() {
+        return armValue;
+    }
+
+    public void setArmValue(List<String> armValue) {
+        this.armValue = armValue;
+    }
+
+    public List<String> getYearDrop() {
+        return yearDrop;
+    }
+
+    public void setYearDrop(List<String> yearDrop) {
+        this.yearDrop = yearDrop;
     }
 
 }

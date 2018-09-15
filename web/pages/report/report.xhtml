@@ -43,18 +43,27 @@
                                                itemValue="#{singlevalue.id}"/>
                             </p:selectOneMenu>                             
                             <p:selectOneMenu id="gra" class="form-control" value="#{studentReport.term}" required="true" requiredMessage="Term required">                                
-                                <p:ajax listener="#{classmode.ontermChanges(studentReport.term)}" update="gr" />
+                                <p:ajax listener="#{classmode.onarmChanges}" update="arm" />
                                 <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{classmode.termList}"
                                                var="singlevalue"  
                                                itemLabel="#{singlevalue.term}"
                                                itemValue="#{singlevalue.id}"/>
-                            </p:selectOneMenu>                 
+                            </p:selectOneMenu>   
+                            <p:selectOneMenu id="arm" value="#{studentReport.arm}"  class="form-control" requiredMessage="Arm is required" required="true">
+                                <p:ajax listener="#{studentReport.onYearDropDown}" update="gr" />
+                                <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{classmode.arm}"/>
+                            </p:selectOneMenu>
+
                             <p:selectOneMenu id="gr" class="form-control" value="#{studentReport.year}" required="true" requiredMessage="Year required">  
                                 <p:ajax listener="#{studentReport.onyearchange(studentReport.term)}" update="vis,zz" />
                                 <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
-                                <f:selectItems value="#{classmode.term}"/>
+                                <f:selectItems value="#{studentReport.yearDrop}"/>
                             </p:selectOneMenu>  
+
+
+
 
                         </p:panel>
                     </div>
