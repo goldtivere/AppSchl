@@ -77,6 +77,7 @@ public class RoleManager implements Serializable {
                 coun.setCanRegisterStudent(rs.getBoolean("canregisterstudent"));
                 coun.setCanRegisterStaff(rs.getBoolean("canregisterstaff"));
                 coun.setCanSendMessage(rs.getBoolean("cansendText"));
+                coun.setCanManageSchool(rs.getBoolean("canmanageschool"));
 
                 lst.add(coun);
             }
@@ -123,7 +124,7 @@ public class RoleManager implements Serializable {
             } else {
 
                 String updateSubject = "update user_details set canupdateresult=?,canupdatesubject=?,canregisterstaff=?, "
-                        + " canregisterstudent=? , cansendtext=?,canMessageSchool=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
+                        + " canregisterstudent=? , cansendtext=?,canManageSchool=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
 
                 pstmt = con.prepareStatement(updateSubject);
                 RoleManagerModel ta = roleManager2;

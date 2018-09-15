@@ -108,7 +108,15 @@
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/report/report.xhtml">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">Result Report</span>
                             </h:outputLink>
-                            </li>                                                                                                                                                            
+                            </li>  
+                            <li>
+                            <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/school/schoolManagement.xhtml">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">School Management</span>
+                            </h:outputLink>
+                            <h:outputLink rendered="#{login.canmanageschool}" value="#{request.contextPath}/faces/pages/school/schoolManagement.xhtml">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">School Management</span>
+                            </h:outputLink>
+                            </li> 
 
                         </ul>
 
@@ -213,7 +221,7 @@
                                                         <i class="glyphicon glyphicon-book"></i>Result Upload
                                                     </h:outputLink> 
                                                     </li>
-                                                     <li>
+                                                    <li>
                                                     <h:outputLink rendered="#{login.roleAssigned1}" value="#{request.contextPath}/faces/pages/Staff/viewResult.xhtml">
                                                         <i class="glyphicon glyphicon-book"></i>Result Upload
                                                     </h:outputLink> 

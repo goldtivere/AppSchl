@@ -43,6 +43,7 @@ public class Login implements Serializable {
     private boolean cancreatestaff;
     private boolean cancreatestudent;
     private boolean cansendtext;
+    private boolean canmanageschool;
     private int assignedRole;
     
     public void loginpage() throws Exception {
@@ -122,17 +123,17 @@ public class Login implements Serializable {
                     setCansendtext(true);
                 }
                 
-                if (getAssignedRole() == 2 && dto.isCanUpdateSubject()) {
-                    setRoleAssigned(false);
-                    setRoleAssigned1(false);
-                    setCanupdateSubject(true);
-                }
+               
                 if (getAssignedRole() == 2 && (dto.isCanRegisterStaff() || dto.isCanRegisterStudent())) {
                     setRoleAssigned(false);
                     setRoleAssigned1(false);
                     setCancreatestaff(true);
                 }
-                
+                 if (getAssignedRole() == 2 && dto.isCanManageSchool()) {
+                    setRoleAssigned(false);
+                    setRoleAssigned1(false);
+                    setCanmanageschool(true);
+                }
             } else {
                 
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Invalid login details", "Invalid login details"));
@@ -300,6 +301,14 @@ public class Login implements Serializable {
     
     public void setCansendtext(boolean cansendtext) {
         this.cansendtext = cansendtext;
+    }
+
+    public boolean isCanmanageschool() {
+        return canmanageschool;
+    }
+
+    public void setCanmanageschool(boolean canmanageschool) {
+        this.canmanageschool = canmanageschool;
     }
     
 }
