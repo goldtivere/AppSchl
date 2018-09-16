@@ -34,11 +34,14 @@ public class ClassGrade implements Serializable {
     private List<TermModel> termList;
     private List<String> term;
     private List<String> arm;
+    private boolean viis;
+    private boolean bis;
 
     @PostConstruct
     public void init() {
         try {
-
+            viis = false;
+            bis = false;
             classmodel = classDropdown();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -171,6 +174,11 @@ public class ClassGrade implements Serializable {
             }
 
         }
+    }
+
+    public void onyearchange() {
+        setBis(true);
+        setViis(true);
     }
 
     public String countryOrigin(String countryValue) throws SQLException {
@@ -489,7 +497,7 @@ public class ClassGrade implements Serializable {
     }
 
     public String termGet(String termValue) throws SQLException {
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -498,7 +506,6 @@ public class ClassGrade implements Serializable {
         PreparedStatement pstmt = null;
 
         try {
-            
 
             con = dbConnections.mySqlDBconnection();
             String query = "SELECT * FROM tbterm where id=?";
@@ -515,7 +522,7 @@ public class ClassGrade implements Serializable {
 
             return value;
         } catch (NumberFormatException e) {
-            
+
             return null;
 
         } catch (Exception e) {
@@ -582,6 +589,12 @@ public class ClassGrade implements Serializable {
     }
 
     public void ontermChanges() throws Exception {
+
+        term = yearDropdown();
+
+    }
+
+    public void ontermChan() throws Exception {
 
         term = yearDropdown();
 
@@ -769,6 +782,22 @@ public class ClassGrade implements Serializable {
 
     public void setClassmodel(List<ClassModel> classmodel) {
         this.classmodel = classmodel;
+    }
+
+    public boolean isViis() {
+        return viis;
+    }
+
+    public void setViis(boolean viis) {
+        this.viis = viis;
+    }
+
+    public boolean isBis() {
+        return bis;
+    }
+
+    public void setBis(boolean bis) {
+        this.bis = bis;
     }
 
 }

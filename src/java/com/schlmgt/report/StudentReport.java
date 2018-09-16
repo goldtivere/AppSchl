@@ -85,7 +85,7 @@ public class StudentReport {
     public void init() {
         try {
             vis = false;
-            bis = false;            
+            bis = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,7 +176,7 @@ public class StudentReport {
     }
 
     public void onyearchange(String terms) throws Exception {
-
+        System.out.println(terms + " Tivere");
         if ("Third Term".equalsIgnoreCase(terms)) {
             setBis(true);
             setVis(true);

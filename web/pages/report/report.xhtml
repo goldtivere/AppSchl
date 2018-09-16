@@ -50,20 +50,17 @@
                                                itemLabel="#{singlevalue.term}"
                                                itemValue="#{singlevalue.id}"/>
                             </p:selectOneMenu>   
-                            <p:selectOneMenu id="arm" value="#{studentReport.arm}"  class="form-control" requiredMessage="Arm is required" required="true">
-                                <p:ajax listener="#{studentReport.onYearDropDown}" update="gr" />
+                            
+                            <p:selectOneMenu id="arm" value="#{studentReport.arm}"  class="form-control" requiredMessage="Arm is required" style="width:125px" required="true">
+                                <p:ajax listener="#{classmode.ontermChan()}" update="gr" />
                                 <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
                                 <f:selectItems value="#{classmode.arm}"/>
                             </p:selectOneMenu>
-
                             <p:selectOneMenu id="gr" class="form-control" value="#{studentReport.year}" required="true" requiredMessage="Year required">  
-                                <p:ajax listener="#{studentReport.onyearchange(studentReport.term)}" update="vis,zz" />
+                                <p:ajax listener="#{classmode.onyearchange}" update="vis,zz" />
                                 <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
-                                <f:selectItems value="#{studentReport.yearDrop}"/>
+                                <f:selectItems value="#{classmode.term}"/>
                             </p:selectOneMenu>  
-
-
-
 
                         </p:panel>
                     </div>
@@ -75,7 +72,7 @@
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
                     <div class="text-center">
-                        <p:panel visible="#{studentReport.vis}" id="vis">
+                        <p:panel visible="#{classmode.viis}" id="vis">
                             <p:commandButton value="Generate Report" ajax="false" actionListener="#{studentReport.printReport()}" update="wat,wow">
                                 <p:fileDownload value="#{studentReport.exportFile}"
                                                 contentDisposition="attachment" />
@@ -84,7 +81,7 @@
                         </p:panel>
 
 
-                        <p:panel visible="#{studentReport.bis}" id="zz">                            
+                        <p:panel visible="#{classmode.bis}" id="zz">                            
                             <p:commandButton value="Generate Report For Session"  update="wat,wow"/>
                         </p:panel>
                     </div>
