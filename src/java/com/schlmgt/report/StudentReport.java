@@ -6,6 +6,10 @@
 package com.schlmgt.report;
 
 import com.schlmgt.dbconn.DbConnectionX;
+import com.schlmgt.register.ClassModel;
+import com.schlmgt.register.GradeModel;
+import com.schlmgt.register.TermModel;
+import com.schlmgt.school.SchoolGetterMethod;
 import com.schlmgt.updateResult.ResultModel;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -55,6 +59,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -80,12 +85,19 @@ public class StudentReport {
     private boolean bis;
     private String arm;
     private StreamedContent exportFile;
+    private String school;
+    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
+    private List<ClassModel> classmodel;
+    private List<GradeModel> grademodels;
+    private List<TermModel> termList;
+    private List<String> terms;
 
     @PostConstruct
     public void init() {
         try {
             vis = false;
             bis = false;
+            classmodel=classDropdown();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -175,15 +187,11 @@ public class StudentReport {
         this.subHead = subHead;
     }
 
-    public void onyearchange(String terms) throws Exception {
-        System.out.println(terms + " Tivere");
-        if ("Third Term".equalsIgnoreCase(terms)) {
-            setBis(true);
-            setVis(true);
-        } else {
+    public void onyearchange() throws Exception {
+       
             setVis(true);
             setBis(true);
-        }
+        
     }
 
     public List<Double> scoreSum() throws Exception {
@@ -531,6 +539,185 @@ public class StudentReport {
         }
     }
 
+    public List<ClassModel> classDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbclass";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<ClassModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public void onClassChanges(String tbclass) throws Exception {
+
+        grademodels = gradeDropdowns(tbclass);
+
+    }
+
+    public List<GradeModel> gradeDropdowns(String tbclass) throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbgrade where class=?";
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setString(1, tbclass);
+            rs = pstmt.executeQuery();
+            //
+            List<GradeModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                GradeModel coun = new GradeModel();
+                coun.setId(rs.getInt("id"));
+                coun.setGrade(rs.getString("grade"));
+                coun.setSclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+   
+
+    public void onarmChanges() throws Exception {
+
+        armValue = armDropdown();
+
+    }
+
+    public void ontermChan() throws Exception {
+
+        terms = yearDropdown();
+
+    }
+     public void ongradeeChanges() throws Exception {
+
+        termList = termDropdown();
+
+    }
+
+    public void ongradeChanges() throws Exception {
+
+        termList = termDropdown();
+
+    }
+
+    public List<TermModel> termDropdown() throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbterm";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<TermModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                TermModel coun = new TermModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTerm(rs.getString("term"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public void onItemSelect(SelectEvent event) {
+        try {
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+            System.out.println(event.getObject().toString() + " table name: " + schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+            classmodel = classDropdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void writeToExcel() throws Exception {
 
         Workbook workbook = new XSSFWorkbook();
@@ -705,6 +892,54 @@ public class StudentReport {
 
     public void setYearDrop(List<String> yearDrop) {
         this.yearDrop = yearDrop;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public SchoolGetterMethod getSchlGetterMethod() {
+        return schlGetterMethod;
+    }
+
+    public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
+        this.schlGetterMethod = schlGetterMethod;
+    }
+
+    public List<ClassModel> getClassmodel() {
+        return classmodel;
+    }
+
+    public void setClassmodel(List<ClassModel> classmodel) {
+        this.classmodel = classmodel;
+    }
+
+    public List<GradeModel> getGrademodels() {
+        return grademodels;
+    }
+
+    public void setGrademodels(List<GradeModel> grademodels) {
+        this.grademodels = grademodels;
+    }
+
+    public List<TermModel> getTermList() {
+        return termList;
+    }
+
+    public void setTermList(List<TermModel> termList) {
+        this.termList = termList;
+    }
+
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(List<String> terms) {
+        this.terms = terms;
     }
 
 }

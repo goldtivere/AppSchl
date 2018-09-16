@@ -605,6 +605,11 @@ public class ClassGrade implements Serializable {
         term = yearDropdown(tbclass);
 
     }
+     public void onterm(String tbclass) throws Exception {
+
+        term = yearDropdown(tbclass);
+
+    }
 
     public void onarmChanges() throws Exception {
 
