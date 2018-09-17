@@ -13,9 +13,18 @@ import java.io.Serializable;
  */
 public class PositionModel implements Serializable {
 
+    private String fullname;
     private int position;
     private double average;
     private double tSum;
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
 
     public int getPosition() {
         return position;

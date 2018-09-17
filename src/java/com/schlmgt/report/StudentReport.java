@@ -257,7 +257,7 @@ public class StudentReport {
             String val = getSchool().replaceAll("\\s", "_");
             //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
             con = dbConnections.mySqlDBconnection();
-            String query = "select * from " + val + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
+            String query = "select a.*,b.full_name from " + val + "_tbresultcompute a inner join " + val + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -269,7 +269,57 @@ public class StudentReport {
             List<String> lst = new ArrayList<>();
             List<String> suHead = new ArrayList<>();
             while (rs.next()) {
+
                 lst.add(rs.getString("studentreg"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
+
+    public List<String> studentName() throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            String val = getSchool().replaceAll("\\s", "_");
+            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + val + "_tbresultcompute a inner join " + val + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getGrade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getArm());
+            pstmt.setString(4, getYear());
+            pstmt.setBoolean(5, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("full_name"));
             }
 
             return lst;
@@ -440,7 +490,7 @@ public class StudentReport {
                     PositionModel coun = new PositionModel();
                     coun.settSum(rs.getDouble("totalscore"));
                     coun.setAverage(rs.getDouble("average"));
-                    coun.setPosition(rs.getInt("postion"));
+                    coun.setPosition(rs.getInt("positionarm"));
                     lst.add(coun);
 
                 }
@@ -755,13 +805,15 @@ public class StudentReport {
             subHeading.add("Total");
             subHeading.add("Grade");
         }
-        int val = 1;
-        int lav = 2;
+        int val = 2;
+        int lav = 3;
 
         Row headerRow = sheet.createRow(6);
 
         Cell cells = headerRow.createCell(0);
         cells.setCellValue("Student Number");
+        Cell cellss = headerRow.createCell(1);
+        cellss.setCellValue("Student Name");
         cells.setCellStyle(headerCellStyle);
         for (int i = 0; i < tableHeaderNames.size(); i++) {
             Cell cell = headerRow.createCell(val);
@@ -790,7 +842,7 @@ public class StudentReport {
 
         // write code for subheading
         Row headerRows = sheet.createRow(7);
-        int nn = 1;
+        int nn = 2;
         for (int i = 0; i < subHeading.size(); i++) {
             Cell cell = headerRows.createCell(nn);
             cell.setCellValue(subHeading.get(i));
@@ -800,12 +852,13 @@ public class StudentReport {
         int rowNums = 8;
         int cellNum = 0;
         int valNum = 1;
-        int numCell = 1;
+        int numCell = 2;
         Row row;
         for (int i = 0; i < studentNum().size(); i++) {
             row = sheet.createRow(rowNums);
 
             row.createCell(0).setCellValue(studentNum().get(i));
+            row.createCell(1).setCellValue(studentName().get(i));
             rowNums++;
         }
         int vala = displaySubject().size() * 2;
@@ -820,7 +873,7 @@ public class StudentReport {
 
                 cellNum++;
                 if (p == vala - 1) {
-                    numCell = 1;
+                    numCell = 2;
                     break;
                 }
                 numCell++;
@@ -843,17 +896,17 @@ public class StudentReport {
         for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
             sheet.autoSizeColumn(i, true);
         }
-//         try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
-//           workbook.write(fileOut);
-//      }
-        String filename = "sheet.xlsx";
-        FileOutputStream fileOut = new FileOutputStream(filename);
-        workbook.write(fileOut);
-        fileOut.close();
-        System.out.println("***Done***");
-
-        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
-        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
+        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
+            workbook.write(fileOut);
+        }
+//        String filename = "sheet.xlsx";
+//        FileOutputStream fileOut = new FileOutputStream(filename);
+//        workbook.write(fileOut);
+//        fileOut.close();
+//        System.out.println("***Done***");
+//
+//        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
+//        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
 //        Workbook wb = new XSSFWorkbook();
 //        Sheet sheet = wb.createSheet("new sheet");
 //
