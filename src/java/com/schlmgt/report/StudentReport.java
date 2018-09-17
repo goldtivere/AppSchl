@@ -86,6 +86,7 @@ public class StudentReport {
     private String arm;
     private StreamedContent exportFile;
     private String school;
+    private String schools;
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
     private List<ClassModel> classmodel;
     private List<GradeModel> grademodels;
@@ -207,7 +208,7 @@ public class StudentReport {
             con = dbConnections.mySqlDBconnection();
             List<Double> lst = new ArrayList<>();
             for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select sum(totalscore) as total from " + val + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
+                String query = "select sum(totalscore) as total from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
@@ -257,7 +258,7 @@ public class StudentReport {
             String val = getSchool().replaceAll("\\s", "_");
             //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + val + "_tbresultcompute a inner join " + val + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + getSchool() + "_tbresultcompute a inner join " + getSchool() + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -306,7 +307,7 @@ public class StudentReport {
             String val = getSchool().replaceAll("\\s", "_");
             //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + val + "_tbresultcompute a inner join " + val + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + getSchool() + "_tbresultcompute a inner join " + getSchool() + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -368,7 +369,7 @@ public class StudentReport {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select distinct(subject) from " + val + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and isdeleted=?";
+            String query = "select distinct(subject) from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -415,7 +416,7 @@ public class StudentReport {
             con = dbConnections.mySqlDBconnection();
             List<String> lst = new ArrayList<>();
             for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select totalscore,grade from " + val + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
+                String query = "select totalscore,grade from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
@@ -476,7 +477,7 @@ public class StudentReport {
             con = dbConnections.mySqlDBconnection();
             List<PositionModel> lst = new ArrayList<>();
             for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select * from " + val + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
+                String query = "select * from " + getSchool() + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
@@ -774,7 +775,7 @@ public class StudentReport {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
+            setSchools(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
             System.out.println(event.getObject().toString() + " table name: " + getSchool());
             classmodel = classDropdown();
         } catch (Exception e) {
@@ -793,6 +794,14 @@ public class StudentReport {
         headerFont.setFontHeightInPoints((short) 10);
         headerFont.setColor(IndexedColors.BLACK.getIndex());
 
+        Font headerFontT = workbook.createFont();
+        headerFontT.setBoldweight((short) 30);
+        headerFontT.setFontHeightInPoints((short) 30);
+        headerFontT.setColor(IndexedColors.BLACK.getIndex());
+
+        CellStyle headerCellStyleT = workbook.createCellStyle();
+        headerCellStyleT.setFont(headerFontT);
+
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
         tableHeaderNames = displaySubject();
@@ -807,9 +816,22 @@ public class StudentReport {
         }
         int val = 2;
         int lav = 3;
-
+        Row title = sheet.createRow(3);
+        Cell ces = title.createCell(7);
+        ces.setCellValue(getSchools() +" "+getGrade()+" Result BroadSheet, "+ getYear());
+        ces.setCellStyle(headerCellStyleT);
+         sheet.addMergedRegion(new CellRangeAddress(
+                    3, //first row (0-based)
+                    4, //last row  (0-based)
+                    3, //first column (0-based)
+                    20 //last column  (0-based)                     
+            ));
+    
+        
         Row headerRow = sheet.createRow(6);
-
+        
+        
+        
         Cell cells = headerRow.createCell(0);
         cells.setCellValue("Student Number");
         Cell cellss = headerRow.createCell(1);
@@ -1010,6 +1032,14 @@ public class StudentReport {
 
     public void setTerms(List<String> terms) {
         this.terms = terms;
+    }
+
+    public String getSchools() {
+        return schools;
+    }
+
+    public void setSchools(String schools) {
+        this.schools = schools;
     }
 
 }
