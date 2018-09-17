@@ -83,7 +83,7 @@
                 <div class="form-group">
                     <div class="text-center">
                         <p:panel visible="#{studentReport.vis}" id="vis">
-                            <p:commandButton value="Generate Report" ajax="false" actionListener="#{studentReport.printReport()}" update="wat,wow">
+                            <p:commandButton value="Generate Report" actionListener="#{studentReport.writeToExcel()}" ajax="false" update="wat,wow">
                                 <p:fileDownload value="#{studentReport.exportFile}"
                                                 contentDisposition="attachment" />
                             </p:commandButton>                           
@@ -92,7 +92,7 @@
 
 
                         <p:panel visible="#{studentReport.bis}" id="zz">                            
-                            <p:commandButton value="Generate Report For Session"  update="wat,wow"/>
+                            <p:commandButton value="Generate Report For Session" actionListener="#{studentReport.valval}"  update="wat,wow"/>
                         </p:panel>
                     </div>
                 </div>
