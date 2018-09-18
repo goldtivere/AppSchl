@@ -6,6 +6,7 @@
 package com.schlmgt.report;
 
 import com.schlmgt.dbconn.DbConnectionX;
+import com.schlmgt.logic.ClassGrade;
 import com.schlmgt.register.ClassModel;
 import com.schlmgt.register.GradeModel;
 import com.schlmgt.register.TermModel;
@@ -69,7 +70,7 @@ import org.primefaces.model.StreamedContent;
  */
 @ManagedBean
 @RequestScoped
-public class StudentReport {
+public class StudentReports {
 
     private List<ColumnModel> personas = new ArrayList<ColumnModel>();
     private List<ResultModel> tableData;
@@ -92,6 +93,7 @@ public class StudentReport {
     private List<GradeModel> grademodels;
     private List<TermModel> termList;
     private List<String> terms;
+    private String table_name;
 
     @PostConstruct
     public void init() {
@@ -195,26 +197,27 @@ public class StudentReport {
 
     }
 
-    public List<Double> scoreSum() throws Exception {
+    public List<Double> scoreSum(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        String val = getSchool().replaceAll("\\s", "_");
+        //String val = getSchool().replaceAll("\\s", "_");
+        String value = schlGetterMethod.tableNameDisplay(getSchools());
         try {
 
             con = dbConnections.mySqlDBconnection();
             List<Double> lst = new ArrayList<>();
-            for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select sum(totalscore) as total from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
+            for (int i = 0; i < studentNum(table_name).size(); i++) {
+                String query = "select sum(totalscore) as total from " + value + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
                 pstmt.setString(3, getArm());
                 pstmt.setString(4, getYear());
-                pstmt.setString(5, studentNum().get(i));
+                pstmt.setString(5, studentNum(table_name).get(i));
                 pstmt.setBoolean(6, false);
                 rs = pstmt.executeQuery();
                 //                
@@ -244,7 +247,7 @@ public class StudentReport {
         }
     }
 
-    public List<String> studentNum() throws Exception {
+    public List<String> studentNum(String table_name) throws Exception {
 
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -255,10 +258,9 @@ public class StudentReport {
 
         try {
 
-            String val = getSchool().replaceAll("\\s", "_");
-            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
+            System.out.println(table_name + " okay dude");
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + getSchool() + "_tbresultcompute a inner join " + getSchool() + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -293,7 +295,7 @@ public class StudentReport {
 
     }
 
-    public List<String> studentName() throws Exception {
+    public List<String> studentName(String table_name) throws Exception {
 
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -304,10 +306,10 @@ public class StudentReport {
 
         try {
 
-            String val = getSchool().replaceAll("\\s", "_");
-            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);
+            // = getSchool().replaceAll("\\s", "_");
+            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);            
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + getSchool() + "_tbresultcompute a inner join " + getSchool() + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -358,18 +360,17 @@ public class StudentReport {
         }
     }
 
-    public List<String> displaySubject() throws Exception {
+    public List<String> displaySubject(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        String val = getSchool().replaceAll("\\s", "_");
+        // String val = getSchool().replaceAll("\\s", "_");
         try {
-
             con = dbConnections.mySqlDBconnection();
-            String query = "select distinct(subject) from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and isdeleted=?";
+            String query = "select distinct(subject) from " + table_name + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -402,27 +403,26 @@ public class StudentReport {
         }
     }
 
-    public List<String> displaySub() throws Exception {
+    public List<String> displaySub(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        String val = getSchool().replaceAll("\\s", "_");
 
         try {
 
             con = dbConnections.mySqlDBconnection();
             List<String> lst = new ArrayList<>();
-            for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select totalscore,grade from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
+            for (int i = 0; i < studentNum(table_name).size(); i++) {
+                String query = "select totalscore,grade from " + table_name + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
                 pstmt.setString(3, getArm());
                 pstmt.setString(4, getYear());
-                pstmt.setString(5, studentNum().get(i));
+                pstmt.setString(5, studentNum(table_name).get(i));
                 pstmt.setBoolean(6, false);
                 rs = pstmt.executeQuery();
                 //                
@@ -459,25 +459,26 @@ public class StudentReport {
             //Generate table header.
 
         } catch (Exception ex) {
-            Logger.getLogger(StudentReport.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentReports.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
-    public List<PositionModel> scoreSums() throws Exception {
+    public List<PositionModel> scoreSums(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        String val = getSchool().replaceAll("\\s", "_");
+        //String val = getSchool().replaceAll("\\s", "_");
+        String value = schlGetterMethod.tableNameDisplay(getSchools());
         try {
 
             con = dbConnections.mySqlDBconnection();
             List<PositionModel> lst = new ArrayList<>();
-            for (int i = 0; i < studentNum().size(); i++) {
-                String query = "select * from " + getSchool() + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
+            for (int i = 0; i < studentNum(table_name).size(); i++) {
+                String query = "select * from " + table_name + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
@@ -521,9 +522,12 @@ public class StudentReport {
         FacesContext context = FacesContext.getCurrentInstance();
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        if (displaySub().size() > 0) {
+        String table_names = schlGetterMethod.tableNameDisplay(getSchools());
+        setTable_name(schlGetterMethod.tableNameDisplay(getSchools().replaceAll("\\s", "_")));
+        System.out.println(table_names + " hiya " + getTable_name() + " hmm " + getSchool() + " now " + schlGetterMethod.tableNameDisplay(getSchools()));
+        if (displaySub(table_names).size() > 0) {
             System.out.println("Hello Boss");
-            writeToExcel();
+            writeToExcel(table_names);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
             context.addMessage(null, msg);
         } else {
@@ -775,20 +779,19 @@ public class StudentReport {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchools(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
             System.out.println(event.getObject().toString() + " table name: " + getSchool());
             classmodel = classDropdown();
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void writeToExcel() throws Exception {
-        System.out.println(displaySub().size() + " add");
-
+    public void writeToExcel(String table_name) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("resultSheet");
-
+        ClassGrade mode = new ClassGrade();
         Font headerFont = workbook.createFont();
         headerFont.setBoldweight((short) 10);
         headerFont.setFontHeightInPoints((short) 10);
@@ -804,7 +807,7 @@ public class StudentReport {
 
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
-        tableHeaderNames = displaySubject();
+        tableHeaderNames = displaySubject(table_name);
 
         List<String> subHeading = new ArrayList<>();
         int valu = tableHeaderNames.size() * 2;
@@ -818,20 +821,17 @@ public class StudentReport {
         int lav = 3;
         Row title = sheet.createRow(3);
         Cell ces = title.createCell(7);
-        ces.setCellValue(getSchools() +" "+getGrade()+" Result BroadSheet, "+ getYear());
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " Result BroadSheet, " + getYear());
         ces.setCellStyle(headerCellStyleT);
-         sheet.addMergedRegion(new CellRangeAddress(
-                    3, //first row (0-based)
-                    4, //last row  (0-based)
-                    3, //first column (0-based)
-                    20 //last column  (0-based)                     
-            ));
-    
-        
+//        sheet.addMergedRegion(new CellRangeAddress(
+//                3, //first row (0-based)
+//                4, //last row  (0-based)
+//                3, //first column (0-based)
+//                20 //last column  (0-based)                     
+//        ));
+
         Row headerRow = sheet.createRow(6);
-        
-        
-        
+
         Cell cells = headerRow.createCell(0);
         cells.setCellValue("Student Number");
         Cell cellss = headerRow.createCell(1);
@@ -876,22 +876,22 @@ public class StudentReport {
         int valNum = 1;
         int numCell = 2;
         Row row;
-        for (int i = 0; i < studentNum().size(); i++) {
+        for (int i = 0; i < studentNum(table_name).size(); i++) {
             row = sheet.createRow(rowNums);
 
-            row.createCell(0).setCellValue(studentNum().get(i));
-            row.createCell(1).setCellValue(studentName().get(i));
+            row.createCell(0).setCellValue(studentNum(table_name).get(i));
+            row.createCell(1).setCellValue(studentName(table_name).get(i));
             rowNums++;
         }
-        int vala = displaySubject().size() * 2;
-        for (int i = 0; i < studentNum().size(); i++) {
+        int vala = displaySubject(table_name).size() * 2;
+        for (int i = 0; i < studentNum(table_name).size(); i++) {
             //paste score and grade of each student in excel
             row = sheet.getRow(rowNum);
 
-            for (int p = 0; p < displaySub().size(); p++) {
+            for (int p = 0; p < displaySub(table_name).size(); p++) {
 
                 Cell cell = row.createCell(numCell);
-                cell.setCellValue(displaySub().get(cellNum));
+                cell.setCellValue(displaySub(table_name).get(cellNum));
 
                 cellNum++;
                 if (p == vala - 1) {
@@ -906,18 +906,18 @@ public class StudentReport {
 
         int rowValue = 8;
 
-        for (int i = 0; i < studentNum().size(); i++) {
+        for (int i = 0; i < studentNum(table_name).size(); i++) {
             Row header = sheet.getRow(rowValue);
-            header.createCell(lav).setCellValue(scoreSums().get(i).gettSum());
-            header.createCell(lav + 1).setCellValue(String.format("%.2f", scoreSums().get(i).getAverage()));
-            header.createCell(lav + 2).setCellValue(scoreSums().get(i).getPosition());
+            header.createCell(lav).setCellValue(scoreSums(table_name).get(i).gettSum());
+            header.createCell(lav + 1).setCellValue(String.format("%.2f", scoreSums(table_name).get(i).getAverage()));
+            header.createCell(lav + 2).setCellValue(scoreSums(table_name).get(i).getPosition());
 
             rowValue++;
         }
-
-        for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
-            sheet.autoSizeColumn(i, true);
-        }
+        System.out.println(tableHeaderNames.size());
+//        for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
+//            sheet.autoSizeColumn(i, true);
+//        }
         try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
             workbook.write(fileOut);
         }
@@ -1040,6 +1040,14 @@ public class StudentReport {
 
     public void setSchools(String schools) {
         this.schools = schools;
+    }
+
+    public String getTable_name() {
+        return table_name;
+    }
+
+    public void setTable_name(String table_name) {
+        this.table_name = table_name;
     }
 
 }

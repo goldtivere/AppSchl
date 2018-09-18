@@ -24,19 +24,19 @@
                         <div class="form-group">
                             <div class="text-center">
                                 <p:outputLabel value="Select School: " for="event"/>                            
-                                <p:autoComplete id="event" value="#{studentReport.schools}" emptyMessage="no record found" completeMethod="#{studentReport.schlGetterMethod.completeSchool}">
-                                    <p:ajax event="itemSelect" listener="#{studentReport.onItemSelect}" update="sclass" />
+                                <p:autoComplete id="event" value="#{studentReports.schools}" forceSelection="true" emptyMessage="no record found" completeMethod="#{studentReports.schlGetterMethod.completeSchool}">
+                                    <p:ajax event="itemSelect" listener="#{studentReports.onItemSelect}" update="sclass" />
                                 </p:autoComplete>
                             </div>
                             <div class="text-center">
-                               
+
                                 <p:panel id="dude" style="border: none;">
-                                    <p:selectOneMenu id="sclass" class="form-control" value="#{studentReport.sclass}" required="true" requiredMessage="Class required">
+                                    <p:selectOneMenu id="sclass" class="form-control" value="#{studentReports.sclass}" required="true" requiredMessage="Class required">
 
 
-                                        <p:ajax listener="#{classmode.onClassChanges(studentReport.sclass)}" update="grad" />
+                                        <p:ajax listener="#{classmode.onClassChanges(studentReports.sclass)}" update="grad" />
                                         <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
-                                        <f:selectItems value="#{studentReport.classmodel}"
+                                        <f:selectItems value="#{studentReports.classmodel}"
                                                        var="singlevalue"  
                                                        itemLabel="#{singlevalue.tbclass}"
                                                        itemValue="#{singlevalue.id}"/>
@@ -44,7 +44,7 @@
 
 
 
-                                    <p:selectOneMenu id="grad" class="form-control" value="#{studentReport.grade}" required="true" requiredMessage="Grade required">                                
+                                    <p:selectOneMenu id="grad" class="form-control" value="#{studentReports.grade}" required="true" requiredMessage="Grade required">                                
                                         <p:ajax listener="#{classmode.ongradeChanges}" update="gra" /> 
                                         <f:selectItem itemLabel="--Select Grade--" itemValue="" noSelectionOption="true"/>
                                         <f:selectItems value="#{classmode.grademodels}"
@@ -52,20 +52,20 @@
                                                        itemLabel="#{singlevalue.grade}"
                                                        itemValue="#{singlevalue.id}"/>
                                     </p:selectOneMenu>                             
-                                    <p:selectOneMenu id="gra" class="form-control" value="#{studentReport.term}" required="true" requiredMessage="Term required">                                
+                                    <p:selectOneMenu id="gra" class="form-control" value="#{studentReports.term}" required="true" requiredMessage="Term required">                                
                                         <p:ajax listener="#{classmode.onarmChanges()}" update="arm" />
                                         <f:selectItem itemLabel="--Select Term--" itemValue="" noSelectionOption="true"/>
                                         <f:selectItems value="#{classmode.termList}" var="singlevalue"  
                                                        itemLabel="#{singlevalue.term}"
                                                        itemValue="#{singlevalue.id}"/>
                                     </p:selectOneMenu> 
-                                    <p:selectOneMenu id="arm" class="form-control" value="#{studentReport.arm}" required="true" requiredMessage="Term required">                                
-                                         <p:ajax listener="#{classmode.ontermChan()}" update="gr" />
+                                    <p:selectOneMenu id="arm" class="form-control" value="#{studentReports.arm}" required="true" requiredMessage="Term required">                                
+                                        <p:ajax listener="#{classmode.ontermChan()}" update="gr" />
                                         <f:selectItem itemLabel="--Select Arm--" itemValue="" noSelectionOption="true"/>
                                         <f:selectItems value="#{classmode.arm}" var="singlevalue" />
                                     </p:selectOneMenu> 
-                                    <p:selectOneMenu id="gr" class="form-control" value="#{studentReport.year}" required="true" requiredMessage="Year required">  
-                                        <p:ajax listener="#{studentReport.onyearchange()}" update="vis,zz"  />
+                                    <p:selectOneMenu id="gr" class="form-control" value="#{studentReports.year}" required="true" requiredMessage="Year required">  
+                                        <p:ajax listener="#{studentReports.onyearchange()}" update="vis,zz"  />
                                         <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
                                         <f:selectItems value="#{classmode.term}"/>
                                     </p:selectOneMenu>  
@@ -82,17 +82,17 @@
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
                     <div class="text-center">
-                        <p:panel visible="#{studentReport.vis}" id="vis">
-                            <p:commandButton value="Generate Report" actionListener="#{studentReport.writeToExcel()}" ajax="false" update="wat,wow">
-                                <p:fileDownload value="#{studentReport.exportFile}"
+                        <p:panel visible="#{studentReports.vis}" id="vis">
+                            <p:commandButton value="Generate Report" actionListener="#{studentReports.printReport}" ajax="false" update="wat,wow">
+                                <p:fileDownload value="#{studentReports.exportFile}"
                                                 contentDisposition="attachment" />
                             </p:commandButton>                           
 
                         </p:panel>
 
 
-                        <p:panel visible="#{studentReport.bis}" id="zz">                            
-                            <p:commandButton value="Generate Report For Session" actionListener="#{studentReport.valval}"  update="wat,wow"/>
+                        <p:panel visible="#{studentReports.bis}" id="zz">                            
+                            <p:commandButton value="Generate Report For Session" actionListener="#{studentReports.valval}"  update="wat,wow"/>
                         </p:panel>
                     </div>
                 </div>
