@@ -821,7 +821,7 @@ public class StudentReports {
         int lav = 3;
         Row title = sheet.createRow(3);
         Cell ces = title.createCell(7);
-        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " Result BroadSheet, " + getYear());
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade())+" "+getArm() + " Result BroadSheet, " + getYear());
         ces.setCellStyle(headerCellStyleT);
 //        sheet.addMergedRegion(new CellRangeAddress(
 //                3, //first row (0-based)
