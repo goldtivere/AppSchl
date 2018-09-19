@@ -248,8 +248,7 @@ public class StudentReports {
     }
 
     public List<String> studentNum(String table_name) throws Exception {
-
-        FacesContext context = FacesContext.getCurrentInstance();
+ FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -267,6 +266,53 @@ public class StudentReports {
             pstmt.setString(3, getArm());
             pstmt.setString(4, getYear());
             pstmt.setBoolean(5, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("studentreg"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+
+    }
+    public List<String> studentNumTerm(String table_name) throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            System.out.println(table_name + " okay dude");
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getGrade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getYear());
+            pstmt.setBoolean(4, false);
             rs = pstmt.executeQuery();
             //
             List<String> lst = new ArrayList<>();
@@ -316,6 +362,54 @@ public class StudentReports {
             pstmt.setString(3, getArm());
             pstmt.setString(4, getYear());
             pstmt.setBoolean(5, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("full_name"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+
+    }
+     public List<String> studentNameTerm(String table_name) throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            // = getSchool().replaceAll("\\s", "_");
+            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);            
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getGrade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getYear());
+            pstmt.setBoolean(4, false);
             rs = pstmt.executeQuery();
             //
             List<String> lst = new ArrayList<>();
@@ -465,7 +559,7 @@ public class StudentReports {
     }
 
     public List<PositionModel> scoreSums(String table_name) throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
+          FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -514,8 +608,61 @@ public class StudentReports {
                 pstmt = null;
             }
 
+        }    }
+     public List<PostionTermModel> scoreSumsTerm(String table_name) throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        //String val = getSchool().replaceAll("\\s", "_");        
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            List<PostionTermModel> lst = new ArrayList<>();
+            for (int i = 0; i < studentNum(table_name).size(); i++) {
+                String query = "select * from " + table_name + "_tbfinalcompute where studentclass=? and Term=? and year=? and isdeleted=? order by average desc";
+                pstmt = con.prepareStatement(query);
+                pstmt.setString(1, getGrade());
+                pstmt.setString(2, getTerm());                
+                pstmt.setString(3, getYear());
+                pstmt.setBoolean(4, false);
+                rs = pstmt.executeQuery();
+                //                
+                while (rs.next()) {
+
+                    PostionTermModel coun = new PostionTermModel();
+                    coun.setFirstTerm(rs.getDouble("firstterm"));
+                    coun.setSecondTerm(rs.getDouble("secondterm"));
+                    coun.setThirdTerm(rs.getDouble("thirdTerm"));
+                    coun.setTotalscore(rs.getDouble("totalscore"));
+                    coun.setAverage(rs.getDouble("average"));
+                    coun.setPosition(rs.getInt("position"));
+                    lst.add(coun);
+
+                }
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
         }
     }
+    
 
     public void printReport() throws Exception {
         FacesMessage msg;
@@ -534,6 +681,20 @@ public class StudentReports {
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "No Report Found", "No Report Found");
             context.addMessage(null, msg);
         }
+    }
+    
+    public void printReportTerm() throws Exception {
+        FacesMessage msg;
+        FacesContext context = FacesContext.getCurrentInstance();
+        RequestContext cont = RequestContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        String table_names = schlGetterMethod.tableNameDisplay(getSchools());     
+        System.out.println(table_names + " hiya " + getTable_name() + " hmm " + getSchool() + " now " + schlGetterMethod.tableNameDisplay(getSchools()));
+        
+            writeToExcelTerm(table_names);
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
+            context.addMessage(null, msg);
+        
     }
 
     public void onArmChange() throws Exception {
@@ -821,7 +982,7 @@ public class StudentReports {
         int lav = 3;
         Row title = sheet.createRow(3);
         Cell ces = title.createCell(7);
-        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade())+" "+getArm() + " Result BroadSheet, " + getYear());
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " " + getArm() + " Result BroadSheet, " + getYear());
         ces.setCellStyle(headerCellStyleT);
 //        sheet.addMergedRegion(new CellRangeAddress(
 //                3, //first row (0-based)
@@ -911,6 +1072,145 @@ public class StudentReports {
             header.createCell(lav).setCellValue(scoreSums(table_name).get(i).gettSum());
             header.createCell(lav + 1).setCellValue(String.format("%.2f", scoreSums(table_name).get(i).getAverage()));
             header.createCell(lav + 2).setCellValue(scoreSums(table_name).get(i).getPosition());
+
+            rowValue++;
+        }
+        System.out.println(tableHeaderNames.size());
+//        for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
+//            sheet.autoSizeColumn(i, true);
+//        }
+        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
+            workbook.write(fileOut);
+        }
+//        String filename = "sheet.xlsx";
+//        FileOutputStream fileOut = new FileOutputStream(filename);
+//        workbook.write(fileOut);
+//        fileOut.close();
+//        System.out.println("***Done***");
+//
+//        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
+//        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
+//        Workbook wb = new XSSFWorkbook();
+//        Sheet sheet = wb.createSheet("new sheet");
+//
+//        Row row = sheet.createRow(0);
+//        Cell cell = row.createCell(0);
+//       
+//        cell.setCellValue("This is a test of merging");
+//
+//        sheet.addMergedRegion(new CellRangeAddress(
+//                0, //first row (0-based)
+//                0, //last row  (0-based)
+//                0, //first column (0-based)
+//                1 //last column  (0-based)
+//        ));
+//        
+//         Cell cells = row.createCell(2);
+//       
+//        cells.setCellValue("test of merging");
+//
+//        sheet.addMergedRegion(new CellRangeAddress(
+//                0, //first row (0-based)
+//                0, //last row  (0-based)
+//                2, //first column (0-based)
+//                3 //last column  (0-based)
+//        ));
+//        
+//        
+//        // Write the output to a file
+//        try (OutputStream fileOut = new FileOutputStream("C:/workbook.xlsx")) {
+//            wb.write(fileOut);
+//        }
+    }
+
+    public void writeToExcelTerm(String table_name) throws Exception {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("resultSheet");
+        ClassGrade mode = new ClassGrade();
+        Font headerFont = workbook.createFont();
+        headerFont.setBoldweight((short) 10);
+        headerFont.setFontHeightInPoints((short) 10);
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
+
+        Font headerFontT = workbook.createFont();
+        headerFontT.setBoldweight((short) 30);
+        headerFontT.setFontHeightInPoints((short) 30);
+        headerFontT.setColor(IndexedColors.BLACK.getIndex());
+
+        CellStyle headerCellStyleT = workbook.createCellStyle();
+        headerCellStyleT.setFont(headerFontT);
+
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        tableHeaderNames = displaySubject(table_name);
+
+        int val = 2;
+        int lav = 3;
+        Row title = sheet.createRow(3);
+        Cell ces = title.createCell(7);
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " Result BroadSheet, " + getYear());
+        ces.setCellStyle(headerCellStyleT);
+//        sheet.addMergedRegion(new CellRangeAddress(
+//                3, //first row (0-based)
+//                4, //last row  (0-based)
+//                3, //first column (0-based)
+//                20 //last column  (0-based)                     
+//        ));
+
+        Row headerRow = sheet.createRow(6);
+
+        Cell cells = headerRow.createCell(0);
+        cells.setCellValue("Student Number");
+        cells.setCellStyle(headerCellStyle);
+        Cell cellss = headerRow.createCell(1);
+        cellss.setCellValue("Student Name");
+        cellss.setCellStyle(headerCellStyle);
+        Cell cell1 = headerRow.createCell(2);
+        cell1.setCellValue("First Term");
+        cell1.setCellStyle(headerCellStyle);
+        Cell cell2 = headerRow.createCell(3);
+        cell2.setCellValue("Second Term");
+        cell2.setCellStyle(headerCellStyle);
+        Cell cell3 = headerRow.createCell(4);
+        cell3.setCellValue("Third Term");
+        cell3.setCellStyle(headerCellStyle);
+
+        Cell cel = headerRow.createCell(7);
+        cel.setCellValue("Grand Total");
+        cel.setCellStyle(headerCellStyle);
+        Cell ce = headerRow.createCell(8);
+        ce.setCellValue("Class Average");
+        ce.setCellStyle(headerCellStyle);
+        Cell c = headerRow.createCell(9);
+        c.setCellValue("Position");
+        c.setCellStyle(headerCellStyle);
+
+        int rowNum = 8;
+        int rowNums = 8;
+        int cellNum = 0;
+        int valNum = 1;
+        int numCell = 2;
+        Row row;
+        for (int i = 0; i < studentNumTerm(table_name).size(); i++) {
+            row = sheet.createRow(rowNums);
+
+            row.createCell(0).setCellValue(studentNumTerm(table_name).get(i));
+            row.createCell(1).setCellValue(studentNameTerm(table_name).get(i));
+            rowNums++;
+        }
+        
+
+        int rowValue = 8;
+
+        for (int i = 0; i < studentNumTerm(table_name).size(); i++) {
+            Row header = sheet.getRow(rowValue);
+            header.createCell(2).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getFirstTerm()));
+            header.createCell(3).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getSecondTerm()));
+            header.createCell(4).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getThirdTerm()));
+            
+            header.createCell(7).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getTotalscore()));
+            header.createCell(8).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getAverage()));
+            header.createCell(9).setCellValue(scoreSums(table_name).get(i).getPosition());
 
             rowValue++;
         }
