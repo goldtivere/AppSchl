@@ -1210,7 +1210,7 @@ public class StudentReports {
             
             header.createCell(7).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getTotalscore()));
             header.createCell(8).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getAverage()));
-            header.createCell(9).setCellValue(scoreSums(table_name).get(i).getPosition());
+            header.createCell(9).setCellValue(scoreSumsTerm(table_name).get(i).getPosition());
 
             rowValue++;
         }
