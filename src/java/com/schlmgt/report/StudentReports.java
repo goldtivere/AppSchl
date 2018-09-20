@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -248,7 +249,7 @@ public class StudentReports {
     }
 
     public List<String> studentNum(String table_name) throws Exception {
- FacesContext context = FacesContext.getCurrentInstance();
+        FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -256,8 +257,7 @@ public class StudentReports {
         PreparedStatement pstmt = null;
 
         try {
-
-            System.out.println(table_name + " okay dude");
+            
             con = dbConnections.mySqlDBconnection();
             String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
@@ -292,8 +292,8 @@ public class StudentReports {
 
         }
 
-
     }
+
     public List<String> studentNumTerm(String table_name) throws Exception {
 
         FacesContext context = FacesContext.getCurrentInstance();
@@ -304,8 +304,7 @@ public class StudentReports {
         PreparedStatement pstmt = null;
 
         try {
-
-            System.out.println(table_name + " okay dude");
+            
             con = dbConnections.mySqlDBconnection();
             String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
@@ -351,9 +350,7 @@ public class StudentReports {
         PreparedStatement pstmt = null;
 
         try {
-
-            // = getSchool().replaceAll("\\s", "_");
-            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);            
+               
             con = dbConnections.mySqlDBconnection();
             String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
@@ -388,9 +385,9 @@ public class StudentReports {
 
         }
 
-
     }
-     public List<String> studentNameTerm(String table_name) throws Exception {
+
+    public List<String> studentNameTerm(String table_name) throws Exception {
 
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -400,9 +397,7 @@ public class StudentReports {
         PreparedStatement pstmt = null;
 
         try {
-
-            // = getSchool().replaceAll("\\s", "_");
-            //System.out.println(getArm() + " kay " + getSchool() + "  yesssss " + val);            
+        
             con = dbConnections.mySqlDBconnection();
             String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
@@ -526,8 +521,7 @@ public class StudentReports {
                     lst.add(String.valueOf(rs.getDouble("totalscore")));
                     lst.add(rs.getString("grade"));
                 }
-            }
-            System.out.println("hi Bro");
+            }            
             return lst;
         } catch (Exception e) {
             e.printStackTrace();
@@ -559,7 +553,7 @@ public class StudentReports {
     }
 
     public List<PositionModel> scoreSums(String table_name) throws Exception {
-          FacesContext context = FacesContext.getCurrentInstance();
+        FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -608,8 +602,10 @@ public class StudentReports {
                 pstmt = null;
             }
 
-        }    }
-     public List<PostionTermModel> scoreSumsTerm(String table_name) throws Exception {
+        }
+    }
+
+    public List<PostionTermModel> scoreSumsTerm(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -625,7 +621,7 @@ public class StudentReports {
                 String query = "select * from " + table_name + "_tbfinalcompute where studentclass=? and Term=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
-                pstmt.setString(2, getTerm());                
+                pstmt.setString(2, getTerm());
                 pstmt.setString(3, getYear());
                 pstmt.setBoolean(4, false);
                 rs = pstmt.executeQuery();
@@ -662,7 +658,6 @@ public class StudentReports {
 
         }
     }
-    
 
     public void printReport() throws Exception {
         FacesMessage msg;
@@ -670,10 +665,8 @@ public class StudentReports {
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         String table_names = schlGetterMethod.tableNameDisplay(getSchools());
-        setTable_name(schlGetterMethod.tableNameDisplay(getSchools().replaceAll("\\s", "_")));
-        System.out.println(table_names + " hiya " + getTable_name() + " hmm " + getSchool() + " now " + schlGetterMethod.tableNameDisplay(getSchools()));
-        if (displaySub(table_names).size() > 0) {
-            System.out.println("Hello Boss");
+        setTable_name(schlGetterMethod.tableNameDisplay(getSchools().replaceAll("\\s", "_")));      
+        if (displaySub(table_names).size() > 0) {            
             writeToExcel(table_names);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
             context.addMessage(null, msg);
@@ -682,19 +675,18 @@ public class StudentReports {
             context.addMessage(null, msg);
         }
     }
-    
+
     public void printReportTerm() throws Exception {
         FacesMessage msg;
         FacesContext context = FacesContext.getCurrentInstance();
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        String table_names = schlGetterMethod.tableNameDisplay(getSchools());     
-        System.out.println(table_names + " hiya " + getTable_name() + " hmm " + getSchool() + " now " + schlGetterMethod.tableNameDisplay(getSchools()));
-        
-            writeToExcelTerm(table_names);
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
-            context.addMessage(null, msg);
-        
+        String table_names = schlGetterMethod.tableNameDisplay(getSchools());       
+
+        writeToExcelTerm(table_names);
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
+        context.addMessage(null, msg);
+
     }
 
     public void onArmChange() throws Exception {
@@ -940,8 +932,7 @@ public class StudentReports {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
-            System.out.println(event.getObject().toString() + " table name: " + getSchool());
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));          
             classmodel = classDropdown();
             setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
         } catch (Exception e) {
@@ -971,8 +962,7 @@ public class StudentReports {
         tableHeaderNames = displaySubject(table_name);
 
         List<String> subHeading = new ArrayList<>();
-        int valu = tableHeaderNames.size() * 2;
-        System.out.println("hey dude");
+        int valu = tableHeaderNames.size() * 2;        
         //write code for subheads
         for (int i = 0; i < tableHeaderNames.size(); i++) {
             subHeading.add("Total");
@@ -1075,21 +1065,22 @@ public class StudentReports {
 
             rowValue++;
         }
-        System.out.println(tableHeaderNames.size());
+        
 //        for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
 //            sheet.autoSizeColumn(i, true);
 //        }
-        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
-            workbook.write(fileOut);
-        }
-//        String filename = "sheet.xlsx";
-//        FileOutputStream fileOut = new FileOutputStream(filename);
-//        workbook.write(fileOut);
-//        fileOut.close();
-//        System.out.println("***Done***");
-//
-//        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
-//        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
+//        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
+//            workbook.write(fileOut);
+//        }
+         String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
+        String filename = timeStamp+getGrade()+getTerm()+getYear()+"Report.xlsx";
+        FileOutputStream fileOut = new FileOutputStream(filename);
+        workbook.write(fileOut);
+        fileOut.close();
+        System.out.println("***Done***" + timeStamp);
+
+        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
+        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
 //        Workbook wb = new XSSFWorkbook();
 //        Sheet sheet = wb.createSheet("new sheet");
 //
@@ -1198,7 +1189,6 @@ public class StudentReports {
             row.createCell(1).setCellValue(studentNameTerm(table_name).get(i));
             rowNums++;
         }
-        
 
         int rowValue = 8;
 
@@ -1207,28 +1197,28 @@ public class StudentReports {
             header.createCell(2).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getFirstTerm()));
             header.createCell(3).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getSecondTerm()));
             header.createCell(4).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getThirdTerm()));
-            
+
             header.createCell(7).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getTotalscore()));
             header.createCell(8).setCellValue(String.format("%.2f", scoreSumsTerm(table_name).get(i).getAverage()));
             header.createCell(9).setCellValue(scoreSumsTerm(table_name).get(i).getPosition());
 
             rowValue++;
-        }
-        System.out.println(tableHeaderNames.size());
+        }        
 //        for (int i = 0; i < tableHeaderNames.size() + 4; i++) {
 //            sheet.autoSizeColumn(i, true);
 //        }
-        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
-            workbook.write(fileOut);
-        }
-//        String filename = "sheet.xlsx";
-//        FileOutputStream fileOut = new FileOutputStream(filename);
-//        workbook.write(fileOut);
-//        fileOut.close();
-//        System.out.println("***Done***");
-//
-//        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
-//        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
+//        try (OutputStream fileOut = new FileOutputStream("C:/woook.xlsx")) {
+//            workbook.write(fileOut);
+//        }
+        String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
+        String filename = timeStamp+getGrade()+"sessionReport.xlsx";
+        FileOutputStream fileOut = new FileOutputStream(filename);
+        workbook.write(fileOut);
+        fileOut.close();
+        System.out.println("***Done***" + timeStamp);
+
+        InputStream stream = new BufferedInputStream(new FileInputStream(filename));
+        exportFile = new DefaultStreamedContent(stream, "application/xlsx", filename);
 //        Workbook wb = new XSSFWorkbook();
 //        Sheet sheet = wb.createSheet("new sheet");
 //
