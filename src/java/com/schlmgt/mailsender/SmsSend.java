@@ -15,6 +15,7 @@ import com.schlmgt.profile.PrimaryModel;
 import com.schlmgt.profile.SecondaryModel;
 import com.schlmgt.register.GradeModel;
 import com.schlmgt.register.StaffModel;
+import com.schlmgt.school.SchoolGetterMethod;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,6 +39,7 @@ import javax.faces.context.FacesContext;
 import javax.swing.table.TableModel;
 import org.mike.test.ThreadTest;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -74,13 +76,16 @@ public class SmsSend implements Serializable {
     private Boolean nbool, pbool, sbool, fbool, status, status1;
     private String messangerOfTruth;
     private ExecutorService service;
+    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
+    private String school;
+    private String schools;
 
     @PostConstruct
     public void init() {
         try {
             setStatus(false);
             setStatus1(false);
-           
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -266,6 +271,51 @@ public class SmsSend implements Serializable {
 
     }
 
+    public List<ClassModel> classDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbclass";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<ClassModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
     public void sendStaff() {
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -319,6 +369,16 @@ public class SmsSend implements Serializable {
             ex.printStackTrace();
         }
 
+    }
+
+    public void onItemSelect(SelectEvent event) {
+        try {
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
+            classmodel = classDropdown();
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getMessangerOfTruth() {
@@ -583,6 +643,30 @@ public class SmsSend implements Serializable {
 
     public void setStaffModel2(List<StaffModel> staffModel2) {
         this.staffModel2 = staffModel2;
+    }
+
+    public SchoolGetterMethod getSchlGetterMethod() {
+        return schlGetterMethod;
+    }
+
+    public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
+        this.schlGetterMethod = schlGetterMethod;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getSchools() {
+        return schools;
+    }
+
+    public void setSchools(String schools) {
+        this.schools = schools;
     }
 
 }

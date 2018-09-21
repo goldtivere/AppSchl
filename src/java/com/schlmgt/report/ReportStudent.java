@@ -7,50 +7,27 @@ package com.schlmgt.report;
 
 import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.logic.ClassGrade;
-import com.schlmgt.register.ClassModel;
-import com.schlmgt.register.GradeModel;
-import com.schlmgt.register.TermModel;
+import com.schlmgt.profile.ClassModel;
 import com.schlmgt.school.SchoolGetterMethod;
 import com.schlmgt.updateResult.ResultModel;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -69,186 +46,38 @@ import org.primefaces.model.StreamedContent;
  *
  * @author Gold
  */
-@ManagedBean
-@RequestScoped
-public class StudentReports {
+@ManagedBean(name = "stuReport")
+@ViewScoped
+public class ReportStudent implements Serializable {
 
-    private List<ColumnModel> personas = new ArrayList<ColumnModel>();
-    private List<ResultModel> tableData;
-    private List<String> tableHeaderNames;
-    private List<String> subHead;
-    private List<String> armValue;
-    private List<String> yearDrop;
-    private String sclass;
-    private String grade;
-    private String term;
+    private String schools;
+    private String school;
+    private String student_class;
+    private String student_grade;
     private String year;
+    private String arm;
+    private String term;
+    private List<ClassModel> classmodel;
+    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
     private boolean vis;
     private boolean bis;
-    private String arm;
+    private List<String> tableHeaderNames;
     private StreamedContent exportFile;
-    private String school;
-    private String schools;
-    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
-    private List<ClassModel> classmodel;
-    private List<GradeModel> grademodels;
-    private List<TermModel> termList;
-    private List<String> terms;
-    private String table_name;
 
     @PostConstruct
     public void init() {
-        try {
-            vis = false;
-            bis = false;
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public StreamedContent getExportFile() {
-        return exportFile;
-    }
-
-    public void setExportFile(StreamedContent exportFile) {
-        this.exportFile = exportFile;
-    }
-
-    public boolean isBis() {
-        return bis;
-    }
-
-    public void setBis(boolean bis) {
-        this.bis = bis;
-    }
-
-    public boolean isVis() {
-        return vis;
-    }
-
-    public void setVis(boolean vis) {
-        this.vis = vis;
-    }
-
-    public String getSclass() {
-        return sclass;
-    }
-
-    public void setSclass(String sclass) {
-        this.sclass = sclass;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public List<ResultModel> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(List<ResultModel> tableData) {
-        this.tableData = tableData;
-    }
-
-    public List<String> getTableHeaderNames() {
-        return tableHeaderNames;
-    }
-
-    public List<ColumnModel> getPersonas() {
-        return personas;
-    }
-
-    public void setPersonas(List<ColumnModel> personas) {
-        this.personas = personas;
-    }
-
-    public List<String> getSubHead() {
-        return subHead;
-    }
-
-    public void setSubHead(List<String> subHead) {
-        this.subHead = subHead;
+        setVis(false);
+        setBis(false);
     }
 
     public void onyearchange() throws Exception {
-
+        System.out.println("HI");
         setVis(true);
         setBis(true);
 
     }
 
-    public List<Double> scoreSum(String table_name) throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        //String val = getSchool().replaceAll("\\s", "_");
-        String value = schlGetterMethod.tableNameDisplay(getSchools());
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            List<Double> lst = new ArrayList<>();
-            for (int i = 0; i < studentNum(table_name).size(); i++) {
-                String query = "select sum(totalscore) as total from " + value + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
-                pstmt = con.prepareStatement(query);
-                pstmt.setString(1, getGrade());
-                pstmt.setString(2, getTerm());
-                pstmt.setString(3, getArm());
-                pstmt.setString(4, getYear());
-                pstmt.setString(5, studentNum(table_name).get(i));
-                pstmt.setBoolean(6, false);
-                rs = pstmt.executeQuery();
-                //                
-                while (rs.next()) {
-
-                    ResultModel coun = new ResultModel();
-                    lst.add(rs.getDouble("total"));
-                }
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-    }
-
-    public List<String> studentNum(String table_name) throws Exception {
+    public List<ClassModel> classDropdown() throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -259,26 +88,26 @@ public class StudentReports {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "SELECT * FROM tbclass";
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, getGrade());
-            pstmt.setString(2, getTerm());
-            pstmt.setString(3, getArm());
-            pstmt.setString(4, getYear());
-            pstmt.setBoolean(5, false);
             rs = pstmt.executeQuery();
             //
-            List<String> lst = new ArrayList<>();
-            List<String> suHead = new ArrayList<>();
+            List<ClassModel> lst = new ArrayList<>();
             while (rs.next()) {
 
-                lst.add(rs.getString("studentreg"));
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
             }
 
             return lst;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+
         } finally {
 
             if (!(con == null)) {
@@ -291,161 +120,15 @@ public class StudentReports {
             }
 
         }
-
     }
 
-    public List<String> studentNumTerm(String table_name) throws Exception {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
+    public void onItemSelect(SelectEvent event) {
         try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, getGrade());
-            pstmt.setString(2, getTerm());
-            pstmt.setString(3, getYear());
-            pstmt.setBoolean(4, false);
-            rs = pstmt.executeQuery();
-            //
-            List<String> lst = new ArrayList<>();
-            List<String> suHead = new ArrayList<>();
-            while (rs.next()) {
-
-                lst.add(rs.getString("studentreg"));
-            }
-
-            return lst;
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
+            classmodel = classDropdown();
+            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-
-    }
-
-    public List<String> studentName(String table_name) throws Exception {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, getGrade());
-            pstmt.setString(2, getTerm());
-            pstmt.setString(3, getArm());
-            pstmt.setString(4, getYear());
-            pstmt.setBoolean(5, false);
-            rs = pstmt.executeQuery();
-            //
-            List<String> lst = new ArrayList<>();
-            List<String> suHead = new ArrayList<>();
-            while (rs.next()) {
-
-                lst.add(rs.getString("full_name"));
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-
-    }
-
-    public List<String> studentNameTerm(String table_name) throws Exception {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, getGrade());
-            pstmt.setString(2, getTerm());
-            pstmt.setString(3, getYear());
-            pstmt.setBoolean(4, false);
-            rs = pstmt.executeQuery();
-            //
-            List<String> lst = new ArrayList<>();
-            List<String> suHead = new ArrayList<>();
-            while (rs.next()) {
-
-                lst.add(rs.getString("full_name"));
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-
-    }
-
-    public void postProcessXLS(Object document) {
-        HSSFWorkbook wb = (HSSFWorkbook) document;
-        HSSFSheet sheet = wb.getSheetAt(0);
-        HSSFRow header = sheet.getRow(0);
-
-        HSSFCellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
-        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-
-        for (int i = 0; i < header.getPhysicalNumberOfCells(); i++) {
-            HSSFCell cell = header.getCell(i);
-
-            cell.setCellStyle(cellStyle);
         }
     }
 
@@ -461,7 +144,7 @@ public class StudentReports {
             con = dbConnections.mySqlDBconnection();
             String query = "select distinct(subject) from " + table_name + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
-            pstmt.setString(1, getGrade());
+            pstmt.setString(1, getStudent_grade());
             pstmt.setString(2, getTerm());
             pstmt.setString(3, getArm());
             pstmt.setString(4, getYear());
@@ -507,7 +190,7 @@ public class StudentReports {
             for (int i = 0; i < studentNum(table_name).size(); i++) {
                 String query = "select totalscore,grade from " + table_name + "_tbstudentresult where studentclass=? and Term=? and arm=? and year=? and studentreg=? and isdeleted=?";
                 pstmt = con.prepareStatement(query);
-                pstmt.setString(1, getGrade());
+                pstmt.setString(1, getStudent_grade());
                 pstmt.setString(2, getTerm());
                 pstmt.setString(3, getArm());
                 pstmt.setString(4, getYear());
@@ -540,19 +223,7 @@ public class StudentReports {
 
         }
     }
-
-    public void PlayListMB() {
-
-        try {
-            //Generate table header.
-
-        } catch (Exception ex) {
-            Logger.getLogger(StudentReports.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    public List<PositionModel> scoreSums(String table_name) throws Exception {
+public List<PositionModel> scoreSums(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -568,7 +239,7 @@ public class StudentReports {
             for (int i = 0; i < studentNum(table_name).size(); i++) {
                 String query = "select * from " + table_name + "_tbresultcompute where studentclass=? and Term=? and arm=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
-                pstmt.setString(1, getGrade());
+                pstmt.setString(1, getStudent_grade());
                 pstmt.setString(2, getTerm());
                 pstmt.setString(3, getArm());
                 pstmt.setString(4, getYear());
@@ -620,7 +291,7 @@ public class StudentReports {
             for (int i = 0; i < studentNum(table_name).size(); i++) {
                 String query = "select * from " + table_name + "_tbfinalcompute where studentclass=? and Term=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
-                pstmt.setString(1, getGrade());
+                pstmt.setString(1, getStudent_grade());
                 pstmt.setString(2, getTerm());
                 pstmt.setString(3, getYear());
                 pstmt.setBoolean(4, false);
@@ -658,14 +329,197 @@ public class StudentReports {
 
         }
     }
+    public List<String> studentNum(String table_name) throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getStudent_grade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getArm());
+            pstmt.setString(4, getYear());
+            pstmt.setBoolean(5, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("studentreg"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
+
+    public List<String> studentNumTerm(String table_name) throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getStudent_grade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getYear());
+            pstmt.setBoolean(4, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("studentreg"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
+
+    public List<String> studentName(String table_name) throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbresultcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.arm=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getStudent_grade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getArm());
+            pstmt.setString(4, getYear());
+            pstmt.setBoolean(5, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("full_name"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
+
+    public List<String> studentNameTerm(String table_name) throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, getStudent_grade());
+            pstmt.setString(2, getTerm());
+            pstmt.setString(3, getYear());
+            pstmt.setBoolean(4, false);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            List<String> suHead = new ArrayList<>();
+            while (rs.next()) {
+
+                lst.add(rs.getString("full_name"));
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
 
     public void printReport() throws Exception {
         FacesMessage msg;
         FacesContext context = FacesContext.getCurrentInstance();
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        String table_names = schlGetterMethod.tableNameDisplay(getSchools());
-        setTable_name(schlGetterMethod.tableNameDisplay(getSchools().replaceAll("\\s", "_")));
+        String table_names = schlGetterMethod.tableNameDisplay(getSchools());       
         if (displaySub(table_names).size() > 0) {
             writeToExcel(table_names);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
@@ -687,259 +541,6 @@ public class StudentReports {
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
         context.addMessage(null, msg);
 
-    }
-
-    public void onArmChange() throws Exception {
-        armValue = armDropdown();
-    }
-
-    public void onYearDropDown() throws Exception {
-        yearDrop = yearDropdown();
-    }
-
-    public List<String> yearDropdown() throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "SELECT distinct year FROM yearterm";
-            pstmt = con.prepareStatement(query);
-            rs = pstmt.executeQuery();
-            //
-            List<String> lst = new ArrayList<>();
-            while (rs.next()) {
-
-                lst.add(rs.getString("year"));
-
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-    }
-
-    public List<String> armDropdown() throws Exception {
-
-        //
-        try {
-            List<String> lst = new ArrayList<>();
-            lst.add("A");
-            lst.add("B");
-            lst.add("C");
-            lst.add("D");
-            return lst;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        }
-    }
-
-    public List<ClassModel> classDropdown() throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbclass";
-            pstmt = con.prepareStatement(query);
-            rs = pstmt.executeQuery();
-            //
-            List<ClassModel> lst = new ArrayList<>();
-            while (rs.next()) {
-
-                ClassModel coun = new ClassModel();
-                coun.setId(rs.getInt("id"));
-                coun.setTbclass(rs.getString("class"));
-
-                //
-                lst.add(coun);
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-    }
-
-    public void onClassChanges(String tbclass) throws Exception {
-
-        grademodels = gradeDropdowns(tbclass);
-
-    }
-
-    public List<GradeModel> gradeDropdowns(String tbclass) throws Exception {
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbgrade where class=?";
-            pstmt = con.prepareStatement(query);
-
-            pstmt.setString(1, tbclass);
-            rs = pstmt.executeQuery();
-            //
-            List<GradeModel> lst = new ArrayList<>();
-            while (rs.next()) {
-
-                GradeModel coun = new GradeModel();
-                coun.setId(rs.getInt("id"));
-                coun.setGrade(rs.getString("grade"));
-                coun.setSclass(rs.getString("class"));
-
-                //
-                lst.add(coun);
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-    }
-
-    public void onarmChanges() throws Exception {
-
-        armValue = armDropdown();
-
-    }
-
-    public void ontermChan() throws Exception {
-
-        terms = yearDropdown();
-
-    }
-
-    public void ongradeeChanges() throws Exception {
-
-        termList = termDropdown();
-
-    }
-
-    public void ongradeChanges() throws Exception {
-
-        termList = termDropdown();
-
-    }
-
-    public List<TermModel> termDropdown() throws Exception {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        DbConnectionX dbConnections = new DbConnectionX();
-        Connection con = null;
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-
-        try {
-
-            con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM tbterm";
-            pstmt = con.prepareStatement(query);
-            rs = pstmt.executeQuery();
-            //
-            List<TermModel> lst = new ArrayList<>();
-            while (rs.next()) {
-
-                TermModel coun = new TermModel();
-                coun.setId(rs.getInt("id"));
-                coun.setTerm(rs.getString("term"));
-
-                //
-                lst.add(coun);
-            }
-
-            return lst;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-
-        } finally {
-
-            if (!(con == null)) {
-                con.close();
-                con = null;
-            }
-            if (!(pstmt == null)) {
-                pstmt.close();
-                pstmt = null;
-            }
-
-        }
-    }
-
-    public void valval() {
-        System.out.println("this is it");
-        System.out.println("this not");
-    }
-
-    public void onItemSelect(SelectEvent event) {
-        try {
-            classmodel = classDropdown();
-            System.out.println("HI");
-            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
-
-            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()).replaceAll("\\s", "_"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void writeToExcel(String table_name) throws Exception {
@@ -974,7 +575,7 @@ public class StudentReports {
         int lav = 3;
         Row title = sheet.createRow(3);
         Cell ces = title.createCell(7);
-        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " " + getArm() + " Result BroadSheet, " + getYear());
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getStudent_grade()) + " " + getArm() + " Result BroadSheet, " + getYear());
         ces.setCellStyle(headerCellStyleT);
 //        sheet.addMergedRegion(new CellRangeAddress(
 //                3, //first row (0-based)
@@ -1075,7 +676,7 @@ public class StudentReports {
 //            workbook.write(fileOut);
 //        }
         String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
-        String filename = timeStamp + getGrade() + getTerm() + getYear() + "Report.xlsx";
+        String filename = timeStamp + getStudent_grade()+ getTerm() + getYear() + "Report.xlsx";
         FileOutputStream fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
@@ -1115,8 +716,7 @@ public class StudentReports {
 //            wb.write(fileOut);
 //        }
     }
-
-    public void writeToExcelTerm(String table_name) throws Exception {
+public void writeToExcelTerm(String table_name) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("resultSheet");
         ClassGrade mode = new ClassGrade();
@@ -1141,7 +741,7 @@ public class StudentReports {
         int lav = 3;
         Row title = sheet.createRow(3);
         Cell ces = title.createCell(7);
-        ces.setCellValue(getSchools() + " " + mode.gradeGet(getGrade()) + " Result BroadSheet, " + getYear());
+        ces.setCellValue(getSchools() + " " + mode.gradeGet(getStudent_grade()) + " Result BroadSheet, " + getYear());
         ces.setCellStyle(headerCellStyleT);
 //        sheet.addMergedRegion(new CellRangeAddress(
 //                3, //first row (0-based)
@@ -1213,7 +813,7 @@ public class StudentReports {
 //            workbook.write(fileOut);
 //        }
         String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
-        String filename = timeStamp + getGrade() + "sessionReport.xlsx";
+        String filename = timeStamp + getStudent_grade()+ "sessionReport.xlsx";
         FileOutputStream fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
@@ -1253,29 +853,12 @@ public class StudentReports {
 //            wb.write(fileOut);
 //        }
     }
-
-    public String getArm() {
-        return arm;
+    public String getSchools() {
+        return schools;
     }
 
-    public void setArm(String arm) {
-        this.arm = arm;
-    }
-
-    public List<String> getArmValue() {
-        return armValue;
-    }
-
-    public void setArmValue(List<String> armValue) {
-        this.armValue = armValue;
-    }
-
-    public List<String> getYearDrop() {
-        return yearDrop;
-    }
-
-    public void setYearDrop(List<String> yearDrop) {
-        this.yearDrop = yearDrop;
+    public void setSchools(String schools) {
+        this.schools = schools;
     }
 
     public String getSchool() {
@@ -1284,6 +867,30 @@ public class StudentReports {
 
     public void setSchool(String school) {
         this.school = school;
+    }
+
+    public String getStudent_class() {
+        return student_class;
+    }
+
+    public void setStudent_class(String student_class) {
+        this.student_class = student_class;
+    }
+
+    public String getStudent_grade() {
+        return student_grade;
+    }
+
+    public void setStudent_grade(String student_grade) {
+        this.student_grade = student_grade;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public SchoolGetterMethod getSchlGetterMethod() {
@@ -1302,44 +909,48 @@ public class StudentReports {
         this.classmodel = classmodel;
     }
 
-    public List<GradeModel> getGrademodels() {
-        return grademodels;
+    public String getArm() {
+        return arm;
     }
 
-    public void setGrademodels(List<GradeModel> grademodels) {
-        this.grademodels = grademodels;
+    public void setArm(String arm) {
+        this.arm = arm;
     }
 
-    public List<TermModel> getTermList() {
-        return termList;
+    public String getTerm() {
+        return term;
     }
 
-    public void setTermList(List<TermModel> termList) {
-        this.termList = termList;
+    public void setTerm(String term) {
+        this.term = term;
     }
 
-    public List<String> getTerms() {
-        return terms;
+    public boolean isVis() {
+        return vis;
     }
 
-    public void setTerms(List<String> terms) {
-        this.terms = terms;
+    public void setVis(boolean vis) {
+        this.vis = vis;
     }
 
-    public String getSchools() {
-        return schools;
+    public boolean isBis() {
+        return bis;
     }
 
-    public void setSchools(String schools) {
-        this.schools = schools;
+    public void setBis(boolean bis) {
+        this.bis = bis;
     }
 
-    public String getTable_name() {
-        return table_name;
+    public List<String> getTableHeaderNames() {
+        return tableHeaderNames;
     }
 
-    public void setTable_name(String table_name) {
-        this.table_name = table_name;
+    public StreamedContent getExportFile() {
+        return exportFile;
+    }
+
+    public void setExportFile(StreamedContent exportFile) {
+        this.exportFile = exportFile;
     }
 
 }

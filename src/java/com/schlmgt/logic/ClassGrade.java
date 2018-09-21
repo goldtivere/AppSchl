@@ -42,7 +42,7 @@ public class ClassGrade implements Serializable {
         try {
             viis = false;
             bis = false;
-            classmodel = classDropdown();
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -748,6 +748,12 @@ public class ClassGrade implements Serializable {
     }
 
     public void onClassChanges(String tbclass) throws Exception {
+
+        grademodels = gradeDropdowns(tbclass);
+
+    }
+    
+     public void ClassChangesOn(String tbclass) throws Exception {
 
         grademodels = gradeDropdowns(tbclass);
 
