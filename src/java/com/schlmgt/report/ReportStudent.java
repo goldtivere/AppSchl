@@ -223,7 +223,8 @@ public class ReportStudent implements Serializable {
 
         }
     }
-public List<PositionModel> scoreSums(String table_name) throws Exception {
+
+    public List<PositionModel> scoreSums(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -329,6 +330,7 @@ public List<PositionModel> scoreSums(String table_name) throws Exception {
 
         }
     }
+
     public List<String> studentNum(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -519,7 +521,7 @@ public List<PositionModel> scoreSums(String table_name) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-        String table_names = schlGetterMethod.tableNameDisplay(getSchools());       
+        String table_names = schlGetterMethod.tableNameDisplay(getSchools());
         if (displaySub(table_names).size() > 0) {
             writeToExcel(table_names);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Report Generated", "Report Generated");
@@ -676,7 +678,7 @@ public List<PositionModel> scoreSums(String table_name) throws Exception {
 //            workbook.write(fileOut);
 //        }
         String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
-        String filename = timeStamp + getStudent_grade()+ getTerm() + getYear() + "Report.xlsx";
+        String filename = timeStamp + mode.gradeGet(getStudent_grade()) + mode.termGet(getTerm()) + getYear() + "Report.xlsx";
         FileOutputStream fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
@@ -716,9 +718,11 @@ public List<PositionModel> scoreSums(String table_name) throws Exception {
 //            wb.write(fileOut);
 //        }
     }
-public void writeToExcelTerm(String table_name) throws Exception {
+
+    public void writeToExcelTerm(String table_name) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("resultSheet");
+        
         ClassGrade mode = new ClassGrade();
         Font headerFont = workbook.createFont();
         headerFont.setBoldweight((short) 10);
@@ -813,7 +817,7 @@ public void writeToExcelTerm(String table_name) throws Exception {
 //            workbook.write(fileOut);
 //        }
         String timeStamp = new SimpleDateFormat("yyMMddHHmmss").format(Calendar.getInstance().getTime());
-        String filename = timeStamp + getStudent_grade()+ "sessionReport.xlsx";
+        String filename = timeStamp + mode.gradeGet(getStudent_grade()) + "sessionReport.xlsx";
         FileOutputStream fileOut = new FileOutputStream(filename);
         workbook.write(fileOut);
         fileOut.close();
@@ -853,6 +857,7 @@ public void writeToExcelTerm(String table_name) throws Exception {
 //            wb.write(fileOut);
 //        }
     }
+
     public String getSchools() {
         return schools;
     }
