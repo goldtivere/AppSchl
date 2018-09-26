@@ -126,5 +126,47 @@ public class SchoolGetterMethod implements Serializable {
             }
 
         }
-    }    
+    }
+
+    public SchoolManagementModel tableNameDisplayValue(String tablename) throws SQLException {
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        try {
+            SchoolManagementModel mdl = new SchoolManagementModel();
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT student.*, stu.dbname,stu.totalstudent,stu.totalmale,totalfemale FROM tbschlmgt student inner "
+                    + "join tbschltablestructure stu on stu.schoolname=student.schlname where student.schlname=? and student.isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, tablename);
+            pstmt.setBoolean(2, false);
+            rs = pstmt.executeQuery();
+            //           
+            if (rs.next()) {                
+                mdl.setId(rs.getInt("id"));
+                mdl.setLga(rs.getString("lga"));
+                mdl.setPnum(rs.getString("phonenumber"));
+                mdl.setSchoolHeadName(rs.getString("schoolheadname"));
+                mdl.setSchoolName(rs.getString("schlname"));
+                mdl.setTableName(rs.getString("tablename"));               
+
+            }
+            return mdl;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
 }

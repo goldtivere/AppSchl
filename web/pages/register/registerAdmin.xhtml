@@ -46,7 +46,12 @@
                             <p:outputLabel value="Address: " for="add"/>
                             <p:inputTextarea id="add" required="true" autoResize="true" value="#{adminReg.address}" class="form-control"/>
                             <p:message for="add"/>
-                        </div>                      
+                        </div> 
+                        <div class="form-group">
+                            <p:outputLabel value="Select School: " for="event"/>                            
+                            <p:autoComplete id="event" value="#{adminReg.schools}" forceSelection="true" emptyMessage="no record found" completeMethod="#{sms.schlGetterMethod.completeSchool}">                                
+                            </p:autoComplete>
+                        </div>
 
                     </div>
                     <div class="col-md-6">
@@ -86,7 +91,7 @@
                                              update="upload_pix_data,pst_img"/>                                 
 
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <p:outputLabel  for="design" value="Designation: "/>
                             <p:inputTextarea id="design" class="form-control" value="#{adminReg.designation}" required="true" />
                             <p:message for="design"/>
