@@ -26,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.swing.table.TableModel;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
+import com.schlmgt.school.SchoolGetterMethod;
 
 /**
  *
@@ -54,6 +55,7 @@ public class Profile implements Serializable {
     private Boolean nbool, pbool, sbool, fbool;
     private String schoolValue;
     private String school;
+    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
 
     @PostConstruct
     public void init() {
@@ -86,7 +88,7 @@ public class Profile implements Serializable {
     public void selectReco(SecondaryModel secRecord) {
 
         try {
-            FacesContext ctx = FacesContext.getCurrentInstance();
+            FacesContext ctx = FacesContext.getCurrentInstance();                        
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
             ctx.getExternalContext().getApplicationMap().remove("SecData");
             ctx.getExternalContext().getApplicationMap().remove("reDet");
@@ -703,6 +705,14 @@ public class Profile implements Serializable {
 
     public void setSchool(String school) {
         this.school = school;
+    }
+
+    public SchoolGetterMethod getSchlGetterMethod() {
+        return schlGetterMethod;
+    }
+
+    public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
+        this.schlGetterMethod = schlGetterMethod;
     }
 
 }

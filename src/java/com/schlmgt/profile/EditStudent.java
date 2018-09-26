@@ -139,8 +139,7 @@ public class EditStudent implements Serializable {
             String stuValue = null;
             stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
 
-            if (stuValue != null) {
-                stuValue = stuValue.replaceAll("\\s", "_");
+            if (stuValue != null) {                
                 setSchool(stuValue);
             } else {
                 setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
@@ -749,7 +748,7 @@ public class EditStudent implements Serializable {
                 setStudentid(secModel.getStudentid());
             }
 
-            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from " + tbname + "_student_details a inner join " + getSchool() + "_tbstudentclass b on "
+            String testguid = "Select a.*,b.currentclass,b.classtype,b.class,b.Arm,b.year from " + tbname + "_student_details a inner join " + tbname + "_tbstudentclass b on "
                     + "b.studentid=a.id where b.currentclass=true and a.id=?";
             pstmt = con.prepareStatement(testguid);
             pstmt.setString(1, getStudentid());
@@ -798,7 +797,7 @@ public class EditStudent implements Serializable {
             }
 
             //for studentclassupload
-            String testStud = "Select * from " + getSchool() + "_tbstudentclass where studentid=? and currentclass=?";
+            String testStud = "Select * from " + tbname + "_tbstudentclass where studentid=? and currentclass=?";
             pstmt = con.prepareStatement(testStud);
             pstmt.setString(1, getStudentid());
             pstmt.setBoolean(2, true);

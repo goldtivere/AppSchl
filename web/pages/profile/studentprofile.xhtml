@@ -15,7 +15,7 @@
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
                     <p:outputLabel value="Select School: " for="event"/>                            
-                    <p:autoComplete id="event" value="#{prof.school}" emptyMessage="no record found" completeMethod="#{prof.completeSchool}">
+                    <p:autoComplete id="event" value="#{prof.school}" forceSelection="true" emptyMessage="no record found" completeMethod="#{prof.completeSchool}">
                         <p:ajax event="itemSelect" listener="#{prof.onItemSelect}" update="class" />
                     </p:autoComplete>
                     <div class="pull-right">

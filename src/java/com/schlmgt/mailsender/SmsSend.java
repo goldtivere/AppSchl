@@ -93,8 +93,10 @@ public class SmsSend implements Serializable {
     }
 
     public void ongradeChanges(String studentClass, String studentGrade) throws Exception {
-
-        secModel = onSecondarySearch(studentClass, studentGrade);
+        String tablename = schlGetterMethod.tableNameDisplay(getSchools());
+        setSchool(tablename);
+        System.out.println(tablename + " " + getSchools());
+        secModel = onSecondarySearch(studentClass, studentGrade, tablename);
         setStatus(true);
         setStatus1(false);
 
@@ -108,7 +110,7 @@ public class SmsSend implements Serializable {
 
     }
 
-    public List<SecondaryModel> onSecondarySearch(String studentClass, String studentGrade) throws SQLException {
+    public List<SecondaryModel> onSecondarySearch(String studentClass, String studentGrade, String tablename) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
@@ -117,8 +119,8 @@ public class SmsSend implements Serializable {
             List<SecondaryModel> lst = new ArrayList<>();
             con = dbConnections.mySqlDBconnection();
 
-            String query = "SELECT student.*,stu.guardian_phone FROM tbstudentclass student inner join schlmgt.student_details stu on "
-                    + "stu.id=student.studentid where classtype=? and class=? and currentclass=?";
+            String query = "SELECT student.*,stu.guardian_phone FROM " + tablename + "_tbstudentclass student inner join " + tablename + "_student_details stu on "
+                    + "stu.id=student.studentid where student.classtype=? and student.class=? and student.currentclass=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, studentClass);
             pstmt.setString(2, studentGrade);
@@ -239,9 +241,9 @@ public class SmsSend implements Serializable {
                 context.addMessage(null, msg);
             } else {
 
-                String updateStaff = "insert into smstable (body,phonenumbers,status,datesent,datetimesent,sentby) values"
+                String updateStaff = "insert into " + getSchool() + "_smstable (body,phonenumbers,status,datesent,datetimesent,sentby) values"
                         + "(?,?,?,?,?,?)";
-
+                System.out.println(getSchool() + " hiGold");
                 pstmt = con.prepareStatement(updateStaff);
                 for (SecondaryModel ta : secModel1) {
                     pstmt.setString(1, getSearch_item());
@@ -339,7 +341,7 @@ public class SmsSend implements Serializable {
                 context.addMessage(null, msg);
             } else {
 
-                String updateStaff = "insert into smstable (body,phonenumbers,status,datesent,datetimesent,sentby) values"
+                String updateStaff = "insert into " + getSchool() + "_smstable (body,phonenumbers,status,datesent,datetimesent,sentby) values"
                         + "(?,?,?,?,?,?)";
 
                 pstmt = con.prepareStatement(updateStaff);

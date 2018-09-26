@@ -71,12 +71,13 @@ public class ResultUpdate implements Serializable {
     @PostConstruct
     public void init() {
         setStatus(false);
-        
+
     }
 
     public void onyearchange() throws Exception {
         setStatus(true);
-        resultmodel = displayResult();
+        String tablename = schlGetterMethod.tableNameDisplay(getSchool());
+        resultmodel = displayResult(tablename);
     }
 
     public Boolean statusOfStudent(List<String> excelValue) throws SQLException {
@@ -178,7 +179,7 @@ public class ResultUpdate implements Serializable {
         return count;
     }
 
-    public String resultExist(List<String> excelValue, List<String> sub) throws SQLException {
+    public String resultExist(List<String> excelValue, List<String> sub, String tablename) throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -189,7 +190,7 @@ public class ResultUpdate implements Serializable {
             String value = null;
             con = dbConnections.mySqlDBconnection();
             String valExist = "true";
-            String query = "SELECT * FROM " + getSchool() + "_tbstudentresult where studentreg=? and studentclass=? and term=? and year=? and subject=? and isdeleted=?";
+            String query = "SELECT * FROM " + tablename + "_tbstudentresult where studentreg=? and studentclass=? and term=? and year=? and subject=? and isdeleted=?";
 
             for (int i = 0; i < excelValue.size(); i++) {
 
@@ -234,7 +235,7 @@ public class ResultUpdate implements Serializable {
 
     }
 
-    public void populatePosition() throws SQLException {
+    public void populatePosition(String tablename) throws SQLException {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -245,7 +246,7 @@ public class ResultUpdate implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select average, COUNT(average) as countPosition from " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
+            String query = "select average, COUNT(average) as countPosition from " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -266,7 +267,7 @@ public class ResultUpdate implements Serializable {
 
             }
 
-            String updatePosition = "update " + getSchool() + "_tbresultcompute set postion=? where average=? and studentclass=? and term=? and year=?";
+            String updatePosition = "update " + tablename + "_tbresultcompute set postion=? where average=? and studentclass=? and term=? and year=?";
             pstmt = con.prepareStatement(updatePosition);
             int rank = 0;
             for (int i = 0; i < lst.size(); i++) {
@@ -297,7 +298,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void populatePositionArm() throws SQLException {
+    public void populatePositionArm(String tablename) throws SQLException {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -307,7 +308,7 @@ public class ResultUpdate implements Serializable {
 
         try {
             con = dbConnections.mySqlDBconnection();
-            String queryArm = "select distinct(arm) from " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? group by arm";
+            String queryArm = "select distinct(arm) from " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? group by arm";
             pstmt = con.prepareStatement(queryArm);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -326,7 +327,7 @@ public class ResultUpdate implements Serializable {
 
             }
 
-            String queryArms = "select average, COUNT(average) as countPosition from " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and arm=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
+            String queryArms = "select average, COUNT(average) as countPosition from " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and arm=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
             List<Double> avgss = new ArrayList<>();
             List<Double> posi = new ArrayList<>();
             int rank = 0;
@@ -346,7 +347,7 @@ public class ResultUpdate implements Serializable {
                     avgss.add(rs.getDouble("average"));
                     posi.add(rs.getDouble("countPosition"));
                     //                
-                    String updatePositionArm = "update " + getSchool() + "_tbresultcompute set positionArm=? where average=? and studentclass=? and term=? and year=? and arm=?";
+                    String updatePositionArm = "update " + tablename + "_tbresultcompute set positionArm=? where average=? and studentclass=? and term=? and year=? and arm=?";
                     pstmt = con.prepareStatement(updatePositionArm);
 
                     pstmt.setString(1, String.valueOf(rank + 1));
@@ -381,7 +382,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void populatePositionFinal() throws SQLException {
+    public void populatePositionFinal(String tablename) throws SQLException {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -392,7 +393,7 @@ public class ResultUpdate implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select average, COUNT(average) as countPosition from " + getSchool() + "_tbfinalCompute where studentclass=? and year=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
+            String query = "select average, COUNT(average) as countPosition from " + tablename + "_tbfinalCompute where studentclass=? and year=? and isdeleted=? GROUP BY average HAVING COUNT(average) > 0 order by average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getYear());
@@ -412,7 +413,7 @@ public class ResultUpdate implements Serializable {
 
             }
 
-            String updatePosition = "update " + getSchool() + "_tbfinalCompute set position=? where average=? and studentclass=? and year=?";
+            String updatePosition = "update " + tablename + "_tbfinalCompute set position=? where average=? and studentclass=? and year=?";
             pstmt = con.prepareStatement(updatePosition);
             int rank = 0;
             for (int i = 0; i < lst.size(); i++) {
@@ -453,8 +454,7 @@ public class ResultUpdate implements Serializable {
         ResultSet rs = null;
         boolean stat = false;
         ClassGrade classgrade = new ClassGrade();
-        
-
+        String tablename = schlGetterMethod.tableNameDisplay(getSchool());
         con = dbConnections.mySqlDBconnection();
 
         try {
@@ -518,13 +518,13 @@ public class ResultUpdate implements Serializable {
 
             int total = 0;
 
-            if (resultExist(studentIds, lst).equalsIgnoreCase("true")) {
+            if (resultExist(studentIds, lst, tablename).equalsIgnoreCase("true")) {
                 if (statusOfStudent(lst)) {
                     con.setAutoCommit(false);
                     int rowCount = 0;
-                    String testId = "select * from " + getSchool() + "_tbstudentclass where studentid=? and class=? and currentclass=?";
+                    String testId = "select * from " + tablename + "_tbstudentclass where studentid=? and class=? and currentclass=?";
 
-                    String resultDetail = "insert into " + getSchool() + "_tbstudentresult (studentreg,firsttest,secondtest,exam,totalscore,subject,studentclass,term,arm,year,createdby,datecreated,datetimecreated,isdeleted) values("
+                    String resultDetail = "insert into " + tablename + "_tbstudentresult (studentreg,firsttest,secondtest,exam,totalscore,subject,studentclass,term,arm,year,createdby,datecreated,datetimecreated,isdeleted) values("
                             + "?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
                     for (Row row : ws) {
@@ -625,14 +625,14 @@ public class ResultUpdate implements Serializable {
                             }
 
                             con.commit();
-                            updateStudentArm();
-                            resultmodel = displayResult();
-                            updateStudentGrade();
-                            updateCompute(studentId);
-                            populatePosition();
-                            populatePositionArm();
-                            updateComputeFinal(studentId);
-                            populatePositionFinal();
+                            updateStudentArm(tablename);
+                            resultmodel = displayResult(tablename);
+                            updateStudentGrade(tablename);
+                            updateCompute(studentId, tablename);
+                            populatePosition(tablename);
+                            populatePositionArm(tablename);
+                            updateComputeFinal(studentId, tablename);
+                            populatePositionFinal(tablename);
                             setMessangerOfTruth("Records Successfully Updated!!!.");
                             message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                             context.addMessage(null, message);
@@ -655,7 +655,7 @@ public class ResultUpdate implements Serializable {
                 }
 
             } else {
-                setMessangerOfTruth(resultExist(studentIds, lst));
+                setMessangerOfTruth(resultExist(studentIds, lst, tablename));
                 message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                 context.addMessage(null, message);
 
@@ -693,7 +693,7 @@ public class ResultUpdate implements Serializable {
 
     }
 
-    public List<ResultModel> displayResult() throws Exception {
+    public List<ResultModel> displayResult(String tablename) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
@@ -704,7 +704,7 @@ public class ResultUpdate implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM " + getSchool() + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
+            String query = "SELECT * FROM " + tablename + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -751,7 +751,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void updateResultCompute(double total, String reg) {
+    public void updateResultCompute(double total, String reg, String tablename) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -769,7 +769,7 @@ public class ResultUpdate implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
 
-            String updateSubject = "update " + getSchool() + "_tbresultcompute set totalscore=?,Average=?,updatedby=?,dateupdated=? where studentreg=? and studentClass=? and term=? and year=?";
+            String updateSubject = "update " + tablename + "_tbresultcompute set totalscore=?,Average=?,updatedby=?,dateupdated=? where studentreg=? and studentClass=? and term=? and year=?";
 
             pstmt = con.prepareStatement(updateSubject);
             System.out.println(total + " total");
@@ -784,14 +784,14 @@ public class ResultUpdate implements Serializable {
             pstmt.setString(8, getYear());
             pstmt.executeUpdate();
 
-            updateComputeFinal(reg);
+            updateComputeFinal(reg, tablename);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void updateResult() {
+    public void updateResult(String tablename) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -809,7 +809,7 @@ public class ResultUpdate implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
 
-            String updateSubject = "update " + getSchool() + "_tbstudentresult set firsttest=?,secondtest=?,exam=?,totalscore=? ,updatedby=?,dateupdated=?,datetimeupdated=?,grade=? where id=?";
+            String updateSubject = "update " + tablename + "_tbstudentresult set firsttest=?,secondtest=?,exam=?,totalscore=? ,updatedby=?,dateupdated=?,datetimeupdated=?,grade=? where id=?";
 
             pstmt = con.prepareStatement(updateSubject);
             double total = modelResult.getFirstTest() + modelResult.getSecondTest() + modelResult.getExam();
@@ -838,16 +838,16 @@ public class ResultUpdate implements Serializable {
             }
             pstmt.setInt(9, modelResult.getId());
             pstmt.executeUpdate();
-            updateStudentGrade();
-            updateStudentArm();
-            resultmodel = displayResult();
-            updateResultCompute(totalScore(modelResult.getStudentId()), modelResult.getStudentId());
+            updateStudentGrade(tablename);
+            updateStudentArm(tablename);
+            resultmodel = displayResult(tablename);
+            updateResultCompute(totalScore(modelResult.getStudentId(), tablename), modelResult.getStudentId(), tablename);
             System.out.println(modelResult.getStudentId());
-            updateComputeFinal(modelResult.getStudentId());
-            averagePosition(modelResult.getStudentId());
-            populatePosition();
-            populatePositionArm();
-            populatePositionFinal();
+            updateComputeFinal(modelResult.getStudentId(), tablename);
+            averagePosition(modelResult.getStudentId(), tablename);
+            populatePosition(tablename);
+            populatePositionArm(tablename);
+            populatePositionFinal(tablename);
             setMessangerOfTruth("Result Updated!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
@@ -858,7 +858,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void deleteRecordCompute() {
+    public void deleteRecordCompute(String tablename) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -880,7 +880,7 @@ public class ResultUpdate implements Serializable {
                 context.addMessage(null, msg);
             } else {
 
-                String updateSubject = "update " + getSchool() + "_tbresultcompute set isdeleted=?,deletedby=?,dateDeleted=?,datedeletedalone=? where studentreg=? and studentclass=? and term=? and year=?";
+                String updateSubject = "update " + tablename + "_tbresultcompute set isdeleted=?,deletedby=?,dateDeleted=?,datedeletedalone=? where studentreg=? and studentclass=? and term=? and year=?";
 
                 pstmt = con.prepareStatement(updateSubject);
                 for (ResultModel ta : resultmodel1) {
@@ -907,7 +907,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void deleteRecord() {
+    public void deleteRecord(String tablename) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -929,7 +929,7 @@ public class ResultUpdate implements Serializable {
                 context.addMessage(null, msg);
             } else {
 
-                String updateSubject = "update " + getSchool() + "_tbstudentresult set isdeleted=?,deletedby=?,datetimeDeleted=? where studentreg=? and studentclass=? and term=? and year=?";
+                String updateSubject = "update " + tablename + "_tbstudentresult set isdeleted=?,deletedby=?,datetimeDeleted=? where studentreg=? and studentclass=? and term=? and year=?";
 
                 pstmt = con.prepareStatement(updateSubject);
                 for (ResultModel ta : resultmodel1) {
@@ -943,11 +943,11 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
 
                 }
-                deleteRecordCompute();
-                updateDelete();
-                populatePosition();
-                populatePositionArm();
-                resultmodel = displayResult();
+                deleteRecordCompute(tablename);
+                updateDelete(tablename);
+                populatePosition(tablename);
+                populatePositionArm(tablename);
+                resultmodel = displayResult(tablename);
 
                 setMessangerOfTruth("Result Deleted!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
@@ -967,7 +967,7 @@ public class ResultUpdate implements Serializable {
         return resultmodel2;
     }
 
-    public void updateStudentArm() {
+    public void updateStudentArm(String tablename) {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -978,7 +978,7 @@ public class ResultUpdate implements Serializable {
             List<String> arm = new ArrayList<>();
 
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT distinct(studentreg) FROM " + getSchool() + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
+            String query = "SELECT distinct(studentreg) FROM " + tablename + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -990,7 +990,7 @@ public class ResultUpdate implements Serializable {
                 studentID.add(rs.getString("studentreg"));
             }
 
-            String query1 = "SELECT arm FROM " + getSchool() + "_tbstudentclass where studentid=? and isdeleted=? and currentclass=?";
+            String query1 = "SELECT arm FROM " + tablename + "_tbstudentclass where studentid=? and isdeleted=? and currentclass=?";
             pstmt = con.prepareStatement(query1);
 
             for (int i = 0; i < studentID.size(); i++) {
@@ -1004,7 +1004,7 @@ public class ResultUpdate implements Serializable {
                 }
 
             }
-            String query2 = "update " + getSchool() + "_tbstudentresult set arm=? where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
+            String query2 = "update " + tablename + "_tbstudentresult set arm=? where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
             pstmt = con.prepareStatement(query2);
             for (int i = 0; i < studentID.size(); i++) {
                 pstmt.setString(1, arm.get(i));
@@ -1022,7 +1022,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void updateStudentGrade() {
+    public void updateStudentGrade(String tablename) {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1033,7 +1033,7 @@ public class ResultUpdate implements Serializable {
             List<Integer> arm = new ArrayList<>();
             con = dbConnections.mySqlDBconnection();
 
-            String query = "SELECT * FROM " + getSchool() + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
+            String query = "SELECT * FROM " + tablename + "_tbstudentresult where studentclass=? and term=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -1046,7 +1046,7 @@ public class ResultUpdate implements Serializable {
                 arm.add(rs.getInt("id"));
             }
 
-            String query2 = "update " + getSchool() + "_tbstudentresult set grade=? where studentclass=? and term=? and year=? and isdeleted=? and id=?";
+            String query2 = "update " + tablename + "_tbstudentresult set grade=? where studentclass=? and term=? and year=? and isdeleted=? and id=?";
             pstmt = con.prepareStatement(query2);
             for (int i = 0; i < studentID.size(); i++) {
                 if (studentID.get(i) > 74) {
@@ -1079,7 +1079,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public List<String> studentNum() throws Exception {
+    public List<String> studentNum(String tablename) throws Exception {
 
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -1091,7 +1091,7 @@ public class ResultUpdate implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select distinct(Studentreg) from " + getSchool() + "_tbstudentresult where studentclass=? and Term=? and year=? and isdeleted=?";
+            String query = "select distinct(Studentreg) from " + tablename + "_tbstudentresult where studentclass=? and Term=? and year=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -1124,7 +1124,7 @@ public class ResultUpdate implements Serializable {
 
     }
 
-    public double totalScore(String id) {
+    public double totalScore(String id, String tablename) {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1140,7 +1140,7 @@ public class ResultUpdate implements Serializable {
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             int createdId = userObj.getId();
 
-            String query = "SELECT sum(totalscore) as total FROM " + getSchool() + "_tbstudentresult where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
+            String query = "SELECT sum(totalscore) as total FROM " + tablename + "_tbstudentresult where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -1162,7 +1162,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void updateCompute(List<String> studentId) {
+    public void updateCompute(List<String> studentId, String tablename) {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1180,7 +1180,7 @@ public class ResultUpdate implements Serializable {
             List<ResultModel> arrayDude = new ArrayList<>();
 
             for (int i = 0; i < studentId.size(); i++) {
-                String query = "SELECT distinct(studentreg) as regNum,sum(totalscore) as total,studentclass,term,arm,year FROM " + getSchool() + "_tbstudentresult where studentclass=? and term=? and year=? and studentreg=? and isdeleted=? group by studentreg";
+                String query = "SELECT distinct(studentreg) as regNum,sum(totalscore) as total,studentclass,term,arm,year FROM " + tablename + "_tbstudentresult where studentclass=? and term=? and year=? and studentreg=? and isdeleted=? group by studentreg";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getGrade());
                 pstmt.setString(2, getTerm());
@@ -1204,7 +1204,7 @@ public class ResultUpdate implements Serializable {
                 }
             }
 
-            String resultDetail = "insert into " + getSchool() + "_tbresultcompute (studentreg,studentclass,term,arm,year,totalscore,numberofsubject,average,createdby,datecreated,datealone,isdeleted) values("
+            String resultDetail = "insert into " + tablename + "_tbresultcompute (studentreg,studentclass,term,arm,year,totalscore,numberofsubject,average,createdby,datecreated,datealone,isdeleted) values("
                     + "?,?,?,?,?,?,?,?,?,?,?,?)";
             pstmt = con.prepareStatement(resultDetail);
 
@@ -1229,7 +1229,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void updateComputeFinal(List<String> studentId) {
+    public void updateComputeFinal(List<String> studentId, String tablename) {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1246,7 +1246,7 @@ public class ResultUpdate implements Serializable {
             int createdId = userObj.getId();
             List<ResultComputeModel> arrayDude = new ArrayList<>();
             List<String> regStud = new ArrayList<>();
-            String query = "SELECT * FROM " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and datealone=?";
+            String query = "SELECT * FROM " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and datealone=?";
             for (int i = 0; i < studentId.size(); i++) {
 
                 pstmt = con.prepareStatement(query);
@@ -1269,7 +1269,7 @@ public class ResultUpdate implements Serializable {
                 }
             }
             int uuu = 0;
-            String querys = "SELECT * FROM " + getSchool() + "_tbfinalCompute where studentclass=? and year=? and studentreg=?";
+            String querys = "SELECT * FROM " + tablename + "_tbfinalCompute where studentclass=? and year=? and studentreg=?";
             for (ResultComputeModel mm : arrayDude) {
 
                 pstmt = con.prepareStatement(querys);
@@ -1280,7 +1280,7 @@ public class ResultUpdate implements Serializable {
 
                 if (rs.next()) {
                     if ("1".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "update " + getSchool() + "_tbfinalCompute set firstterm=?,dateupdated=?,updatedby=? where studentclass=?"
+                        String resultDetail = "update " + tablename + "_tbfinalCompute set firstterm=?,dateupdated=?,updatedby=? where studentclass=?"
                                 + "and year=? and studentreg=?";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1294,7 +1294,7 @@ public class ResultUpdate implements Serializable {
                         pstmt.executeUpdate();
 
                     } else if ("2".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "update " + getSchool() + "_tbfinalCompute set secondterm=?,dateupdated=?,updatedby=? where studentclass=?"
+                        String resultDetail = "update " + tablename + "_tbfinalCompute set secondterm=?,dateupdated=?,updatedby=? where studentclass=?"
                                 + " and year=? and studentreg=?";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1307,7 +1307,7 @@ public class ResultUpdate implements Serializable {
                         pstmt.executeUpdate();
 
                     } else if ("3".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "update " + getSchool() + "_tbfinalCompute set thirdterm=?,dateupdated=?,updatedby=? where studentclass=?"
+                        String resultDetail = "update " + tablename + "_tbfinalCompute set thirdterm=?,dateupdated=?,updatedby=? where studentclass=?"
                                 + "and year=? and studentreg=?";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1323,7 +1323,7 @@ public class ResultUpdate implements Serializable {
                 } else if (!rs.next()) {
 
                     if ("1".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "insert into " + getSchool() + "_tbfinalCompute (studentreg,studentclass,term,year,firstterm,datecreated,createdby,isdeleted) values("
+                        String resultDetail = "insert into " + tablename + "_tbfinalCompute (studentreg,studentclass,term,year,firstterm,datecreated,createdby,isdeleted) values("
                                 + "?,?,?,?,?,?,?,?)";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1339,7 +1339,7 @@ public class ResultUpdate implements Serializable {
                         pstmt.executeUpdate();
 
                     } else if ("2".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "insert into " + getSchool() + "_tbfinalCompute (studentreg,studentclass,term,year,secondterm,datecreated,createdby,isdeleted) values("
+                        String resultDetail = "insert into " + tablename + "_tbfinalCompute (studentreg,studentclass,term,year,secondterm,datecreated,createdby,isdeleted) values("
                                 + "?,?,?,?,?,?,?,?)";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1354,7 +1354,7 @@ public class ResultUpdate implements Serializable {
                         pstmt.executeUpdate();
 
                     } else if ("3".equalsIgnoreCase(getTerm())) {
-                        String resultDetail = "insert into " + getSchool() + "_tbfinalCompute (studentreg,studentclass,term,year,thirdterm,datecreated,createdby,isdeleted) values("
+                        String resultDetail = "insert into " + tablename + "_tbfinalCompute (studentreg,studentclass,term,year,thirdterm,datecreated,createdby,isdeleted) values("
                                 + "?,?,?,?,?,?,?,?)";
                         pstmt = con.prepareStatement(resultDetail);
 
@@ -1371,15 +1371,15 @@ public class ResultUpdate implements Serializable {
                     }
                 }
             }
-            averagePosition(studentId);
-            populatePositionFinal();
+            averagePosition(studentId, tablename);
+            populatePositionFinal(tablename);
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void updateDelete() throws Exception {
+    public void updateDelete(String tablename) throws Exception {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1392,7 +1392,7 @@ public class ResultUpdate implements Serializable {
             String on = String.valueOf(userObj);
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             List<ResultComputeModel> arrayDude = new ArrayList<>();
-            String query = "select sum(totalscore) as total,term,studentreg,studentclass,year from " + getSchool() + "_tbresultcompute where studentreg=? and term=? and year=? and studentclass=? and isdeleted=? and datedeletedalone=?";
+            String query = "select sum(totalscore) as total,term,studentreg,studentclass,year from " + tablename + "_tbresultcompute where studentreg=? and term=? and year=? and studentclass=? and isdeleted=? and datedeletedalone=?";
             for (ResultModel m : resultmodel1) {
 
                 pstmt = con.prepareStatement(query);
@@ -1419,7 +1419,7 @@ public class ResultUpdate implements Serializable {
 
             for (ResultComputeModel mm : arrayDude) {
 
-                String qu = "select * from " + getSchool() + "_tbfinalCompute where studentreg=? and year=? and studentclass=? and isdeleted=?";
+                String qu = "select * from " + tablename + "_tbfinalCompute where studentreg=? and year=? and studentclass=? and isdeleted=?";
                 pstmt = con.prepareStatement(qu);
                 pstmt.setString(1, mm.getStudentReg());
                 pstmt.setString(2, getYear());
@@ -1435,7 +1435,7 @@ public class ResultUpdate implements Serializable {
                 }
 
                 if ("1".equalsIgnoreCase(mm.getTerm())) {
-                    String resultDetail = "update " + getSchool() + "_tbfinalCompute set firstterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
+                    String resultDetail = "update " + tablename + "_tbfinalCompute set firstterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
                             + "and year=? and studentreg=?";
                     pstmt = con.prepareStatement(resultDetail);
                     pstmt.setDouble(1, 0);
@@ -1449,7 +1449,7 @@ public class ResultUpdate implements Serializable {
 
                     pstmt.executeUpdate();
                 } else if ("2".equalsIgnoreCase(mm.getTerm())) {
-                    String resultDetail = "update " + getSchool() + "_tbfinalCompute set secondterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
+                    String resultDetail = "update " + tablename + "_tbfinalCompute set secondterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
                             + "and year=? and studentreg=?";
                     pstmt = con.prepareStatement(resultDetail);
                     pstmt.setDouble(1, 0);
@@ -1463,7 +1463,7 @@ public class ResultUpdate implements Serializable {
 
                     pstmt.executeUpdate();
                 } else if ("3".equalsIgnoreCase(getTerm())) {
-                    String resultDetail = "update " + getSchool() + "_tbfinalCompute set thirdterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
+                    String resultDetail = "update " + tablename + "_tbfinalCompute set thirdterm=?,totalscore=?, isdeleted=?,datedeleted=?,deletedby=? where studentclass=?"
                             + "and year=? and studentreg=?";
                     pstmt = con.prepareStatement(resultDetail);
                     pstmt.setDouble(1, 0);
@@ -1485,7 +1485,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void averagePosition(List<String> studentId) throws Exception {
+    public void averagePosition(List<String> studentId, String tablename) throws Exception {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1498,7 +1498,7 @@ public class ResultUpdate implements Serializable {
             String on = String.valueOf(userObj);
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             List<ResultComputeModel> arrayDude = new ArrayList<>();
-            String query = "select sum(totalscore) as sumtotal,studentreg,studentclass,year from " + getSchool() + "_tbresultcompute where studentreg=? and year=? and studentclass=? and isdeleted=? and datealone=?";
+            String query = "select sum(totalscore) as sumtotal,studentreg,studentclass,year from " + tablename + "_tbresultcompute where studentreg=? and year=? and studentclass=? and isdeleted=? and datealone=?";
             for (int i = 0; i < studentId.size(); i++) {
 
                 pstmt = con.prepareStatement(query);
@@ -1519,7 +1519,7 @@ public class ResultUpdate implements Serializable {
                     arrayDude.add(mode);
                 }
 
-                String resultDetail = "update " + getSchool() + "_tbfinalCompute set totalscore=?,average=?,updatedby=? where studentclass=? "
+                String resultDetail = "update " + tablename + "_tbfinalCompute set totalscore=?,average=?,updatedby=? where studentclass=? "
                         + "and year=? and studentreg=?";
 
                 for (ResultComputeModel mm : arrayDude) {
@@ -1533,14 +1533,14 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
                 }
             }
-            populatePositionFinal();
+            populatePositionFinal(tablename);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void averagePosition(String studentId) throws Exception {
+    public void averagePosition(String studentId, String tablename) throws Exception {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1553,7 +1553,7 @@ public class ResultUpdate implements Serializable {
             String on = String.valueOf(userObj);
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             List<ResultComputeModel> arrayDude = new ArrayList<>();
-            String query = "select sum(totalscore) as sumtotal,studentreg,studentclass,year from " + getSchool() + "_tbresultcompute where studentreg=? and year=? and studentclass=? and isdeleted=?";
+            String query = "select sum(totalscore) as sumtotal,studentreg,studentclass,year from " + tablename + "_tbresultcompute where studentreg=? and year=? and studentclass=? and isdeleted=?";
 
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, studentId);
@@ -1571,7 +1571,7 @@ public class ResultUpdate implements Serializable {
                 mode.setYear(rs.getString("year"));
                 arrayDude.add(mode);
 
-                String resultDetail = "update " + getSchool() + "_tbfinalCompute set totalscore=?,average=?,updatedby=? where studentclass=?"
+                String resultDetail = "update " + tablename + "_tbfinalCompute set totalscore=?,average=?,updatedby=? where studentclass=?"
                         + "and year=? and studentreg=? and isdeleted=?";
 
                 for (ResultComputeModel mm : arrayDude) {
@@ -1592,7 +1592,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void updateComputeFinal(String studentReg) throws SQLException {
+    public void updateComputeFinal(String studentReg, String tablename) throws SQLException {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1608,7 +1608,7 @@ public class ResultUpdate implements Serializable {
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             int createdId = userObj.getId();
             List<ResultComputeModel> arrayDude = new ArrayList<>();
-            String query = "SELECT * FROM " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
+            String query = "SELECT * FROM " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -1629,7 +1629,7 @@ public class ResultUpdate implements Serializable {
             }
 
             if ("1".equalsIgnoreCase(mode.getTerm())) {
-                String updatePosition = "update " + getSchool() + "_tbfinalCompute set firstterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
+                String updatePosition = "update " + tablename + "_tbfinalCompute set firstterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
 
                 pstmt = con.prepareStatement(updatePosition);
 
@@ -1642,7 +1642,7 @@ public class ResultUpdate implements Serializable {
                 pstmt.executeUpdate();
 
             } else if ("2".equalsIgnoreCase(mode.getTerm())) {
-                String updatePosition = "update " + getSchool() + "_tbfinalCompute set secondterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
+                String updatePosition = "update " + tablename + "_tbfinalCompute set secondterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
 
                 pstmt = con.prepareStatement(updatePosition);
 
@@ -1655,7 +1655,7 @@ public class ResultUpdate implements Serializable {
                 pstmt.executeUpdate();
 
             } else if ("3".equalsIgnoreCase(mode.getTerm())) {
-                String updatePosition = "update " + getSchool() + "_tbfinalCompute set thirdterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
+                String updatePosition = "update " + tablename + "_tbfinalCompute set thirdterm=?,dateupdated=?,updatedby=? where StudentReg=? and studentclass=? and year=?";
 
                 pstmt = con.prepareStatement(updatePosition);
 
@@ -1668,13 +1668,13 @@ public class ResultUpdate implements Serializable {
                 pstmt.executeUpdate();
 
             }
-            populatePositionFinal();
+            populatePositionFinal(tablename);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void DeleteComputeFinal(String studentReg) throws SQLException {
+    public void DeleteComputeFinal(String studentReg, String tablename) throws SQLException {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1691,7 +1691,7 @@ public class ResultUpdate implements Serializable {
             int createdId = userObj.getId();
             List<ResultComputeModel> arrayDude = new ArrayList<>();
 
-            String query = "SELECT * FROM " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
+            String query = "SELECT * FROM " + tablename + "_tbresultcompute where studentclass=? and term=? and year=? and studentreg=? and isdeleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getTerm());
@@ -1712,7 +1712,7 @@ public class ResultUpdate implements Serializable {
             }
             for (ResultComputeModel mm : arrayDude) {
                 if ("1".equalsIgnoreCase(mm.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
 
                     pstmt = con.prepareStatement(updatePosition);
 
@@ -1726,7 +1726,7 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
 
                 } else if ("2".equalsIgnoreCase(mm.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set secondterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set secondterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
 
                     pstmt = con.prepareStatement(updatePosition);
 
@@ -1740,7 +1740,7 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
 
                 } else if ("3".equalsIgnoreCase(mm.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set thirdterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set thirdterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
 
                     pstmt.setBoolean(1, true);
                     pstmt.setString(2, DateManipulation.dateAndTime());
@@ -1758,7 +1758,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void DeleteComputeFinal() throws SQLException {
+    public void DeleteComputeFinal(String tablename) throws SQLException {
         try {
 
             DbConnectionX dbConnections = new DbConnectionX();
@@ -1778,7 +1778,7 @@ public class ResultUpdate implements Serializable {
             for (ResultModel moe : resultmodel1) {
 
                 if ("1".equalsIgnoreCase(moe.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and year=?";
 
                     pstmt = con.prepareStatement(updatePosition);
 
@@ -1792,7 +1792,7 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
 
                 } else if ("2".equalsIgnoreCase(moe.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set isdeleted=?,datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and year=?";
 
                     pstmt = con.prepareStatement(updatePosition);
 
@@ -1806,7 +1806,7 @@ public class ResultUpdate implements Serializable {
                     pstmt.executeUpdate();
 
                 } else if ("3".equalsIgnoreCase(moe.getTerm())) {
-                    String updatePosition = "update " + getSchool() + "_tbfinalCompute set thirdterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
+                    String updatePosition = "update " + tablename + "_tbfinalCompute set thirdterm=?, datedeleted=?,deletedby=? where StudentReg=? and studentclass=? and term=? and year=?";
 
                     pstmt = con.prepareStatement(updatePosition);
 
