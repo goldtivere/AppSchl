@@ -76,8 +76,8 @@ public class ResultUpdate implements Serializable {
 
     public void onyearchange() throws Exception {
         setStatus(true);
-        String tablename = schlGetterMethod.tableNameDisplay(getSchool());
-        resultmodel = displayResult(tablename);
+        String tablename = schlGetterMethod.tableNameDisplay(getSchool());        
+        resultmodel = displayResult(getSchool());
     }
 
     public Boolean statusOfStudent(List<String> excelValue) throws SQLException {
@@ -454,7 +454,7 @@ public class ResultUpdate implements Serializable {
         ResultSet rs = null;
         boolean stat = false;
         ClassGrade classgrade = new ClassGrade();
-        String tablename = schlGetterMethod.tableNameDisplay(getSchool());
+        String tablename = getSchool();
         con = dbConnections.mySqlDBconnection();
 
         try {
