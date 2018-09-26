@@ -15,6 +15,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -37,7 +38,7 @@ public class ThreadRunner implements Runnable {
 
     @Override
     public void run() {
-        try {            
+        try {
 
             runValue(doTransaction());
 
@@ -45,6 +46,48 @@ public class ThreadRunner implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public List<String> dbname() throws SQLException {
+        Connection con = null;
+        DbConnectionX dbCon = new DbConnectionX();
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = dbCon.mySqlDBconnection();
+            String querySMSDetails = "select * from tbschltablestructure "
+                    + "where isdeleted=false";
+            //
+            pstmt = con.prepareStatement(querySMSDetails);
+            rs = pstmt.executeQuery();
+            List<String> dbval = new ArrayList<>();
+            while (rs.next()) {
+                dbval.add(rs.getString("dbname"));
+            }
+
+            return dbval;
+        } catch (Exception e) {
+
+            System.out.print("Exception from doTransaction method.....");
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+            }
+
+            if (!(pstmt == null)) {
+                pstmt.close();
+            }
+
+            if (!(rs == null)) {
+                rs.close();
+            }
+
+        }
+
+    }//end doTransaction...
 
     public List<MessageModel> doTransaction() throws Exception {
 
@@ -59,35 +102,39 @@ public class ThreadRunner implements Runnable {
             con = dbCon.mySqlDBconnection();
 
             //
-            String querySMSDetails = "select * from smstable "
-                    + "where status=? and statuscode is null";
-            //
-            pstmt = con.prepareStatement(querySMSDetails);
-            pstmt.setBoolean(1, false);
-            rs = pstmt.executeQuery();
-
-            //
-            String _val = null;
             List<MessageModel> mode = new ArrayList<>();
-            while (rs.next()) {
-                MessageModel messageModel = new MessageModel();
-                String value = rs.getString("body");
-                _val = value.replace(" ", "%20");
-                _val = _val.replace(",", "%2C");
-                _val = _val.replace(":", "%3A");
-                _val = _val.replace(";", "%3B");
-                _val = _val.replace("'", "%27");
-                _val = _val.replace("(", "%28");
-                _val = _val.replace(")", "%29");
-                _val = _val.replace("#", "%23");
-                messageModel.setBody(_val);
-                messageModel.setPnum(rs.getString("phonenumbers"));
-                messageModel.setDateSent(rs.getString("datesent"));
-                messageModel.setStatus(true);
-                messageModel.setId(rs.getInt("id"));
-                setValueGet(true);
-                mode.add(messageModel);
+            for (String dbname : dbname()) {
+                String querySMSDetails = "select * from " + dbname + "_smstable "
+                        + "where status=? and statuscode is null";
+                //
+                pstmt = con.prepareStatement(querySMSDetails);
+                pstmt.setBoolean(1, false);
+                rs = pstmt.executeQuery();
 
+                //
+                String _val = null;
+
+                while (rs.next()) {
+                    MessageModel messageModel = new MessageModel();
+                    String value = rs.getString("body");
+                    _val = value.replace(" ", "%20");
+                    _val = _val.replace(",", "%2C");
+                    _val = _val.replace(":", "%3A");
+                    _val = _val.replace(";", "%3B");
+                    _val = _val.replace("'", "%27");
+                    _val = _val.replace("(", "%28");
+                    _val = _val.replace(")", "%29");
+                    _val = _val.replace("#", "%23");
+                    messageModel.setBody(_val);
+                    messageModel.setPnum(rs.getString("phonenumbers"));
+                    messageModel.setDateSent(rs.getString("datesent"));
+                    messageModel.setStatus(true);
+                    messageModel.setId(rs.getInt("id"));
+                    messageModel.setDbname(dbname);
+                    setValueGet(true);
+                    mode.add(messageModel);
+
+                }
             }
             return mode;
 
@@ -115,15 +162,14 @@ public class ThreadRunner implements Runnable {
 
     }//end doTransaction...
 
-    public void updateSmsTable(String statusCode, String description, int id) {
+    public void updateSmsTable(String statusCode, String description, int id, String dbname) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
         PreparedStatement pstmt = null;
         try {
             con = dbConnections.mySqlDBconnection();
-
-            String updateSmsTable = "update smstable set status=?,statuscode=?,statusdescription=?,datemessagesent=?,datesenttime=? where id=?";
+            String updateSmsTable = "update " + dbname + "_smstable set status=?,statuscode=?,statusdescription=?,datemessagesent=?,datesenttime=? where id=?";
             pstmt = con.prepareStatement(updateSmsTable);
             pstmt.setBoolean(1, true);
             pstmt.setString(2, statusCode);
@@ -189,7 +235,7 @@ public class ThreadRunner implements Runnable {
                 //System.out.println("God is my Strength:" + i++  );
                 //  System.out.println("The URL:" + gims_url);
                 //doTransaction();
-                updateSmsTable(responseCod, val, messageModel.getId());
+                updateSmsTable(responseCod, val, messageModel.getId(), messageModel.getDbname());
                 System.out.println("ID: " + messageModel.getId() + " sent. Message: " + messageModel.getBody() + " Code" + responseCod + "number :" + messageModel.getPnum());
                 System.out.println("Present");
 

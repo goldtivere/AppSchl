@@ -19,6 +19,7 @@ public class MessageModel implements Serializable {
     private String status_msg;
     private String dateSent;
     private int id;
+    private String dbname;
 
     public String getBody() {
         return body;
@@ -66,6 +67,14 @@ public class MessageModel implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDbname() {
+        return dbname;
+    }
+
+    public void setDbname(String dbname) {
+        this.dbname = dbname;
     }
 
 }
