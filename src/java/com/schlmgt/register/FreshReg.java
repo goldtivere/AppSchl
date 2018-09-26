@@ -13,6 +13,7 @@ import com.schlmgt.logic.DateManipulation;
 import com.schlmgt.logic.LoadPPTfile;
 import com.schlmgt.login.UserDetails;
 import com.schlmgt.profile.SecondaryModel;
+import com.schlmgt.school.SchoolGetterMethod;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -108,6 +109,7 @@ public class FreshReg implements Serializable {
     private List<GradeModel> modeGrade;
     private String sexs;
     private String school;
+    private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
 
     @PostConstruct
     public void init() {
@@ -133,8 +135,8 @@ public class FreshReg implements Serializable {
             System.out.println(getSchool() + " hi");
             //test for null...
             if (stuValue != null) {
-                stuValue = stuValue.replaceAll("\\s", "_");
-                setSchool(stuValue);
+               
+                setSchool(schlGetterMethod.tableNameDisplay(stuValue));
             } else {
                 setMessangerOfTruth("Please click on register and select name of school and registration type to proceed!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
@@ -1684,6 +1686,14 @@ public class FreshReg implements Serializable {
 
     public void setSchool(String school) {
         this.school = school;
+    }
+
+    public SchoolGetterMethod getSchlGetterMethod() {
+        return schlGetterMethod;
+    }
+
+    public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
+        this.schlGetterMethod = schlGetterMethod;
     }
 
 }

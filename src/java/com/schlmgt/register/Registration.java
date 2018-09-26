@@ -186,8 +186,8 @@ public class Registration implements Serializable {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchool(tableNameDisplay(event.getObject().toString())); 
-            System.out.println(getSchool()+ " hi");
+            setSchool(tableNameDisplay(event.getObject().toString()));
+            System.out.println(getSchool() + " hi");
             FacesContext context = FacesContext.getCurrentInstance();
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
 
@@ -220,13 +220,18 @@ public class Registration implements Serializable {
         ctx.getExternalContext().getApplicationMap().put("regDet", getSchool());
         String url = "registerStudent.xhtml?faces-redirect=true";
         nav.handleNavigation(ctx, null, url);
-        ctx.renderResponse();        
+        ctx.renderResponse();
 
     }
 
-    public String regAdmin() throws Exception {
-
-        return "registerAdmin.xhtml?faces-redirect=true";
+    public void regAdmin() throws Exception {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        NavigationHandler nav = ctx.getApplication().getNavigationHandler();
+        ctx.getExternalContext().getApplicationMap().remove("regDet");
+        ctx.getExternalContext().getApplicationMap().put("regDet", getSchool());
+        String url = "registerAdmin.xhtml?faces-redirect=true";
+        nav.handleNavigation(ctx, null, url);
+        ctx.renderResponse();
 
     }
 

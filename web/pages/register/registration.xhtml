@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <div class="text-center">
                         <p:outputLabel value="Select School: " for="event"/>                            
-                        <p:autoComplete id="event" value="#{registration.school}" emptyMessage="no record found" completeMethod="#{registration.completeSchool}">
+                        <p:autoComplete id="event" value="#{registration.school}" forceSelection="true" emptyMessage="no record found" completeMethod="#{registration.completeSchool}">
                             <p:ajax event="itemSelect" listener="#{registration.onItemSelect}" update="class1,class2,class3,class4,dude" />
                         </p:autoComplete>
                     </div>
