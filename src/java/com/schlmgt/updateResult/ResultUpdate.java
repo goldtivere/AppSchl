@@ -64,12 +64,14 @@ public class ResultUpdate implements Serializable {
     private List<ResultModel> resultmodel2;
     private ResultModel modelResult = new ResultModel();
     private String school;
+    private String schools;
     private List<ClassModel> classmodel;
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
 
     @PostConstruct
     public void init() {
         setStatus(false);
+        
     }
 
     public void onyearchange() throws Exception {
@@ -451,6 +453,7 @@ public class ResultUpdate implements Serializable {
         ResultSet rs = null;
         boolean stat = false;
         ClassGrade classgrade = new ClassGrade();
+        
 
         con = dbConnections.mySqlDBconnection();
 

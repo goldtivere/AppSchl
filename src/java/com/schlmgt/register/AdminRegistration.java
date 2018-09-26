@@ -53,6 +53,7 @@ public class AdminRegistration implements Serializable {
     private Date dateEmployed;
     private String designation;
     private String schools;
+    private int schoolId;
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
 
     @PostConstruct
@@ -67,6 +68,7 @@ public class AdminRegistration implements Serializable {
             if (stuValue != null) {
 
                 setSchools(schlGetterMethod.tableNameDisplay(stuValue));
+                setSchoolId(schlGetterMethod.tableNameDisplayValue(stuValue).getId());
             } else {
                 setMessangerOfTruth("Please click on register and select name of school and registration type to proceed!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
@@ -287,7 +289,7 @@ public class AdminRegistration implements Serializable {
                         pstmt.setBoolean(22, false);
                         pstmt.setBoolean(23, false);
                         pstmt.setBoolean(24, false);
-                        pstmt.setInt(25, schlGetterMethod.tableNameDisplayValue(getSchools()).getId());
+                        pstmt.setInt(25, getSchoolId());
 
                         pstmt.executeUpdate();
 
@@ -457,6 +459,14 @@ public class AdminRegistration implements Serializable {
 
     public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
         this.schlGetterMethod = schlGetterMethod;
+    }
+
+    public int getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(int schoolId) {
+        this.schoolId = schoolId;
     }
 
 }
