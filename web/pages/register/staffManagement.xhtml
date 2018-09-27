@@ -74,14 +74,14 @@
                             <h:outputText value="#{papprv_rpt.highQua}"/>
 
                         </p:column>
+                        <p:column headerText="Designation" filterBy="#{papprv_rpt.staffGrade}">
+                            <h:outputText value="#{papprv_rpt.designation}"/>
+
+                        </p:column>
                         <p:column headerText="Address" filterBy="#{papprv_rpt.address}">
                             <h:outputText value="#{papprv_rpt.address}"/>
 
                         </p:column> 
-                        <p:column headerText="Class Assigned" filterBy="#{papprv_rpt.staffGrade}">
-                            <h:outputText value="#{classmode.gradeGet(papprv_rpt.staffGrade)}"/>
-
-                        </p:column>
                         <p:column headerText="Date Employed" filterBy="#{papprv_rpt.dateEmployed}">
                             <h:outputText value="#{papprv_rpt.dateEmployed}"/>
 

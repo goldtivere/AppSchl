@@ -112,7 +112,7 @@ public class StaffProfile implements Serializable {
     public void init() {
         try {
             staffDetails();
-            sesTab1 = displayStaff();
+            //sesTab1 = displayStaff();
             term = yearDropdown();
 
             grademodels = gradeDropdowns();

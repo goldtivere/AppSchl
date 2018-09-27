@@ -48,7 +48,7 @@
                     <div class="text-center">
                         <p:outputLabel value="Select School: " for="event"/>                            
                         <p:autoComplete id="event" value="#{sms.schools}" forceSelection="true" emptyMessage="no record found" completeMethod="#{sms.schlGetterMethod.completeSchool}">
-                            <p:ajax event="itemSelect" listener="#{sms.onItemSelect}" update="sclass" />
+                            <p:ajax event="itemSelect" listener="#{sms.onItemSelect}" update="sclass,buttonactive" />
                         </p:autoComplete>
                     </div>
                     <div class="text-center">
@@ -81,7 +81,7 @@
                                 <f:selectItems value="#{classmode.term}"/>
                             </p:selectOneMenu> 
                             <br/>
-                            <p:commandButton value="Send To Staff" actionListener="#{sms.onStaffChange()}" process="@this" update="stafff,nursery" />
+                            <p:commandButton id="buttonactive" value="Send To Staff" actionListener="#{sms.onStaffChange()}" process="@this" update="stafff,nursery,wata" />
 
                         </p:panel>
                     </div>

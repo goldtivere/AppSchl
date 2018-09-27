@@ -26,11 +26,11 @@ import javax.faces.context.FacesContext;
 @ManagedBean(name = "staff")
 @ViewScoped
 public class StaffManagement implements Serializable {
-
+    
     private List<StaffModel> staff;
     private List<StaffModel> staff1;
     private List<StaffModel> staff2;
-
+    
     @PostConstruct
     public void init() {
         try {
@@ -39,7 +39,7 @@ public class StaffManagement implements Serializable {
             e.printStackTrace();
         }
     }
-
+    
     public List<StaffModel> staffDetails() throws SQLException {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -48,7 +48,7 @@ public class StaffManagement implements Serializable {
         try {
             List<StaffModel> lst = new ArrayList<>();
             con = dbConnections.mySqlDBconnection();
-
+            
             String query = "SELECT * FROM user_details where is_deleted=?";
             pstmt = con.prepareStatement(query);
             pstmt.setBoolean(1, false);
@@ -56,7 +56,7 @@ public class StaffManagement implements Serializable {
             //
 
             while (rs.next()) {
-
+                
                 StaffModel coun = new StaffModel();
                 coun.setId(rs.getInt("id"));
                 coun.setFname(rs.getString("first_name"));
@@ -64,8 +64,9 @@ public class StaffManagement implements Serializable {
                 coun.setLname(rs.getString("last_name"));
                 coun.setPnum(rs.getString("username"));
                 coun.setEmail(rs.getString("email_address"));
-                coun.setStaffClass(Integer.parseInt(rs.getString("staffclass")));
-                coun.setStaffGrade(Integer.parseInt(rs.getString("staffgrade")));
+                coun.setDesignation(rs.getString("designation"));
+//                coun.setStaffClass(Integer.parseInt(rs.getString("staffclass")));
+//                coun.setStaffGrade(Integer.parseInt(rs.getString("staffgrade")));
                 coun.setHighQua(rs.getString("HighestQua"));
                 coun.setAddress(rs.getString("address"));
                 coun.setDateEmployed(rs.getString("dateemployed"));
@@ -76,14 +77,14 @@ public class StaffManagement implements Serializable {
                 //
                 lst.add(coun);
             }
-
+            
             return lst;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-
+            
         } finally {
-
+            
             if (!(con == null)) {
                 con.close();
                 con = null;
@@ -92,12 +93,12 @@ public class StaffManagement implements Serializable {
                 pstmt.close();
                 pstmt = null;
             }
-
+            
         }
     }
-
+    
     public void selectReco(StaffModel secRecord) {
-
+        
         try {
             FacesContext ctx = FacesContext.getCurrentInstance();
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
@@ -106,35 +107,35 @@ public class StaffManagement implements Serializable {
             String url = "staffProfile.xhtml?faces-redirect=true";
             nav.handleNavigation(ctx, null, url);
             ctx.renderResponse();
-
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        
     }
-
+    
     public List<StaffModel> getStaff1() {
         return staff1;
     }
-
+    
     public void setStaff1(List<StaffModel> staff1) {
         this.staff1 = staff1;
     }
-
+    
     public List<StaffModel> getStaff2() {
         return staff2;
     }
-
+    
     public void setStaff2(List<StaffModel> staff2) {
         this.staff2 = staff2;
     }
-
+    
     public List<StaffModel> getStaff() {
         return staff;
     }
-
+    
     public void setStaff(List<StaffModel> staff) {
         this.staff = staff;
     }
-
+    
 }

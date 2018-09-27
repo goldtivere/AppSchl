@@ -79,12 +79,14 @@ public class SmsSend implements Serializable {
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
     private String school;
     private String schools;
+    private boolean buttonActive;
 
     @PostConstruct
     public void init() {
         try {
             setStatus(false);
             setStatus1(false);
+            setButtonActive(false);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,11 +105,27 @@ public class SmsSend implements Serializable {
     }
 
     public void onStaffChange() throws Exception {
+        FacesMessage msg;
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
 
-        setStatus(false);
-        setStatus1(true);
-        staffModel = onStaffSearch();
+            if (getSchools().isEmpty() || getSchools() == null || getSchools().equals("")) {
+                setMessangerOfTruth("Please select a school");
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                context.addMessage(null, msg);
 
+            } else {
+                setStatus(false);
+                setStatus1(true);
+                staffModel = onStaffSearch();
+            }
+        } catch (NullPointerException e) {
+            setMessangerOfTruth("Please select a school");
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<SecondaryModel> onSecondarySearch(String studentClass, String studentGrade, String tablename) throws SQLException {
@@ -175,12 +193,10 @@ public class SmsSend implements Serializable {
             List<StaffModel> lst = new ArrayList<>();
             con = dbConnections.mySqlDBconnection();
 
-            String query = "select staff.staffId, staffuser.username,first_name,staffuser.middleName,staffuser.last_name,staff.staffClass,staff.Year,"
-                    + "staff.staffGrade from user_details staffuser  inner join tbstaffclass staff on "
-                    + "staffuser.id= staff.staffId "
-                    + "where staffuser.id= staff.staffId and staff.status=? and suspendedstatus=?";
+            String query = "select * from user_details staffuser "
+                    + "where is_deleted=? and suspendedstatus=?";
             pstmt = con.prepareStatement(query);
-            pstmt.setBoolean(1, true);
+            pstmt.setBoolean(1, false);
             pstmt.setBoolean(2, false);
             rs = pstmt.executeQuery();
             //
@@ -188,14 +204,14 @@ public class SmsSend implements Serializable {
             while (rs.next()) {
 
                 StaffModel coun = new StaffModel();
-                coun.setStaffId(rs.getString("staffid"));
+                coun.setStaffId(rs.getString("id"));
                 coun.setFname(rs.getString("first_name"));
                 coun.setMname(rs.getString("middlename"));
                 coun.setLname(rs.getString("last_name"));
                 coun.setPnum(rs.getString("username"));
 //                coun.setStaffClass(rs.getString("staffclass"));
 //                coun.setStaffGrade(rs.getString("staffgrade"));
-                coun.setYear(rs.getString("year"));
+                // coun.setYear(rs.getString("year"));
                 //                
                 lst.add(coun);
             }
@@ -669,6 +685,14 @@ public class SmsSend implements Serializable {
 
     public void setSchools(String schools) {
         this.schools = schools;
+    }
+
+    public boolean isButtonActive() {
+        return buttonActive;
+    }
+
+    public void setButtonActive(boolean buttonActive) {
+        this.buttonActive = buttonActive;
     }
 
 }

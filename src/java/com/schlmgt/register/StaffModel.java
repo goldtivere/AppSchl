@@ -32,6 +32,7 @@ public class StaffModel implements Serializable {
     private String year;
     private int roleAssigned;
     private int roleid;
+    private String designation;
 
     public int getId() {
         return id;
@@ -175,6 +176,14 @@ public class StaffModel implements Serializable {
 
     public void setRoleid(int roleid) {
         this.roleid = roleid;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
     }
 
 }
