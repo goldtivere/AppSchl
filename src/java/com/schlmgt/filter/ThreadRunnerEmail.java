@@ -21,49 +21,32 @@ public class ThreadRunnerEmail implements Runnable {
     private SITembeddedImageEmailUtil embeddedImageEmailUtils = new SITembeddedImageEmailUtil();
     private boolean message1;
     private boolean message2;
+    Connection con = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    DbConnectionX dbCon = new DbConnectionX();
 
     public void run() {
 
-        int i = 0;
-
-        while (true) {
-
-            try {
-
-                //get information the connect to the internet that's all
-                String tempData = "";//stores fomatted data, delete if repeatition...
-
-                doTransaction();
-                doUrlSend();
-
-                Thread t = new Thread();
-                //t.sleep(20000);
-                t.sleep(1000);
-
-            } catch (Exception ex) {
-
-                //ex.printStackTrace();
-                System.out.println("Exception.... mother of Exceptions....");
-                ex.printStackTrace();
-                //System.exit(1);
-
-            }
-
-        }//end of while...
+       try
+       {
+           doTransaction();
+       }
+       catch(Exception e)
+       {
+           e.printStackTrace();
+       }
 
     }//end of run method...
 
     public void doTransaction() throws Exception {
 
-        Connection con = null;
-        DbConnectionX dbCon = new DbConnectionX();
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
         try {
+
             StaffEmailModel staffdetail = staffDetails();
 
             if (staffDetails() != null) {
-
+                con = dbCon.mySqlDBconnection();
                 String updateData = "";
                 System.out.println("guid:" + staffdetail.getFullname() + ",request time:" + new java.util.Date().toString());
 
@@ -112,7 +95,7 @@ public class ThreadRunnerEmail implements Runnable {
                 if (embeddedImageEmailUtil.sendOut(staffdetail.getEmail(),
                         subject, body.toString())) {
 
-                    updateData = "update staffstatus set status=1 "
+                    updateData = "update staffstatus set status=true "
                             + "where staffphone='" + staffdetail.getPhone() + "' and "
                             + "fullname='" + staffdetail.getFullname() + "' and id='" + staffdetail.getId() + "'";
                     pstmt = con.prepareStatement(updateData);
@@ -156,10 +139,6 @@ public class ThreadRunnerEmail implements Runnable {
 
     public void doUrlSend() throws Exception {
 
-        Connection con = null;
-        DbConnectionX dbCon = new DbConnectionX();
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
         try {
             StudentEmailModel sudentEmail = studentDetails();
             if (studentDetails() != null) {
@@ -265,12 +244,6 @@ public class ThreadRunnerEmail implements Runnable {
 
     public StudentEmailModel studentDetails() throws Exception {
 
-        Connection con = null;
-        DbConnectionX dbCon = new DbConnectionX();
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        String sms_url;
-
         try {
             con = dbCon.mySqlDBconnection();
             String querySMSDetails = "select * from studentstatus where status=?";
@@ -318,10 +291,6 @@ public class ThreadRunnerEmail implements Runnable {
 
     public StaffEmailModel staffDetails() throws Exception {
 
-        Connection con = null;
-        DbConnectionX dbCon = new DbConnectionX();
-        ResultSet rs = null;
-        PreparedStatement pstmt = null;
         String sms_url;
 
         try {

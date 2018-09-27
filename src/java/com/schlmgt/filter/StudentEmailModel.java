@@ -17,6 +17,7 @@ public class StudentEmailModel implements Serializable{
     private String studentEmail;
     private String studentId;
     private String slink;
+    private String tablename;
 
     public String getGuid() {
         return guid;
@@ -56,6 +57,14 @@ public class StudentEmailModel implements Serializable{
 
     public void setSlink(String slink) {
         this.slink = slink;
+    }
+
+    public String getTablename() {
+        return tablename;
+    }
+
+    public void setTablename(String tablename) {
+        this.tablename = tablename;
     }
     
     
