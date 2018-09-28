@@ -97,13 +97,13 @@ public class StaffManagement implements Serializable {
         }
     }
     
-    public void selectReco(StaffModel secRecord) {
+    public void selectRecos(StaffModel secRecords) {
         
         try {
             FacesContext ctx = FacesContext.getCurrentInstance();
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
-            ctx.getExternalContext().getApplicationMap().remove("staffRecord");
-            ctx.getExternalContext().getApplicationMap().put("staffRecord", secRecord);
+            ctx.getExternalContext().getApplicationMap().remove("staffRecords");
+            ctx.getExternalContext().getApplicationMap().put("staffRecords", secRecords);
             String url = "staffProfile.xhtml?faces-redirect=true";
             nav.handleNavigation(ctx, null, url);
             ctx.renderResponse();

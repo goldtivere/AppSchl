@@ -142,7 +142,7 @@ public class EditStudent implements Serializable {
             if (stuValue != null) {                
                 setSchool(stuValue);
             } else {
-                setMessangerOfTruth("Session Expired for this Student. Please select student and try again!!");
+                setMessangerOfTruth("Session Expired for this Student. Please select student and try again1!!");
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                 ctx.addMessage(null, msg);
             }
@@ -818,7 +818,7 @@ public class EditStudent implements Serializable {
             e.printStackTrace();
 
         } catch (MySQLSyntaxErrorException e) {
-            setMessangerOfTruth("Sessionsss Expired for this Student. Please select student and try again!!");
+            setMessangerOfTruth("Sessionsss Expired for this Student. Please select student and try again2!!");
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
             e.printStackTrace();

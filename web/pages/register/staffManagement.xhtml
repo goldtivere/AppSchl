@@ -74,7 +74,7 @@
                             <h:outputText value="#{papprv_rpt.highQua}"/>
 
                         </p:column>
-                        <p:column headerText="Designation" filterBy="#{papprv_rpt.staffGrade}">
+                        <p:column headerText="Designation" filterBy="#{papprv_rpt.designation}">
                             <h:outputText value="#{papprv_rpt.designation}"/>
 
                         </p:column>
@@ -89,7 +89,7 @@
                         <p:column style="width:60px" exportable="false">
                             <f:facet name="header">Action</f:facet>
                             <p:commandButton value="" icon="ui-icon-search" process="@this"
-                                             actionListener="#{staff.selectReco(papprv_rpt)}"/>                          
+                                             actionListener="#{staff.selectRecos(papprv_rpt)}"/>                          
                         </p:column>
                     </p:dataTable> 
 
