@@ -36,6 +36,7 @@ public class UserDetails implements Serializable {
     private boolean canRegisterStaff;
     private boolean canSendMessage;
     private boolean canManageSchool;
+    private int schoolName;
 
     public String getPassword() {
         return password;
@@ -211,6 +212,14 @@ public class UserDetails implements Serializable {
 
     public void setCanManageSchool(boolean canManageSchool) {
         this.canManageSchool = canManageSchool;
+    }
+
+    public int getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(int schoolName) {
+        this.schoolName = schoolName;
     }
 
 }

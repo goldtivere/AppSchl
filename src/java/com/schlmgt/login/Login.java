@@ -94,6 +94,7 @@ public class Login implements Serializable {
                 dto.setCanUpdateSubject(rs.getBoolean("canupdatesubject"));
                 dto.setCanSendMessage(rs.getBoolean("cansendtext"));
                 dto.setCanManageSchool(rs.getBoolean("canmanageschool"));
+                dto.setSchoolName(rs.getInt("school_name"));
                 
                 context.getExternalContext().getSessionMap().put("sessn_nums", getDto());
                 
@@ -123,13 +124,12 @@ public class Login implements Serializable {
                     setCansendtext(true);
                 }
                 
-               
                 if (getAssignedRole() == 2 && (dto.isCanRegisterStaff() || dto.isCanRegisterStudent())) {
                     setRoleAssigned(false);
                     setRoleAssigned1(false);
                     setCancreatestaff(true);
                 }
-                 if (getAssignedRole() == 2 && dto.isCanManageSchool()) {
+                if (getAssignedRole() == 2 && dto.isCanManageSchool()) {
                     setRoleAssigned(false);
                     setRoleAssigned1(false);
                     setCanmanageschool(true);
@@ -302,11 +302,11 @@ public class Login implements Serializable {
     public void setCansendtext(boolean cansendtext) {
         this.cansendtext = cansendtext;
     }
-
+    
     public boolean isCanmanageschool() {
         return canmanageschool;
     }
-
+    
     public void setCanmanageschool(boolean canmanageschool) {
         this.canmanageschool = canmanageschool;
     }
