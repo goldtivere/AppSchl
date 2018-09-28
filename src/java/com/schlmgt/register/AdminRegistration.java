@@ -294,7 +294,7 @@ public class AdminRegistration implements Serializable {
                         pstmt.executeUpdate();
 
                         String fullname = getLname() + " " + getFname();
-                        String slink = "http://localhost:8080/SchlMgt/faces/pages/createStaff/index.xhtml?id=";
+                        String slink = "http://localhost:8084/AppSchl/faces/pages/createStaff/index.xhtml?id=";
                         String insertemail = "insert into staffstatus (guid,fullname,status,datelogged,staffemail,datetime,staffphone,link)"
                                 + "values(?,?,?,?,?,?,?,?)";
 
