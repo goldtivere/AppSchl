@@ -9,6 +9,7 @@ import com.schlmgt.dbconn.DbConnectionX;
 import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.ClassGrade;
 import com.schlmgt.logic.DateManipulation;
+import com.schlmgt.login.SchoolNameGet;
 import com.schlmgt.login.UserDetails;
 import com.schlmgt.profile.SecondaryModel;
 import com.schlmgt.register.ClassModel;
@@ -67,16 +68,43 @@ public class ResultUpdate implements Serializable {
     private String schools;
     private List<ClassModel> classmodel;
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
+    private SchoolNameGet schnName = new SchoolNameGet();
+    private boolean schoolStatus;
 
     @PostConstruct
     public void init() {
-        setStatus(false);
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            setStatus(false);
+            UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+
+            if (userObj != null) {
+                if (userObj.getSchoolName() == 3) {
+                    setSchoolStatus(true);
+                } else {
+                    setSchoolStatus(false);
+                }
+            }
+            String on = String.valueOf(userObj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void onyearchange() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+        UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+        String tablename = null;
+        if (userObj != null) {
+            if (userObj.getSchoolName() == 3) {
+                tablename = schlGetterMethod.tableNameDisplay(getSchool());
+            } else {
+                tablename = schnName.schoolName(userObj.getSchoolName());
+            }
+        }
         setStatus(true);
-        String tablename = schlGetterMethod.tableNameDisplay(getSchool());        
+
         resultmodel = displayResult(getSchool());
     }
 
@@ -1873,8 +1901,17 @@ public class ResultUpdate implements Serializable {
 
     public void onItemSelect(SelectEvent event) {
         try {
-            setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()));
-            System.out.println(event.getObject().toString() + " table name: " + schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+            FacesContext context = FacesContext.getCurrentInstance();
+            UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+            String tablename = null;
+            if (userObj != null) {
+                if (userObj.getSchoolName() == 3) {
+                    setSchool(schlGetterMethod.tableNameDisplay(event.getObject().toString()));
+                } else {
+                    setSchool(schnName.schoolName(userObj.getSchoolName()));
+                }
+                tablename = schnName.schoolName(userObj.getSchoolName());
+            }
             classmodel = classDropdown();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1995,6 +2032,22 @@ public class ResultUpdate implements Serializable {
 
     public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
         this.schlGetterMethod = schlGetterMethod;
+    }
+
+    public boolean isSchoolStatus() {
+        return schoolStatus;
+    }
+
+    public void setSchoolStatus(boolean schoolStatus) {
+        this.schoolStatus = schoolStatus;
+    }
+
+    public SchoolNameGet getSchnName() {
+        return schnName;
+    }
+
+    public void setSchnName(SchoolNameGet schnName) {
+        this.schnName = schnName;
     }
 
 }

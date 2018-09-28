@@ -17,10 +17,12 @@
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
                     <div class="text-center">
-                        <p:outputLabel value="Select School: " for="event"/>                            
-                        <p:autoComplete id="event" value="#{result.school}" emptyMessage="no record found" completeMethod="#{result.schlGetterMethod.completeSchool}">
-                            <p:ajax event="itemSelect" listener="#{result.onItemSelect}" update="sclass" />
-                        </p:autoComplete>
+                        <p:panel style="border: none;" visible="#{result.schoolStatus}">
+                            <p:outputLabel value="Select School: " for="event"/>                            
+                            <p:autoComplete id="event" value="#{result.school}"  emptyMessage="no record found" completeMethod="#{result.schlGetterMethod.completeSchool}">
+                                <p:ajax event="itemSelect" listener="#{result.onItemSelect}" update="sclass" />
+                            </p:autoComplete>
+                        </p:panel>
                     </div>
                     <div class="text-center">
                         <p:growl id="wat"></p:growl>
