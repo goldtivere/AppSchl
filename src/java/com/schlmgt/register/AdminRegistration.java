@@ -326,6 +326,11 @@ public class AdminRegistration implements Serializable {
                 }
             }
 
+        } catch (NullPointerException e) {
+            setMessangerOfTruth("Please go to register and select a school to register an Admin under!!");
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
+            
         } catch (Exception e) {
             e.printStackTrace();
 
