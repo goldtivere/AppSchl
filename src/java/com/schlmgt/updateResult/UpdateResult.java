@@ -48,9 +48,9 @@ import org.primefaces.model.UploadedFile;
  *
  * @author Gold
  */
-@ManagedBean(name = "resulthhhh")
+@ManagedBean(name = "result")
 @ViewScoped
-public class ResultUpdate implements Serializable {
+public class UpdateResult implements Serializable {
 
     private String grade;
     private String sclass;
@@ -98,16 +98,17 @@ public class ResultUpdate implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
         String tablename = null;
+
         if (userObj != null) {
             if (userObj.getRoleAssigned() == 3) {
-                tablename = schlGetterMethod.tableNameDisplay(getSchool());
+                resultmodel = displayResult(getSchool());
             } else {
                 tablename = schnName.schoolName(userObj.getSchoolName());
+                resultmodel = displayResult(tablename);
             }
         }
         setStatus(true);
 
-        resultmodel = displayResult(tablename);
     }
 
     public Boolean statusOfStudent(List<String> excelValue) throws SQLException {
@@ -484,7 +485,7 @@ public class ResultUpdate implements Serializable {
         ResultSet rs = null;
         boolean stat = false;
         ClassGrade classgrade = new ClassGrade();
-        String tablename = getSchool();
+        String tablename = null;
         con = dbConnections.mySqlDBconnection();
 
         try {
@@ -493,7 +494,13 @@ public class ResultUpdate implements Serializable {
             String on = String.valueOf(userObj);
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             int createdId = userObj.getId();
-
+            if (userObj != null) {
+                if (userObj.getRoleAssigned() == 3) {
+                    tablename = getSchool();
+                } else {
+                    tablename = schnName.schoolName(userObj.getSchoolName());
+                }
+            }
             InputStream mn = event.getFile().getInputstream();
             XSSFWorkbook wb = new XSSFWorkbook(mn);
             XSSFSheet ws = wb.getSheetAt(0);
@@ -839,7 +846,7 @@ public class ResultUpdate implements Serializable {
             int createdId = userObj.getId();
             if (userObj != null) {
                 if (userObj.getRoleAssigned() == 3) {
-                    tablename = schlGetterMethod.tableNameDisplay(getSchool());
+                    tablename = getSchool();
                 } else {
                     tablename = schnName.schoolName(userObj.getSchoolName());
                 }
@@ -944,7 +951,7 @@ public class ResultUpdate implements Serializable {
         }
     }
 
-    public void deleteRecord(String tablename) {
+    public void deleteRecord() {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -953,12 +960,19 @@ public class ResultUpdate implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         RequestContext cont = RequestContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
-
+        String tablename = null;
         try {
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
             String on = String.valueOf(userObj);
             String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
             int createdId = userObj.getId();
+            if (userObj != null) {
+                if (userObj.getRoleAssigned() == 3) {
+                    tablename = getSchool();
+                } else {
+                    tablename = schnName.schoolName(userObj.getSchoolName());
+                }
+            }
             con = dbConnections.mySqlDBconnection();
             if (resultmodel1 == null) {
                 setMessangerOfTruth("Item(s) not selected!!");
