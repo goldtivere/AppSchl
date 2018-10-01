@@ -6,6 +6,7 @@
 package com.schlmgt.profile;
 
 import com.schlmgt.dbconn.DbConnectionX;
+import com.schlmgt.login.SchoolNameGet;
 import com.schlmgt.login.UserDetails;
 import com.schlmgt.register.GradeModel;
 import com.schlmgt.school.SchoolManagementModel;
@@ -56,6 +57,8 @@ public class Profile implements Serializable {
     private String schoolValue;
     private String school;
     private SchoolGetterMethod schlGetterMethod = new SchoolGetterMethod();
+    private boolean schoolStatus;
+    private SchoolNameGet schlname = new SchoolNameGet();
 
     @PostConstruct
     public void init() {
@@ -74,11 +77,15 @@ public class Profile implements Serializable {
             RequestContext cont = RequestContext.getCurrentInstance();
             ExternalContext externalContext = context.getExternalContext();
             UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+            if (userObj != null) {
+                if (userObj.getRoleAssigned() == 3) {
+                    setSchoolStatus(true);
+                } else {
+                    setSchoolStatus(false);
+                    secModel = onSecondaryChange(classGet(userObj.getId()), schlname.schoolName(userObj.getSchoolName()));
 
-            if (userObj.getRoleAssigned() == 1) {
-                secModel = onSecondaryChange(classGet(userObj.getId()), getSchool());
-                setSecondary(true);
-
+                    setSecondary(true);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -88,7 +95,7 @@ public class Profile implements Serializable {
     public void selectReco(SecondaryModel secRecord) {
 
         try {
-            FacesContext ctx = FacesContext.getCurrentInstance();                        
+            FacesContext ctx = FacesContext.getCurrentInstance();
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
             ctx.getExternalContext().getApplicationMap().remove("SecData");
             ctx.getExternalContext().getApplicationMap().remove("reDet");
@@ -97,6 +104,8 @@ public class Profile implements Serializable {
             String url = "editprofile.xhtml?faces-redirect=true";
             nav.handleNavigation(ctx, null, url);
             ctx.renderResponse();
+
+            System.out.println(getSchool() + " here it is");
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -713,6 +722,22 @@ public class Profile implements Serializable {
 
     public void setSchlGetterMethod(SchoolGetterMethod schlGetterMethod) {
         this.schlGetterMethod = schlGetterMethod;
+    }
+
+    public boolean isSchoolStatus() {
+        return schoolStatus;
+    }
+
+    public void setSchoolStatus(boolean schoolStatus) {
+        this.schoolStatus = schoolStatus;
+    }
+
+    public SchoolNameGet getSchlname() {
+        return schlname;
+    }
+
+    public void setSchlname(SchoolNameGet schlname) {
+        this.schlname = schlname;
     }
 
 }

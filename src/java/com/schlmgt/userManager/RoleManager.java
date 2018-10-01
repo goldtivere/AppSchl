@@ -78,6 +78,7 @@ public class RoleManager implements Serializable {
                 coun.setCanRegisterStaff(rs.getBoolean("canregisterstaff"));
                 coun.setCanSendMessage(rs.getBoolean("cansendText"));
                 coun.setCanManageSchool(rs.getBoolean("canmanageschool"));
+                coun.setCanViewProfile(rs.getBoolean("canviewprofile"));
 
                 lst.add(coun);
             }
@@ -124,7 +125,7 @@ public class RoleManager implements Serializable {
             } else {
 
                 String updateSubject = "update user_details set canupdateresult=?,canupdatesubject=?,canregisterstaff=?, "
-                        + " canregisterstudent=? , cansendtext=?,canManageSchool=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
+                        + " canregisterstudent=? , cansendtext=?,canManageSchool=?,canviewprofile=?,dateupdated=?,datetimeupdated=?,updatedby=? where id=?";
 
                 pstmt = con.prepareStatement(updateSubject);
                 RoleManagerModel ta = roleManager2;
@@ -134,10 +135,11 @@ public class RoleManager implements Serializable {
                 pstmt.setBoolean(4, ta.isCanRegisterStudent());
                 pstmt.setBoolean(5, ta.isCanSendMessage());
                 pstmt.setBoolean(6, ta.isCanManageSchool());
-                pstmt.setString(7, DateManipulation.dateAlone());
-                pstmt.setString(8, DateManipulation.dateAndTime());
-                pstmt.setString(9, createdby);
-                pstmt.setInt(10, ta.getId());
+                pstmt.setBoolean(7, ta.isCanViewProfile());
+                pstmt.setString(8, DateManipulation.dateAlone());
+                pstmt.setString(9, DateManipulation.dateAndTime());
+                pstmt.setString(10, createdby);
+                pstmt.setInt(11, ta.getId());
                 pstmt.executeUpdate();
                 roleManager = displayRole();
                 setMessangerOfTruth("Role Updated for Admin!!");

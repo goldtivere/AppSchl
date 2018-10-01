@@ -54,7 +54,7 @@
                                 <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
                             </h:commandLink>
                         </f:facet>  
-                         <p:column selectionMode="single" style="width:30px;text-align:center"/>
+                        <p:column selectionMode="single" style="width:30px;text-align:center"/>
                         <p:column headerText="First Name" filterBy="#{papprv_rpt.firstName}">
                             <h:outputText value="#{papprv_rpt.firstName}"/>
 
@@ -86,8 +86,12 @@
                             <p:selectBooleanCheckbox value="#{papprv_rpt.canSendMessage}" />                            
 
                         </p:column>
-                          <p:column headerText="Can Manage School">
-                              <p:selectBooleanCheckbox value="#{papprv_rpt.canManageSchool}" />                            
+                        <p:column headerText="Can Manage School">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canManageSchool}" />                            
+
+                        </p:column>
+                        <p:column headerText="Can View Student Profile">
+                            <p:selectBooleanCheckbox value="#{papprv_rpt.canViewProfile}" />                            
 
                         </p:column>
                         <p:column headerText="Action" exportable="false"> 

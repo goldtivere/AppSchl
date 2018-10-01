@@ -43,30 +43,33 @@ public class filter implements Filter {
 
             if (ses != null && ses.getAttribute("sessn_nums") != null) {
                 UserDetails l = (UserDetails) ses.getAttribute("sessn_nums");
-                if (l.getRoleAssigned() == 1 && (reqURI.contains("faces/pages/register/") || reqURI.contains("faces/pages/profile/") || reqURI.contains("faces/pages/report/"))) {
+                if (l.getRoleAssigned() == 2 && (reqURI.contains("faces/pages/register/") || reqURI.contains("faces/pages/profile/") || reqURI.contains("faces/pages/report/"))) {
                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 }
 
                 if (l.getRoleAssigned() == 2 && !l.isCanUpdateSubject() && reqURI.contains("faces/pages/student/")) {
-                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } 
-                
-                if (l.getRoleAssigned() == 2 && !l.isCanUpdateResult()&& reqURI.contains("faces/pages/result/")) {
-                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } 
-                
-                if (l.getRoleAssigned() == 2 && !l.isCanSendMessage()&& reqURI.contains("faces/pages/mail/")) {
-                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } 
-                
-                 if (l.getRoleAssigned() == 2 && (!l.isCanRegisterStaff() || !l.isCanRegisterStudent()) && reqURI.contains("faces/pages/register/")) {
-                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } 
-                 
-                 if (l.getRoleAssigned() == 2 && !l.isCanManageSchool()&& reqURI.contains("faces/pages/role/")) {
-                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                } 
-               
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                if (l.getRoleAssigned() == 2 && !l.isCanUpdateResult() && reqURI.contains("faces/pages/result/")) {
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                if (l.getRoleAssigned() == 2 && !l.isCanSendMessage() && reqURI.contains("faces/pages/mail/")) {
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                if (l.getRoleAssigned() == 2 && (!l.isCanRegisterStaff() || !l.isCanRegisterStudent()) && reqURI.contains("faces/pages/register/")) {
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                if (l.getRoleAssigned() == 2 && !l.isCanManageSchool() && reqURI.contains("faces/pages/role/")) {
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
+
+                if (l.getRoleAssigned() == 2 && !l.isCanViewProfile() && (reqURI.contains("faces/pages/profile/") || reqURI.contains("faces/pages/report/"))) {
+                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                }
 
             }
             if (reqURI.contains("/faces/index.xhtml") || (ses != null && ses.getAttribute("sessn_nums") != null) || reqURI.contains("javax.faces.resource")) {

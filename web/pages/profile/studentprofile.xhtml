@@ -14,10 +14,12 @@
         <div class="row">
             <div class="ibox-content" style="height: 80px;">
                 <div class="form-group">
-                    <p:outputLabel value="Select School: " for="event"/>                            
-                    <p:autoComplete id="event" value="#{prof.school}" forceSelection="true" emptyMessage="no record found" completeMethod="#{prof.completeSchool}">
-                        <p:ajax event="itemSelect" listener="#{prof.onItemSelect}" update="class" />
-                    </p:autoComplete>
+                    <p:panel style="border:none;" visible="#{prof.schoolStatus}">
+                        <p:outputLabel value="Select School: " for="event"/>                            
+                        <p:autoComplete id="event" value="#{prof.school}" forceSelection="true" emptyMessage="no record found" completeMethod="#{prof.completeSchool}">
+                            <p:ajax event="itemSelect" listener="#{prof.onItemSelect}" update="class" />
+                        </p:autoComplete>
+                    </p:panel>
                     <div class="pull-right">
                         <p:panel id="dude" style="border: none;">         
                             <p:selectOneMenu id="class" class="form-control"  value="#{prof.model.tbclass}" required="true" requiredMessage="Class required">                    

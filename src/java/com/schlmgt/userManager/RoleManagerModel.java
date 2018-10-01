@@ -22,6 +22,7 @@ public class RoleManagerModel implements Serializable{
     private boolean canRegisterStaff;
     private boolean canSendMessage;
     private boolean canManageSchool;
+    private boolean canViewProfile;
 
     public int getId() {
         return id;
@@ -101,6 +102,14 @@ public class RoleManagerModel implements Serializable{
 
     public void setCanManageSchool(boolean canManageSchool) {
         this.canManageSchool = canManageSchool;
+    }
+
+    public boolean isCanViewProfile() {
+        return canViewProfile;
+    }
+
+    public void setCanViewProfile(boolean canViewProfile) {
+        this.canViewProfile = canViewProfile;
     }
     
     
