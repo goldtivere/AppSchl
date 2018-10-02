@@ -141,7 +141,7 @@ public class Login implements Serializable {
                 
                  if (getAssignedRole() == 2 && dto.isCanViewProfile()) {
                     setRoleAssigned(false);
-                    setRoleAssigned1(true);
+                    setRoleAssigned1(false);
                     setCanviewprofile(true);
                 }
             } else {

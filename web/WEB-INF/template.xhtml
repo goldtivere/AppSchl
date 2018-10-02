@@ -71,6 +71,12 @@
                             </h:outputLink> 
 
                             </li>  
+                             <li>   
+                             <h:outputLink rendered="#{login.canviewprofile}" value="#{request.contextPath}/faces/pages/profile/studentprofile.xhtml">
+                                <i class="fa fa-user"></i> <span class="nav-label">Profile</span>
+                            </h:outputLink> 
+
+                            </li>  
                             <li>
 
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/student/updateSubject.xhtml">

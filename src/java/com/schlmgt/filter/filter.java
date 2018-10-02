@@ -43,9 +43,9 @@ public class filter implements Filter {
 
             if (ses != null && ses.getAttribute("sessn_nums") != null) {
                 UserDetails l = (UserDetails) ses.getAttribute("sessn_nums");
-                if (l.getRoleAssigned() == 2 && (reqURI.contains("faces/pages/register/") || reqURI.contains("faces/pages/profile/") || reqURI.contains("faces/pages/report/"))) {
-                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                }
+//                if (l.getRoleAssigned() == 2 && (reqURI.contains("faces/pages/register/") || reqURI.contains("faces/pages/profile/") || reqURI.contains("faces/pages/report/"))) {
+//                    resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+//                }
 
                 if (l.getRoleAssigned() == 2 && !l.isCanUpdateSubject() && reqURI.contains("faces/pages/student/")) {
                     resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);

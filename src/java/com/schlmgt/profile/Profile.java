@@ -81,10 +81,9 @@ public class Profile implements Serializable {
                 if (userObj.getRoleAssigned() == 3) {
                     setSchoolStatus(true);
                 } else {
+                    classmodel = classDropdown();
                     setSchoolStatus(false);
-                    secModel = onSecondaryChange(classGet(userObj.getId()), schlname.schoolName(userObj.getSchoolName()));
 
-                    setSecondary(true);
                 }
             }
         } catch (Exception ex) {
@@ -95,12 +94,27 @@ public class Profile implements Serializable {
     public void selectReco(SecondaryModel secRecord) {
 
         try {
+            String tablename = null;
+            FacesMessage msg;
+            FacesContext context = FacesContext.getCurrentInstance();
+            RequestContext cont = RequestContext.getCurrentInstance();
+            ExternalContext externalContext = context.getExternalContext();
+            UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+            if (userObj != null) {
+                if (userObj.getRoleAssigned() == 3) {
+                    tablename = getSchool();
+                } else {
+                    tablename = schlname.schoolName(userObj.getSchoolName());
+
+                    setSecondary(true);
+                }
+            }
             FacesContext ctx = FacesContext.getCurrentInstance();
             NavigationHandler nav = ctx.getApplication().getNavigationHandler();
             ctx.getExternalContext().getApplicationMap().remove("SecData");
             ctx.getExternalContext().getApplicationMap().remove("reDet");
             ctx.getExternalContext().getApplicationMap().put("SecData", secRecord);
-            ctx.getExternalContext().getApplicationMap().put("reDet", getSchool());
+            ctx.getExternalContext().getApplicationMap().put("reDet", tablename);
             String url = "editprofile.xhtml?faces-redirect=true";
             nav.handleNavigation(ctx, null, url);
             ctx.renderResponse();
@@ -473,9 +487,22 @@ public class Profile implements Serializable {
     }
 
     public void onClassChange() throws Exception {
+        FacesMessage msg;
+        FacesContext context = FacesContext.getCurrentInstance();
+        RequestContext cont = RequestContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+        if (userObj != null) {
+            if (userObj.getRoleAssigned() == 3) {
+                secModel = onSecondaryChange(model.getTbclass(), getSchool());
+                setSecondary(true);
+            } else {
+                System.out.println(schlname.schoolName(userObj.getSchoolName()) + " hi i am here" + userObj.getSchoolName());
+                secModel = onSecondaryChange(model.getTbclass(), schlname.schoolName(userObj.getSchoolName()));
 
-        secModel = onSecondaryChange(model.getTbclass(), getSchool());
-        setSecondary(true);
+                setSecondary(true);
+            }
+        }
 
     }
 

@@ -46,7 +46,7 @@
                                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">
                                                     <h:outputText styleClass="outputLabel" value= "#{login.dto.first_name} #{login.dto.last_name}"/>
                                                 </strong>
-                                            </span></span> </a>                                    
+                                            </span></span> </a>                                   
                                 </div>
 
                             </li>
@@ -61,9 +61,20 @@
                                 <i class="fa fa-user-plus"></i> <span class="nav-label">Register</span>
                             </h:outputLink>                             
                             </li>
+                            <li>  
+                            <h:outputLink rendered="#{login.cancreatestaff}" value="#{request.contextPath}/faces/pages/register/registration.xhtml">
+                                <i class="fa fa-user-plus"></i> <span class="nav-label">Register</span>
+                            </h:outputLink>                             
+                            </li>
 
                             <li>   
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/profile/studentprofile.xhtml">
+                                <i class="fa fa-user"></i> <span class="nav-label">Profile</span>
+                            </h:outputLink> 
+
+                            </li>  
+                             <li>   
+                             <h:outputLink rendered="#{login.canviewprofile}" value="#{request.contextPath}/faces/pages/profile/studentprofile.xhtml">
                                 <i class="fa fa-user"></i> <span class="nav-label">Profile</span>
                             </h:outputLink> 
 
@@ -77,7 +88,22 @@
                             </li>  
                             <li>
 
+                            <h:outputLink rendered="#{login.canupdateSubject}" value="#{request.contextPath}/faces/pages/student/updateSubject.xhtml">
+                                <i class="fa fa-file-text" aria-hidden="true"></i> <span class="nav-label">Update Subject</span>
+                            </h:outputLink>                                 
+
+                            </li>  
+                            <li>
+
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/result/updateResult.xhtml">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">Update Result</span>
+
+                            </h:outputLink> 
+
+                            </li> 
+                            <li>
+
+                            <h:outputLink rendered="#{login.canupdateResult}" value="#{request.contextPath}/faces/pages/result/updateResult.xhtml">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">Update Result</span>
 
                             </h:outputLink> 
@@ -108,15 +134,16 @@
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/report/report.xhtml">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">Result Report</span>
                             </h:outputLink>
-                            </li>                                                                                                                                                           
-                            <li>
+                            </li> 
+                             <li>
                             <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/school/schoolManagement.xhtml">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">School Management</span>
                             </h:outputLink>
-                            <h:outputLink rendered="#{login.canmanageschool}" value="#{request.contextPath}/faces/pages/school/schoolManagement.xhtml">
+                             <h:outputLink rendered="#{login.canmanageschool}" value="#{request.contextPath}/faces/pages/school/schoolManagement.xhtml">
                                 <i class="fa fa-clipboard" aria-hidden="true"></i> <span class="nav-label">School Management</span>
                             </h:outputLink>
                             </li> 
+
                         </ul>
 
                     </div>
