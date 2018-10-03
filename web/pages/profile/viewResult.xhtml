@@ -25,7 +25,7 @@
 
                     <p:ajax listener="#{classmode.onClassChanges(resultView.sclass)}" update="grad" />
                     <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{classmode.classmodel}"
+                    <f:selectItems value="#{resultView.classmodels}"
                                    var="singlevalue"  
                                    itemLabel="#{singlevalue.tbclass}"
                                    itemValue="#{singlevalue.id}"/>
@@ -55,64 +55,66 @@
                                    itemValue="#{singlevalue.id}"/>
                 </p:selectOneMenu>                 
                 <p:selectOneMenu id="gr" class="form-control" value="#{resultView.year}" required="true" requiredMessage="Year required">                                                    
-                    <p:ajax listener="#{resultView.viewResult()}" update="n" />                    
+                    <p:ajax listener="#{resultView.viewResult()}" update="panTab,n" />                    
                     <f:selectItem itemLabel="--Select Year--" itemValue="" noSelectionOption="true"/>
                     <f:selectItems value="#{classmode.term}"/>
                 </p:selectOneMenu>  
             </div>
             <br/>
-            <div class="ibox-content">                 
-                <p:dataTable id="n" class="table table-responsive table-striped" scrollable="true" var="papprv_rpt" 
-                             value="#{resultView.resultmodel}"                            
-                             rowKey="#{papprv_rpt.id}"
-                             paginatorTemplate="{CurrentPageReport}  
-                             {FirstPageLink} {PreviousPageLink} 
-                             {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
-                             paginator="true"
-                             rowsPerPageTemplate="5,10,15"
-                             draggableColumns="true" rows="15" style="margin-bottom:20px">  
-                    <f:facet name="{Exporters}">
-                        <h:commandLink immediate="true">
-                            <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
-                            <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
-                        </h:commandLink>
+            <div class="ibox-content">    
+                <p:panel visible="#{resultView.visibleTab}" id="panTab" style="border:none;">
+                    <p:dataTable id="n" class="table table-responsive table-striped" scrollable="true" var="papprv_rpt" 
+                                 value="#{resultView.resultmodel}"                            
+                                 rowKey="#{papprv_rpt.id}"
+                                 paginatorTemplate="{CurrentPageReport}  
+                                 {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                 paginator="true"
+                                 rowsPerPageTemplate="5,10,15"
+                                 draggableColumns="true" rows="15" style="margin-bottom:20px">  
+                        <f:facet name="{Exporters}">
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/excel.png" style="width: 20px; height: 20px;" />
+                                <p:dataExporter type="xls" target="n" fileName="report" pageOnly="true"/>
+                            </h:commandLink>
 
-                        <h:commandLink immediate="true">
-                            <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
-                            <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
-                        </h:commandLink>
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/pdf.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="pdf" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
 
-                        <h:commandLink immediate="true">
-                            <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
-                            <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
-                        </h:commandLink>
+                            <h:commandLink immediate="true">
+                                <p:graphicImage value="/images/csv.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="csv" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
 
-                        <h:commandLink immediate="true" >
-                            <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
-                            <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
-                        </h:commandLink>
-                    </f:facet>                                                                 
-                    <p:column headerText="Subject">
-                        <h:outputText value="#{papprv_rpt.subject}"/>
+                            <h:commandLink immediate="true" >
+                                <p:graphicImage value="/images/xml.png" style="width: 20px; height: 20px;"/>
+                                <p:dataExporter type="xml" target="n" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+                        </f:facet>                                                                 
+                        <p:column headerText="Subject">
+                            <h:outputText value="#{papprv_rpt.subject}"/>
 
-                    </p:column>
-                    <p:column headerText="First Test">
-                        <h:outputText value="#{papprv_rpt.firstTest}"/>
+                        </p:column>
+                        <p:column headerText="First Test">
+                            <h:outputText value="#{papprv_rpt.firstTest}"/>
 
-                    </p:column>
-                    <p:column headerText="Second Test">
-                        <h:outputText value="#{papprv_rpt.secondTest}"/>
+                        </p:column>
+                        <p:column headerText="Second Test">
+                            <h:outputText value="#{papprv_rpt.secondTest}"/>
 
-                    </p:column>
-                    <p:column headerText="Exam">
-                        <h:outputText value="#{papprv_rpt.exam}"/>
+                        </p:column>
+                        <p:column headerText="Exam">
+                            <h:outputText value="#{papprv_rpt.exam}"/>
 
-                    </p:column>
-                    <p:column headerText="Total">
-                        <h:outputText value="#{papprv_rpt.total}"/>
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{papprv_rpt.total}"/>
 
-                    </p:column>                                    
-                </p:dataTable> 
+                        </p:column>                                    
+                    </p:dataTable> 
+                </p:panel>
                 <p:commandButton value="" icon="ui-icon-print" process="@this"
                                  onclick="window.open('#{resultView.selectReco()}');"/>                
                 <p:button value="Print" 

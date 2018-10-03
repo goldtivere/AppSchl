@@ -217,15 +217,10 @@
                                             <div class="profile-user-menu" >
                                                 <ul class="nav">
                                                     <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/profile/editprofile.xhtml">
+                                                    <h:outputLink value="#{request.contextPath}/faces/pages/profile/editprofile.xhtml">
                                                         <i class="glyphicon glyphicon-edit"></i> <span class="nav-label">Edit Profile</span>
                                                     </h:outputLink>                                                           
-                                                    </li>  
-                                                    <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned1}" value="#{request.contextPath}/faces/pages/Staff/editprofile.xhtml">
-                                                        <i class="glyphicon glyphicon-edit"></i> <span class="nav-label">Edit Profile</span>
-                                                    </h:outputLink>                                                           
-                                                    </li>  
+                                                    </li>                                                    
                                                     <li>
                                                     <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/profile/editSubject.xhtml">
                                                         <i class="glyphicon glyphicon-blackboard"></i> <span class="nav-label">Edit Class</span>
@@ -233,25 +228,15 @@
 
                                                     </li>
                                                     <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/profile/viewSubject.xhtml">
+                                                    <h:outputLink value="#{request.contextPath}/faces/pages/profile/viewSubject.xhtml">
                                                         <i class="glyphicon glyphicon-blackboard"></i> <span class="nav-label">Subject Offered</span>
                                                     </h:outputLink>                                                      
-                                                    </li>   
+                                                    </li>                                                        
                                                     <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned1}" value="#{request.contextPath}/faces/pages/Staff/viewSubject.xhtml">
-                                                        <i class="glyphicon glyphicon-blackboard"></i> <span class="nav-label">Subject Offered</span>
-                                                    </h:outputLink>                                                      
-                                                    </li>   
-                                                    <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned}" value="#{request.contextPath}/faces/pages/profile/viewResult.xhtml">
+                                                    <h:outputLink value="#{request.contextPath}/faces/pages/profile/viewResult.xhtml">
                                                         <i class="glyphicon glyphicon-book"></i>Result Upload
                                                     </h:outputLink> 
-                                                    </li>
-                                                    <li>
-                                                    <h:outputLink rendered="#{login.roleAssigned1}" value="#{request.contextPath}/faces/pages/Staff/viewResult.xhtml">
-                                                        <i class="glyphicon glyphicon-book"></i>Result Upload
-                                                    </h:outputLink> 
-                                                    </li>
+                                                    </li>                                                  
                                                 </ul>
                                             </div>
                                         </div>                                        

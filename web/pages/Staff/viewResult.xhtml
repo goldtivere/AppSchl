@@ -20,12 +20,12 @@
         <div class="row"> 
 
             <div class="ibox-content">
-                <p:selectOneMenu id="sclass" class="form-control" value="#{resultView.sclass}" required="true" requiredMessage="Class required">
+                <p:selectOneMenu id="sclass" class="form-control" value="#{result.sclass}" required="true" requiredMessage="Class required">
 
 
-                    <p:ajax listener="#{classmode.onClassChanges(resultView.sclass)}" update="grad" />
-                    <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
-                    <f:selectItems value="#{classmode.classmodel}"
+                    <p:ajax listener="#{classmode.onClassChanges(result.sclass)}" update="grad" />
+                    <f:selectItem itemLabel="--Select Ap--" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{result.classmodel}"
                                    var="singlevalue"  
                                    itemLabel="#{singlevalue.tbclass}"
                                    itemValue="#{singlevalue.id}"/>

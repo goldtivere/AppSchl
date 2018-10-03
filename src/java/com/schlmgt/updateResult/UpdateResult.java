@@ -998,6 +998,7 @@ public class UpdateResult implements Serializable {
                 updateDelete(tablename);
                 populatePosition(tablename);
                 populatePositionArm(tablename);
+                populatePositionFinal(tablename);
                 resultmodel = displayResult(tablename);
 
                 setMessangerOfTruth("Result Deleted!!");

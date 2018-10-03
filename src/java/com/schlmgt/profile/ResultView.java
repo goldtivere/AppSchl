@@ -21,6 +21,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.application.NavigationHandler;
 import javax.faces.bean.SessionScoped;
+import com.schlmgt.register.ClassModel;
 
 /**
  *
@@ -44,18 +45,20 @@ public class ResultView implements Serializable {
     private String fullname;
     private String school;
     private String messangerOfTruth;
+    private List<ClassModel> classmodels;
     private String studentid;
     private SecondaryModel secModel = new SecondaryModel();
+    private boolean visibleTab;
 
     @PostConstruct
     public void init() {
         try {
             FacesContext ctx = FacesContext.getCurrentInstance();
             FacesMessage msg;
-
+            setVisibleTab(false);
             String stuValue = null;
             stuValue = (String) ctx.getExternalContext().getApplicationMap().get("reDet");
-                       
+
             SecondaryModel secResult = (SecondaryModel) ctx.getExternalContext().getApplicationMap().get("SecData");
             //test for null...
             secModel = secResult;
@@ -64,8 +67,8 @@ public class ResultView implements Serializable {
                 setStudentid(secModel.getStudentid());
             }
 
-
             if (stuValue != null) {
+                classmodels = classDropdown();
                 stuValue = stuValue.replaceAll("\\s", "_");
                 setSchool(stuValue);
             } else {
@@ -78,13 +81,58 @@ public class ResultView implements Serializable {
         }
     }
 
+    public List<ClassModel> classDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbclass";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<ClassModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+                System.out.println(rs.getString("class"));
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
     public SessionModel displayResultDetails(List<ResultModel> mode) throws Exception {
         FacesContext context = FacesContext.getCurrentInstance();
 
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
         ResultSet rs = null;
-        PreparedStatement pstmt = null;        
+        PreparedStatement pstmt = null;
 
         try {
 
@@ -93,7 +141,7 @@ public class ResultView implements Serializable {
             if (mode != null) {
                 for (ResultModel m : mode) {
 
-                    String nameSearch = "SELECT * FROM "+getSchool()+"_tbstudentclass where class=? and term=? and year=? and isdeleted=? and studentid=?";
+                    String nameSearch = "SELECT * FROM " + getSchool() + "_tbstudentclass where class=? and term=? and year=? and isdeleted=? and studentid=?";
                     pstmt = con.prepareStatement(nameSearch);
                     pstmt.setString(1, m.getGrade());
                     pstmt.setString(2, m.getTerm());
@@ -106,7 +154,7 @@ public class ResultView implements Serializable {
                         mm.setFullname(rs.getString("full_name"));
                     }
 
-                    String query = "SELECT * FROM "+getSchool()+"_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
+                    String query = "SELECT * FROM " + getSchool() + "_tbresultcompute where studentclass=? and term=? and year=? and isdeleted=? and studentreg=?";
                     pstmt = con.prepareStatement(query);
                     pstmt.setString(1, m.getGrade());
                     pstmt.setString(2, m.getTerm());
@@ -160,9 +208,9 @@ public class ResultView implements Serializable {
         edits.studDetails(getSchool());
 
         try {
-
+            System.out.println(getGrade() + getArm() + getTerm() + getYear() + getStudentid() + getSchool());
             con = dbConnections.mySqlDBconnection();
-            String query = "SELECT * FROM "+getSchool()+"_tbstudentresult where studentclass=? and arm=? and term=? and year=? and isdeleted=? and studentreg=?";
+            String query = "SELECT * FROM " + getSchool() + "_tbstudentresult where studentclass=? and arm=? and term=? and year=? and isdeleted=? and studentreg=?";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getGrade());
             pstmt.setString(2, getArm());
@@ -217,6 +265,7 @@ public class ResultView implements Serializable {
     }
 
     public void viewResult() throws Exception {
+        setVisibleTab(true);
         resultmodel = displayResult();
         displayResultDetails(displayResult());
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -353,6 +402,22 @@ public class ResultView implements Serializable {
 
     public void setSecModel(SecondaryModel secModel) {
         this.secModel = secModel;
+    }
+
+    public List<ClassModel> getClassmodels() {
+        return classmodels;
+    }
+
+    public void setClassmodel(List<ClassModel> classmodels) {
+        this.classmodels = classmodels;
+    }
+
+    public boolean isVisibleTab() {
+        return visibleTab;
+    }
+
+    public void setVisibleTab(boolean visibleTab) {
+        this.visibleTab = visibleTab;
     }
 
 }
