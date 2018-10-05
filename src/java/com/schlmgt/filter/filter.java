@@ -74,7 +74,7 @@ public class filter implements Filter {
             }
             if (reqURI.contains("/faces/index.xhtml") || (ses != null && ses.getAttribute("sessn_nums") != null) || reqURI.contains("javax.faces.resource")) {
                 chain.doFilter(request, response);
-            } else if (reqURI.contains("faces/pages/createStaff/index.xhtml") || reqURI.contains("faces/pages/create/index.xhtml")) {
+            } else if (reqURI.contains("faces/pages/createStaff/index.xhtml") || reqURI.contains("faces/pages/create/index.xhtml") || reqURI.contains("/student.xhtml")) {
                 chain.doFilter(request, response);
             } else {
                 resp.sendRedirect(reqt.getContextPath() + "/faces/index.xhtml");
