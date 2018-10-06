@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:p="http://primefaces.org/ui">
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -39,27 +39,25 @@
 
                     <p:messages id="login_panel"/>
                     <div class="form-group">
-                        <p:selectOneMenu id="sclass" class="form-control" value="#{resultView.sclass}" required="true" requiredMessage="Class required">
+                        <p:selectOneMenu id="sclass" class="form-control" value="#{Studentlogin.school}" required="true" requiredMessage="Class required">
 
-
-                            <p:ajax listener="#{classmode.onClassChanges(resultView.sclass)}" />
                             <f:selectItem itemLabel="--Select School--" itemValue="" noSelectionOption="true"/>
-                            <f:selectItems value="#{resultView.classmodels}"
+                            <f:selectItems value="#{Studentlogin.schlMgt}"
                                            var="singlevalue"  
-                                           itemLabel="#{singlevalue.tbclass}"
-                                           itemValue="#{singlevalue.id}"/>
+                                           itemLabel="#{singlevalue.schoolName}"
+                                           itemValue="#{singlevalue.tableName}"/>
                         </p:selectOneMenu> 
                     </div>
                     <div class="form-group">
-                        <p:inputText class="form-control" id="username" value="#{login.username}" placeholder="Registration Number" required="true"/>
+                        <p:inputText class="form-control" id="username" value="#{Studentlogin.regNum}" placeholder="Registration Number" required="true"/>
                     </div>
                     <div class="form-group">
-                        <p:password class="form-control" id="password" value="#{login.password}" placeholder="Pin Number" required="true"/>
+                        <p:password class="form-control" id="password" value="#{Studentlogin.stuPin}" placeholder="Pin Number" required="true"/>
                     </div>
                     <div class="form-group">
-                        <p:password class="form-control" id="serial" value="#{login.password}" placeholder="Serial Number" required="true"/>
+                        <p:password class="form-control" id="serial" value="#{Studentlogin.stuSerialNum}" placeholder="Serial Number" required="true"/>
                     </div>
-                    <p:commandButton value="Login" actionListener="#{login.loginpage}" update="mess" class="btn btn-primary block full-width m-b"/>
+                    <p:commandButton value="Login" actionListener="#{Studentlogin.loginpage}" update="mess" class="btn btn-primary block full-width m-b"/>
 
 
                 </h:form>
