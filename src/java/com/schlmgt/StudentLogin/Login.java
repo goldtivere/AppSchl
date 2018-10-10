@@ -6,6 +6,8 @@
 package com.schlmgt.StudentLogin;
 
 import com.schlmgt.dbconn.DbConnectionX;
+import com.schlmgt.logic.AESencrp;
+import com.schlmgt.school.SchoolGetterMethod;
 import com.schlmgt.school.SchoolManagementModel;
 import java.io.Serializable;
 import java.sql.Connection;
@@ -37,6 +39,7 @@ public class Login implements Serializable {
     private String stuSerialNum;
     private List<SchoolManagementModel> schlMgt;
     private String messangerOfTruth;
+    private SchoolGetterMethod schlgetter = new SchoolGetterMethod();
 
     @PostConstruct
     public void init() {
@@ -97,13 +100,117 @@ public class Login implements Serializable {
         }
     }
 
-    public void loginpage() {
+    public boolean confirmRegNum(String regNum) throws SQLException {
+        FacesContext context = FacesContext.getCurrentInstance();
 
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = dbConnections.mySqlDBconnection();
+
+            String queryProfile = "select * from " + getSchool() + "_tbstudentclass "
+                    + " where studentid=? and isdeleted = false";
+
+            pstmt = con.prepareStatement(queryProfile);
+            pstmt.setString(1, regNum);
+
+            //System.out.println(getUsername() + "," + doEncPwd  + "<>" + getPassword() );
+            //pstmt.setString(2, "ok");
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                return true;
+            }
+
+        } catch (SQLException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable111, please try again later."));
+        } catch (Exception e) {
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable, please try again later."));
+            e.printStackTrace();
+            return false;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+        return false;
     }
-     public void noactivity(ActionEvent evt) {
+
+    public boolean confirmPinSerial(String serialnumber, String studentpin) throws SQLException {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+
+            String queryProfile = "select * from tbserialpin "
+                    + "where serialnumber=? and studentpin=? and (numberlogged <= 5 or numberlogged is null)";
+
+            pstmt = con.prepareStatement(queryProfile);
+            pstmt.setString(1, serialnumber);
+            pstmt.setString(2, studentpin);
+
+            //System.out.println(getUsername() + "," + doEncPwd  + "<>" + getPassword() );
+            //pstmt.setString(2, "ok");
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                return true;
+            }
+
+        } catch (SQLException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable111, please try again later."));
+        } catch (Exception e) {
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, e.getMessage().toString(), "System unavailable, please try again later."));
+            e.printStackTrace();
+            return false;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+        return false;
+    }
+
+    public void loginpage() throws SQLException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        System.out.println(confirmPinSerial(getStuSerialNum(), getStuPin()) + " and " + confirmRegNum(getRegNum()));
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Please make sure you enter a valid Pin and serial Number", "Please make sure you enter a valid Pin and serial Number"));
+    }
+
+    public void noactivity(ActionEvent evt) {
         getLogout();
     }
- public boolean getLogout() {
+
+    public boolean getLogout() {
 
         FacesContext context = FacesContext.getCurrentInstance();
 
@@ -142,6 +249,7 @@ public class Login implements Serializable {
         }
 
     }//end getLogout
+
     public String getSchool() {
         return school;
     }

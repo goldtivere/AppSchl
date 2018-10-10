@@ -290,7 +290,7 @@ public class ReportStudent implements Serializable {
             con = dbConnections.mySqlDBconnection();
             List<PostionTermModel> lst = new ArrayList<>();
             for (int i = 0; i < studentNum(table_name).size(); i++) {
-                String query = "select * from " + table_name + "_tbfinalcompute where studentclass=? and Term=? and year=? and isdeleted=? order by average desc";
+                String query = "select * from " + table_name + "_tbfinalCompute where studentclass=? and Term=? and year=? and isdeleted=? order by average desc";
                 pstmt = con.prepareStatement(query);
                 pstmt.setString(1, getStudent_grade());
                 pstmt.setString(2, getTerm());
@@ -389,7 +389,7 @@ public class ReportStudent implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalCompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getStudent_grade());
             pstmt.setString(2, getTerm());
@@ -482,7 +482,7 @@ public class ReportStudent implements Serializable {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String query = "select a.*,b.full_name from " + table_name + "_tbfinalcompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
+            String query = "select a.*,b.full_name from " + table_name + "_tbfinalCompute a inner join " + table_name + "_tbstudentclass b on a.studentreg=b.studentid where a.studentclass=? and a.Term=? and a.year=? and a.isdeleted=? order by a.average desc";
             pstmt = con.prepareStatement(query);
             pstmt.setString(1, getStudent_grade());
             pstmt.setString(2, getTerm());

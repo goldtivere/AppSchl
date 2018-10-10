@@ -435,6 +435,7 @@ public class SchoolManagement implements Serializable {
         String finalCompute = tablename + "_tbfinalCompute";
         String studentStatus = tablename + "_studentstatus";
         String sessionTable = tablename + "_sessiontable";
+        String studentLogin = tablename + "_studentLogin";
 
         try {
 
@@ -650,6 +651,17 @@ public class SchoolManagement implements Serializable {
             pstmt = con.prepareStatement(stuResult);
             pstmt.executeUpdate();
 
+            String studentL = "CREATE TABLE " + studentLogin + " ("
+                    + "`id` INT NOT NULL,"
+                    + " `RegNumber` NVARCHAR(255) NULL,"
+                    + " `PinNumber` NVARCHAR(255) NULL,"
+                    + "`serialNumber` NVARCHAR(255) NULL,"
+                    + "`timesUsed` INT NULL,"
+                    + "`DateLastLoggedIn` DATETIME NULL,"
+                    + "PRIMARY KEY (`id`))";
+            pstmt = con.prepareStatement(studentL);
+            pstmt.executeUpdate();
+
         } catch (MySQLSyntaxErrorException ex) {
             setMessangerOfTruth(" Table already exist");
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
@@ -792,8 +804,8 @@ public class SchoolManagement implements Serializable {
             int createdId = userObj.getId();
             con = dbConnections.mySqlDBconnection();
             System.out.println(schoolEmail(modeSchool.getEmailAdd(), modeSchool.getId()) + " this is serious " + EmailCheck(modeSchool.getEmailAdd(), con));
-            if (schoolNameCheck(modeSchool.getSchoolName(), modeSchool.getId())==1 ||  !SchoolNameCheck(modeSchool.getSchoolName(), con)) {
-                if (schoolHNameCheck(modeSchool.getSchoolHeadName(), modeSchool.getId())==1 || !SchoolHeadNameCheck(modeSchool.getSchoolHeadName(), con)) {
+            if (schoolNameCheck(modeSchool.getSchoolName(), modeSchool.getId()) == 1 || !SchoolNameCheck(modeSchool.getSchoolName(), con)) {
+                if (schoolHNameCheck(modeSchool.getSchoolHeadName(), modeSchool.getId()) == 1 || !SchoolHeadNameCheck(modeSchool.getSchoolHeadName(), con)) {
 
                     if (schoolEmail(modeSchool.getEmailAdd(), modeSchool.getId()) == 1 || !EmailCheck(modeSchool.getEmailAdd(), con)) {
                         if (schoolPhoneCheck(modeSchool.getPnum(), modeSchool.getId()) == 1 || !PhoneCheck(modeSchool.getPnum(), con)) {
@@ -811,7 +823,7 @@ public class SchoolManagement implements Serializable {
                             pstmt.setInt(7, createdId);
                             pstmt.setString(8, DateManipulation.dateAndTime());
                             pstmt.setInt(9, modeSchool.getId());
-                            pstmt.setString(10, modeSchool.getTableName());                            
+                            pstmt.setString(10, modeSchool.getTableName());
                             pstmt.executeUpdate();
 
                             String struc = "update tbschltablestructure set schoolname=? where dbname=?";
