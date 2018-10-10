@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>com.GOTIT.AppSchl</groupId>
-   <artifactId>AppSchl</artifactId>
-   <version>1.0</version>
-   <packaging>war</packaging>
-   <build>
-       <finalName>${project.artifactId}</finalName>
-   </build>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.GOTIT.AppSchl</groupId>
+    <artifactId>AppSchl</artifactId>
+    <version>1.0</version>
+    <packaging>war</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <webXml>web\WEB-INF\web.xml</webXml>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
