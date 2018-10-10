@@ -10,10 +10,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <extensions>false</extensions>
+                <version>2.3</version>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webXml>web\WEB-INF\web.xml</webXml>
                 </configuration>
             </plugin>
         </plugins>
