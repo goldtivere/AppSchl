@@ -6,17 +6,25 @@
     <artifactId>SchoolApp</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <build>
-        <plugins>            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <webXml>web\WEB-INF\web.xml</webXml>
-                </configuration>                
-            </plugin>            
-        </plugins>
-    </build>
 
+<build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
+    <plugins>
+        <plugin>
+            <groupId>org.scala-tools</groupId>
+            <artifactId>maven-scala-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>compile</goal>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <scalaVersion>${scala.version}</scalaVersion>
+            </configuration>
+        </plugin>
+    </plugins>
 </project>
