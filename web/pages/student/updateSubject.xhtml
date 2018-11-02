@@ -40,7 +40,7 @@
 
                                 <p:ajax listener="#{classmode.onClassChanges(subjectUpdate.studentClass)}" update="grad" />
                                 <f:selectItem itemLabel="--Select Class--" itemValue="" noSelectionOption="true"/>
-                                <f:selectItems value="#{classmode.classmodel}"
+                                <f:selectItems value="#{subjectUpdate.classmodel}"
                                                var="singlevalue"  
                                                itemLabel="#{singlevalue.tbclass}"
                                                itemValue="#{singlevalue.id}"/>

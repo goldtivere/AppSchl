@@ -11,6 +11,7 @@ import com.schlmgt.imgupload.UploadImagesX;
 import com.schlmgt.logic.AESencrp;
 import com.schlmgt.logic.DateManipulation;
 import com.schlmgt.login.UserDetails;
+import com.schlmgt.register.ClassModel;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,10 +68,64 @@ public class SubjectUpdate implements Serializable {
     private String ref_number;
     private String csvLocation;
     private String messangerOfTruth;
+    private List<ClassModel> classmodel;
 
     @PostConstruct
     public void init() {
+        try
+        {
         setStatus(false);
+        classmodel = classDropdown();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public List<ClassModel> classDropdown() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM tbclass";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<ClassModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ClassModel coun = new ClassModel();
+                coun.setId(rs.getInt("id"));
+                coun.setTbclass(rs.getString("class"));
+
+                //
+                lst.add(coun);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
     }
 
     public List<SessionTable> displaySubject() throws Exception {
@@ -498,6 +553,14 @@ public class SubjectUpdate implements Serializable {
 
     public void setStudentGrade(String studentGrade) {
         this.studentGrade = studentGrade;
+    }
+
+    public List<ClassModel> getClassmodel() {
+        return classmodel;
+    }
+
+    public void setClassmodel(List<ClassModel> classmodel) {
+        this.classmodel = classmodel;
     }
 
 }
